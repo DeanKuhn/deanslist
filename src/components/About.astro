@@ -1,0 +1,186 @@
+---
+// About.astro
+---
+
+<section id="about">
+  <div class="container about-inner">
+    <div class="about-text">
+      <div class="section-header">
+        <span class="section-label mono muted">03 / about</span>
+        <h2 class="section-title">Background</h2>
+      </div>
+
+      <div class="about-body">
+        <p>
+          I'm a CS graduate (WGU, May 2026) based in the Milwaukee area, looking for a
+          junior data engineering role. My focus is on the infrastructure side of data —
+          building pipelines that are reliable, documented, and maintainable rather than
+          impressive to demo once.
+        </p>
+        <p>
+          KitchenSync is my lead project: a full end-to-end forecasting system with a
+          real ingestion layer, a Snowflake/dbt analytics stack, a LightGBM model, and
+          a live dashboard. The other projects demonstrate pipeline automation, SQL analysis,
+          and algorithm design.
+        </p>
+        <p>
+          I currently work at Kwik Trip — which is why a kitchen production forecasting
+          system was a natural problem to model.
+        </p>
+      </div>
+
+      <div class="contact-links">
+        <a href="mailto:dakuhn1138@gmail.com" class="contact-item mono">
+          <span class="accent">✉</span> dakuhn1138@gmail.com
+        </a>
+        <a href="https://linkedin.com/in/dean-kuhn-565249380" target="_blank" rel="noopener" class="contact-item mono">
+          <span class="accent">in</span> linkedin ↗
+        </a>
+        <a href="https://github.com/DeanKuhn" target="_blank" rel="noopener" class="contact-item mono">
+          <span class="accent">gh</span> github ↗
+        </a>
+      </div>
+    </div>
+
+    <div class="about-aside">
+      <div class="aside-block">
+        <div class="aside-label mono muted">education</div>
+        <div class="aside-item">
+          <div class="aside-title">B.S. Computer Science</div>
+          <div class="aside-sub mono muted">Western Governors University · May 2026</div>
+        </div>
+      </div>
+
+      <div class="aside-block">
+        <div class="aside-label mono muted">certifications</div>
+        <div class="aside-item">
+          <div class="aside-title">dbt Fundamentals</div>
+          <div class="aside-sub mono muted">dbt Labs</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-title">ITIL 4 Foundation</div>
+          <div class="aside-sub mono muted">Axelos / WGU</div>
+        </div>
+      </div>
+
+      <div class="aside-block">
+        <div class="aside-label mono muted">availability</div>
+        <div class="aside-item">
+          <div class="aside-title">Milwaukee area · Remote</div>
+          <div class="aside-sub mono muted">Open to hybrid or on-site (greater Milwaukee)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2xl);
+    align-items: start;
+  }
+
+  @media (max-width: 768px) {
+    .about-inner {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .section-header {
+    margin-bottom: var(--space-lg);
+  }
+
+  .section-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .about-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+  }
+
+  .about-body p {
+    color: var(--muted);
+    font-size: 0.9375rem;
+    line-height: 1.75;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .contact-item {
+    font-size: 0.875rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.15s;
+  }
+
+  .contact-item:hover {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  /* Aside */
+  .about-aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    padding-top: 5.5rem; /* align with text below section header */
+  }
+
+  @media (max-width: 768px) {
+    .about-aside {
+      padding-top: 0;
+    }
+  }
+
+  .aside-block {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-md);
+  }
+
+  .aside-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-sm);
+    opacity: 0.6;
+  }
+
+  .aside-item {
+    margin-top: 0.5rem;
+  }
+
+  .aside-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .aside-sub {
+    font-size: 0.75rem;
+    margin-top: 0.2rem;
+    opacity: 0.7;
+  }
+</style>

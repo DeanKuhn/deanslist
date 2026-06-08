@@ -1,0 +1,85 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Skills from '../components/Skills.astro';
+import About from '../components/About.astro';
+import Footer from '../components/Footer.astro';
+import { projects } from '../data/projects';
+
+// Anchor project first, then rest in defined order
+const anchorProject = projects.find((p) => p.anchor)!;
+const otherProjects = projects.filter((p) => !p.anchor);
+---
+
+<Base>
+  <Nav />
+  <Hero />
+
+  <!-- Projects -->
+  <section id="projects">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label mono muted">01 / projects</span>
+        <h2 class="section-title">Work</h2>
+      </div>
+
+      <!-- Anchor / featured project -->
+      <div class="anchor-wrapper">
+        <ProjectCard project={anchorProject} />
+      </div>
+
+      <!-- Remaining projects in a grid -->
+      <div class="projects-grid">
+        {otherProjects.map((p) => (
+          <ProjectCard project={p} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <Skills />
+  <About />
+  <Footer />
+</Base>
+
+<style>
+  /* Projects section header */
+  .section-header {
+    margin-bottom: var(--space-xl);
+  }
+
+  .section-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  /* Anchor project: full width */
+  .anchor-wrapper {
+    margin-bottom: var(--space-lg);
+  }
+
+  /* Other projects: 2-column grid */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: var(--space-md);
+  }
+
+  @media (max-width: 640px) {
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

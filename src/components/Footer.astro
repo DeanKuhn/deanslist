@@ -1,0 +1,47 @@
+---
+// Footer.astro
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <span class="mono muted">© {year} Dean Kuhn</span>
+    <div class="footer-links">
+      <a href="https://github.com/DeanKuhn" target="_blank" rel="noopener" class="mono muted">github</a>
+      <a href="https://linkedin.com/in/dean-kuhn-565249380" target="_blank" rel="noopener" class="mono muted">linkedin</a>
+      <a href="mailto:dakuhn1138@gmail.com" class="mono muted">email</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: var(--space-lg) 0;
+  }
+
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+  }
+
+  .footer span,
+  .footer a {
+    font-size: 0.75rem;
+    opacity: 0.5;
+    transition: opacity 0.15s;
+  }
+
+  .footer a:hover {
+    opacity: 1;
+    text-decoration: none;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: var(--space-lg);
+  }
+</style>

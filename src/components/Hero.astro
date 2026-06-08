@@ -1,0 +1,145 @@
+---
+// Hero.astro
+---
+
+<section class="hero" id="hero">
+  <div class="container hero-inner">
+    <div class="hero-label mono muted">milwaukee, wi · open to remote</div>
+
+    <h1 class="hero-name">
+      Dean<br /><span class="accent">Kuhn</span>
+    </h1>
+
+    <p class="hero-title mono">
+      <span class="accent">// </span>junior data engineer
+    </p>
+
+    <p class="hero-tagline">
+      I build pipelines that move data from raw to reliable —
+      Postgres, Snowflake, dbt, Python.
+    </p>
+
+    <div class="hero-links">
+      <a href="#projects" class="btn-primary">view projects</a>
+      <a href="https://github.com/DeanKuhn" target="_blank" rel="noopener" class="btn-ghost">
+        github ↗
+      </a>
+      <a href="https://linkedin.com/in/dean-kuhn-565249380" target="_blank" rel="noopener" class="btn-ghost">
+        linkedin ↗
+      </a>
+    </div>
+
+    <div class="hero-stack mono muted">
+      python · sql · snowflake · dbt core · postgresql · fastapi · github actions
+    </div>
+  </div>
+
+  <!-- Decorative grid lines -->
+  <div class="hero-grid" aria-hidden="true"></div>
+</section>
+
+<style>
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding-top: 3.5rem; /* nav height */
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.35;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-xl);
+  }
+
+  .hero-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-lg);
+  }
+
+  .hero-name {
+    font-family: var(--font-display);
+    font-size: clamp(4rem, 12vw, 9rem);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-lg);
+  }
+
+  .hero-title {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: var(--space-lg);
+    letter-spacing: 0.02em;
+  }
+
+  .hero-tagline {
+    font-size: 1.125rem;
+    color: var(--muted);
+    max-width: 480px;
+    margin-bottom: var(--space-xl);
+    line-height: 1.7;
+  }
+
+  .hero-links {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-xl);
+  }
+
+  .btn-primary {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    background: var(--accent);
+    color: #000;
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius);
+    font-weight: 500;
+    transition: opacity 0.15s;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.85;
+    text-decoration: none;
+  }
+
+  .btn-ghost {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius);
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--accent);
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .hero-stack {
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    opacity: 0.6;
+  }
+</style>

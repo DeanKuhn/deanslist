@@ -1,0 +1,193 @@
+---
+// ProjectCard.astro
+// Renders one project. Anchor projects get a larger, featured layout.
+import type { Project } from '../data/projects';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const isAnchor = project.anchor;
+---
+
+<article class:list={['project-card', { 'project-card--anchor': isAnchor }]}>
+  <div class="card-header">
+    <div class="card-meta mono muted">
+      <span class="card-year">{project.year}</span>
+      <span class="card-sep">·</span>
+      <span class:list={['card-status', `status--${project.status}`]}>
+        {project.status === 'live' ? '● live' : project.status === 'paused' ? '◌ paused' : '✓ complete'}
+      </span>
+    </div>
+    <h3 class="card-title">{project.title}</h3>
+  </div>
+
+  {project.statusNote && (
+    <p class="status-note mono muted">{project.statusNote}</p>
+  )}
+
+  <div class="card-body">
+    <div class="card-section">
+      <div class="section-label mono muted">problem</div>
+      <p>{project.problem}</p>
+    </div>
+
+    <div class="card-section">
+      <div class="section-label mono muted">what i built</div>
+      <p>{project.what}</p>
+    </div>
+
+    {isAnchor && (
+      <div class="card-section">
+        <div class="section-label mono muted">highlights</div>
+        <ul class="highlights-list">
+          {project.highlights.map((h) => (
+            <li class="highlight-item">
+              <span class="accent mono">→</span>
+              <span>{h}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+
+  <div class="card-footer">
+    <div class="tech-tags">
+      {project.techStack.map((t) => (
+        <span class="tag mono">{t}</span>
+      ))}
+    </div>
+    <a href={project.githubUrl} target="_blank" rel="noopener" class="card-link mono">
+      view on github ↗
+    </a>
+  </div>
+</article>
+
+<style>
+  .project-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    transition: border-color 0.2s;
+  }
+
+  .project-card:hover {
+    border-color: var(--accent-dim);
+  }
+
+  /* Anchor (featured) card gets left orange border */
+  .project-card--anchor {
+    border-left: 3px solid var(--accent);
+    padding-left: calc(var(--space-lg) - 2px);
+  }
+
+  .card-meta {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .card-sep { opacity: 0.4; }
+
+  .status--live    { color: #4ade80; }
+  .status--paused  { color: var(--muted); }
+  .status--complete{ color: var(--muted); }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2.5vw, 1.375rem);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .status-note {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--bg-hover);
+    border-radius: var(--radius);
+    border-left: 2px solid var(--border);
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .card-section p {
+    color: var(--muted);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+
+  .section-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.375rem;
+    opacity: 0.6;
+  }
+
+  .highlights-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .highlight-item {
+    display: flex;
+    gap: 0.625rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .highlight-item .mono {
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-top: auto;
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border);
+  }
+
+  .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+
+  .tag {
+    font-size: 0.6875rem;
+    color: var(--muted);
+    background: var(--bg-hover);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 0.2rem 0.5rem;
+    letter-spacing: 0.04em;
+  }
+
+  .card-link {
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+</style>
