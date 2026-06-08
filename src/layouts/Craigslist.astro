@@ -30,7 +30,13 @@ const {
         font-size: 14px;
         background: #fff;
         color: #000;
-        padding: 8px 12px;
+        padding: 0;
+      }
+
+      .cl-wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 16px 12px;
       }
 
       a {
@@ -48,6 +54,8 @@ const {
     </style>
   </head>
   <body>
-    <slot />
+    <div class="cl-wrap">
+      <slot />
+    </div>
   </body>
 </html>
