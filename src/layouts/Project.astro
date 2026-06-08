@@ -1,0 +1,72 @@
+---
+// layouts/Project.astro
+// Full dark treatment for individual project pages.
+// Google Fonts loaded here only — not on the craigslist homepage.
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = "dean's list", description = '' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title} — dean's list</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        --bg:        #0e0f11;
+        --bg-card:   #15171a;
+        --bg-hover:  #1c1f23;
+        --border:    #2a2d32;
+        --text:      #e8e9ea;
+        --muted:     #7a7f87;
+        --accent:    #f06a00;
+        --accent-dim:#7a3500;
+        --font-display: 'Syne', sans-serif;
+        --font-mono:    'IBM Plex Mono', monospace;
+        --max-width: 900px;
+        --radius: 4px;
+      }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-display);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+      }
+
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      .container {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      .mono { font-family: var(--font-mono); }
+      .muted { color: var(--muted); }
+      .accent { color: var(--accent); }
+    </style>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

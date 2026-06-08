@@ -1,85 +1,137 @@
 ---
-import Base from '../layouts/Base.astro';
-import Nav from '../components/Nav.astro';
-import Hero from '../components/Hero.astro';
-import ProjectCard from '../components/ProjectCard.astro';
-import Skills from '../components/Skills.astro';
-import About from '../components/About.astro';
-import Footer from '../components/Footer.astro';
+import Craigslist from '../layouts/Craigslist.astro';
 import { projects } from '../data/projects';
 
-// Anchor project first, then rest in defined order
-const anchorProject = projects.find((p) => p.anchor)!;
-const otherProjects = projects.filter((p) => !p.anchor);
+// Group projects by category
+const categories = [...new Set(projects.map((p) => p.category))];
 ---
 
-<Base>
-  <Nav />
-  <Hero />
+<Craigslist>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td width="16" valign="top"></td>
 
-  <!-- Projects -->
-  <section id="projects">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label mono muted">01 / projects</span>
-        <h2 class="section-title">Work</h2>
-      </div>
+      <!-- Left column: branding + nav -->
+      <td width="200" valign="top" style="padding-right: 20px; border-right: 1px solid #ccc;">
+        <div style="text-align: center; margin-bottom: 16px;">
+          <div style="font-size: 26px; font-weight: bold; color: #800000; letter-spacing: -1px;">
+            dean's list
+          </div>
+          <div style="font-size: 11px; color: #666; margin-top: 2px;">
+            milwaukee, wi
+          </div>
+        </div>
 
-      <!-- Anchor / featured project -->
-      <div class="anchor-wrapper">
-        <ProjectCard project={anchorProject} />
-      </div>
+        <hr style="border: none; border-top: 1px solid #ccc; margin: 8px 0;" />
 
-      <!-- Remaining projects in a grid -->
-      <div class="projects-grid">
-        {otherProjects.map((p) => (
-          <ProjectCard project={p} />
-        ))}
-      </div>
-    </div>
-  </section>
+        <div style="font-size: 12px; line-height: 1.8; margin: 8px 0;">
+          <a href="#about">about</a><br />
+          <a href="mailto:dakuhn1138@gmail.com">contact</a><br />
+          <a href="https://github.com/DeanKuhn" target="_blank">github</a><br />
+          <a href="https://linkedin.com/in/dean-kuhn-565249380" target="_blank">linkedin</a><br />
+          <a href="/Dean_Kuhn_Resume.pdf" target="_blank">resume</a>
+        </div>
 
-  <Skills />
-  <About />
-  <Footer />
-</Base>
+        <hr style="border: none; border-top: 1px solid #ccc; margin: 8px 0;" />
 
-<style>
-  /* Projects section header */
-  .section-header {
-    margin-bottom: var(--space-xl);
-  }
+        <div style="font-size: 11px; color: #666; line-height: 1.7;">
+          <div>B.S. Computer Science</div>
+          <div>WGU · May 2026</div>
+          <br />
+          <div>dbt Fundamentals</div>
+          <div>ITIL 4 Foundation</div>
+        </div>
+      </td>
 
-  .section-label {
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    opacity: 0.5;
-    display: block;
-    margin-bottom: 0.5rem;
-  }
+      <td width="16" valign="top"></td>
 
-  .section-title {
-    font-size: clamp(1.75rem, 4vw, 2.5rem);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-  }
+      <!-- Main column: project listings -->
+      <td valign="top">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td>
+              <div style="font-size: 13px; font-weight: bold; margin-bottom: 12px;">
+                portfolio — projects by <a href="#about">dean kuhn</a>
+              </div>
 
-  /* Anchor project: full width */
-  .anchor-wrapper {
-    margin-bottom: var(--space-lg);
-  }
+              {categories.map((cat) => (
+                <div style="margin-bottom: 20px;">
+                  <div style="font-size: 13px; font-weight: bold; margin-bottom: 6px; color: #800000;">
+                    {cat}
+                  </div>
+                  <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                    {projects
+                      .filter((p) => p.category === cat)
+                      .map((p) => (
+                        <tr>
+                          <td style="padding: 1px 0; vertical-align: top; white-space: nowrap; padding-right: 8px;">
+                            <span style="color: #666; font-size: 12px;">
+                              {p.status === 'live' ? '●' : p.status === 'paused' ? '◌' : '✓'}
+                            </span>
+                          </td>
+                          <td style="padding: 1px 0;">
+                            <a href={`/projects/${p.slug}`} style="font-size: 13px;">
+                              {p.title}
+                            </a>
+                            <span style="color: #666; font-size: 12px;"> — {p.tagline}</span>
+                          </td>
+                        </tr>
+                      ))}
+                  </table>
+                </div>
+              ))}
 
-  /* Other projects: 2-column grid */
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-    gap: var(--space-md);
-  }
+              <!-- Stack callout -->
+              <div style="margin-top: 16px; margin-bottom: 20px;">
+                <div style="font-size: 13px; font-weight: bold; margin-bottom: 6px; color: #800000;">
+                  skills
+                </div>
+                <div style="font-size: 12px; color: #444; line-height: 1.8;">
+                  <span style="font-weight: bold;">languages:</span> Python, SQL<br />
+                  <span style="font-weight: bold;">data &amp; storage:</span> PostgreSQL, Snowflake, dbt Core, pandas, PyArrow<br />
+                  <span style="font-weight: bold;">ingestion:</span> FastAPI, REST APIs, Playwright, asyncio/httpx<br />
+                  <span style="font-weight: bold;">ml:</span> LightGBM, scikit-learn, VADER sentiment<br />
+                  <span style="font-weight: bold;">infra:</span> GitHub Actions, Neon, Git, Linux/WSL, AWS (exposure)<br />
+                </div>
+              </div>
 
-  @media (max-width: 640px) {
-    .projects-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>
+              <hr style="border: none; border-top: 1px solid #ccc; margin: 12px 0;" />
+
+              <!-- About -->
+              <div id="about" style="margin-top: 12px;">
+                <div style="font-size: 13px; font-weight: bold; margin-bottom: 6px; color: #800000;">
+                  about
+                </div>
+                <div style="font-size: 12px; color: #444; line-height: 1.8; max-width: 600px;">
+                  CS graduate (WGU, May 2026) based in the Milwaukee area.
+                  Looking for a junior data engineering role — Milwaukee area preferred, open to remote.
+                  Current focus is on pipeline infrastructure: ingestion, transformation, and serving layers
+                  that are reliable and maintainable rather than impressive once.
+                  <br /><br />
+                  I work at Kwik Trip, which is why a kitchen production forecasting system
+                  was a natural problem to model.
+                  <br /><br />
+                  <a href="mailto:dakuhn1138@gmail.com">dakuhn1138@gmail.com</a>
+                  &nbsp;·&nbsp;
+                  <a href="https://linkedin.com/in/dean-kuhn-565249380" target="_blank">linkedin</a>
+                  &nbsp;·&nbsp;
+                  <a href="https://github.com/DeanKuhn" target="_blank">github</a>
+                  &nbsp;·&nbsp;
+                  <a href="/Dean_Kuhn_Resume.pdf" target="_blank">resume (pdf)</a>
+                </div>
+              </div>
+
+              <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;" />
+
+              <div style="font-size: 10px; color: #999;">
+                not affiliated with craigslist &nbsp;·&nbsp; milwaukee, wi &nbsp;·&nbsp; 2026
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+
+      <td width="16"></td>
+    </tr>
+  </table>
+</Craigslist>

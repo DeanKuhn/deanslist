@@ -1,36 +1,33 @@
-# Portfolio Site — Claude Code Handoff
+# dean's list — Claude Code Handoff
 
-## What this is
+## Concept
 
-A personal portfolio site for Dean Kuhn, junior data engineer, Milwaukee WI.
-Built with Astro (static output), styled with plain CSS (no Tailwind, no component library).
-Target deploy: GitHub Pages. Custom domain: `deankuhn.dev` (or similar).
+Two-mode site. The homepage is a deliberate craigslist parody — Times New Roman, white
+background, blue hyperlinks, table layout. Each project link opens a full-page dark
+industrial treatment with architecture diagrams, highlights, and stack details.
+
+The contrast is the whole point. Commit to both directions fully.
 
 ---
 
-## Project Structure
+## Structure
 
 ```
-portfolio/
-├── .github/workflows/deploy.yml     # GitHub Pages deploy — do not touch
+deanslist/
+├── .github/workflows/deploy.yml     # GitHub Pages CI — do not touch
 ├── public/
-│   └── favicon.svg
+│   ├── favicon.svg
+│   └── Dean_Kuhn_Resume.pdf         # ADD THIS FILE before deploying
 ├── src/
 │   ├── layouts/
-│   │   └── Base.astro               # HTML shell, meta tags, font imports
-│   ├── components/
-│   │   ├── Nav.astro                # Fixed top nav
-│   │   ├── Hero.astro               # Full-height landing section
-│   │   ├── ProjectCard.astro        # Single project card (anchor + standard variants)
-│   │   ├── Skills.astro             # Skills grid section
-│   │   ├── About.astro              # About + contact + aside
-│   │   └── Footer.astro
+│   │   ├── Craigslist.astro         # Homepage layout — plain HTML, no fonts
+│   │   └── Project.astro            # Project page layout — dark, Syne + IBM Plex Mono
 │   ├── data/
-│   │   └── projects.ts              # ALL project content lives here
-│   ├── pages/
-│   │   └── index.astro              # Assembles everything
-│   └── styles/
-│       └── global.css               # Design tokens + reset + utilities
+│   │   └── projects.ts              # ALL content lives here
+│   └── pages/
+│       ├── index.astro              # Homepage — craigslist treatment
+│       └── projects/
+│           └── [slug].astro         # Dynamic project pages — dark treatment
 ├── astro.config.mjs
 ├── package.json
 └── tsconfig.json
@@ -38,131 +35,153 @@ portfolio/
 
 ---
 
-## Design System
+## Design tokens (Project layout only)
 
-**Theme:** Dark industrial. Near-black background, orange accent, mono + display type.
-
-| Token | Value |
+| Token        | Value      |
 |---|---|
-| `--bg` | `#0e0f11` |
-| `--bg-card` | `#15171a` |
-| `--accent` | `#f06a00` |
-| `--text` | `#e8e9ea` |
-| `--muted` | `#7a7f87` |
-| `--border` | `#2a2d32` |
-| Display font | Syne (800 weight for headings) |
-| Mono font | IBM Plex Mono |
+| `--bg`       | `#0e0f11`  |
+| `--bg-card`  | `#15171a`  |
+| `--accent`   | `#f06a00`  |
+| `--text`     | `#e8e9ea`  |
+| `--muted`    | `#7a7f87`  |
+| `--border`   | `#2a2d32`  |
+| Display font | Syne 800   |
+| Mono font    | IBM Plex Mono |
 
-All tokens are in `global.css`. Use them. Don't hardcode hex values.
+Homepage uses no CSS variables — all inline styles, intentionally.
 
 ---
 
-## Getting Started
+## Getting started
 
 ```bash
 npm install
 npm run dev       # http://localhost:4321
-npm run build     # outputs to ./dist
-npm run preview   # preview the build locally
+npm run build
+npm run preview
 ```
 
 ---
 
 ## Tasks for Claude Code
 
-### 1. Verify everything builds cleanly
+### 1. Verify clean build
 ```bash
 npm install && npm run build
 ```
 Fix any TypeScript or Astro errors before proceeding.
 
-### 2. Mobile navigation
-`Nav.astro` currently hides links on mobile (<640px) with `display: none`.
-Implement a hamburger toggle:
-- Button visible only on mobile
-- Clicking opens a full-width dropdown menu (dark bg, full links)
-- Closes on link click or outside click
-- Use vanilla JS `<script>` inside the component (no external deps)
+### 2. Architecture diagrams — one per project page
 
-### 3. Scroll-triggered fade-in animations
-Add subtle entrance animations using the Intersection Observer API.
-- Section headings and cards fade up on scroll (opacity 0→1, translateY 20px→0)
-- Stagger delay on project cards (0ms, 100ms, 200ms, 300ms)
-- CSS handles the animation; JS only toggles a `.visible` class
-- Must work without JS (no layout shift)
-- Add this to a `<script>` in `index.astro` or a separate `src/scripts/animations.ts`
+Each project page has a `.diagram-frame` placeholder div. Replace each placeholder
+with an actual SVG diagram. Use the design tokens. Dark bg, orange accent nodes,
+muted connector lines. Boxes and arrows only — no icons needed.
 
-### 4. KitchenSync architecture diagram
-The anchor project (KitchenSync) should display an architecture diagram.
-Two options — pick the simpler one:
-  a) SVG inline diagram built from the ASCII diagram in the README (preferred)
-  b) Placeholder `<div>` styled as a diagram frame with a note "diagram coming soon"
-
-The ASCII diagram from the README:
+**KitchenSync** (`slug: 'kitchensync'`):
 ```
-[POS Simulator] → [FastAPI Ingest API] → [Neon Postgres (12 schemas)]
-                                               ↓
-                                    [extract_to_snowflake.py]
-                                               ↓
-                              [Snowflake RAW] → [dbt Core]
-                              staging → intermediate → marts → metrics
-                                               ↓
-                              [LightGBM Model] → [Streamlit Dashboard]
+[POS Simulator]
+      ↓ POST /sale
+[FastAPI Ingest API]
+      ↓
+[Neon Postgres — 12 store schemas]
+      ↓ extract_to_snowflake.py
+[Snowflake RAW]
+      ↓ dbt Core
+[Staging] → [Intermediate] → [Marts] → [Metrics]
+      ↓
+[LightGBM Model]
+      ↓
+[Streamlit Dashboard — 60s refresh]
 ```
 
-If building the SVG: use the design tokens. Dark background, orange accent nodes,
-muted connector lines. Keep it simple — boxes and arrows, no icons needed.
-Add it to `ProjectCard.astro` only when `project.slug === 'kitchensync'` and `project.anchor === true`.
+**Music Growth Pipeline** (`slug: 'music-growth-pipeline'`):
+```
+[Last.fm API — chart.getTopArtists]
+      ↓ seed_artists.py
+[Neon Postgres]
+  artists | weekly_charts | artist_snapshots | tags
+      ↓ dbt-postgres
+[Staging] → [Marts]
+  artist_tiers | genre_stats | artist_similarity_network
+      ↓ GitHub Actions (weekly cron)
+[analysis.sql — cross-sectional + longitudinal]
+```
 
-### 5. Resume download link
-Add a resume download link to the About section and/or the Nav.
-File: place `Dean_Kuhn_Resume.pdf` in `public/` and link to `/Dean_Kuhn_Resume.pdf`.
-In Nav: add after the "get in touch" button — `resume ↓` styled like `btn-ghost`.
-In About: add below the contact links.
+**Market Cynic Pipeline** (`slug: 'market-cynic-pipeline'`):
+```
+[Yahoo Finance — Playwright scrape]    [Reddit — 4 subreddits]
+              ↓                                  ↓
+        [Bronze layer]                    [Bronze layer]
+        raw_stocks.json                  Reddit posts + VADER
+              ↓                                  ↓
+        [Silver — Pydantic validation]
+              ↓
+        [Gold — inner join + divergence detection]
+        sentiment_momentum > 0 AND price_momentum < 0
+              ↓
+        [market_history.parquet — append-only]
+              ↓
+        [Streamlit Dashboard]
+```
 
-### 6. GitHub repo links — verify URLs
-The GitHub URLs in `src/data/projects.ts` use placeholder paths. Update to the
-actual repo URLs once confirmed:
+**Package Router** (`slug: 'package-router'`):
+```
+[Random package generation]
+      ↓
+[Population initialization — capacity-aware seeding]
+      ↓
+[Fitness function]
+  distance_score + deadline_penalty + capacity_violations
+      ↓
+[Selection → Crossover (sentinel-aware OX) → Mutation]
+  swap | scramble | inversion + adaptive rate
+      ↓ repeat until convergence or 500 stagnant generations
+[Best chromosome → delivery routes per truck]
+      ↓
+[CLI — status lookup by ID or address]
+```
+
+SVG dimensions: 100% width, auto height. Keep them simple and readable.
+
+### 3. Add resume file
+Place `Dean_Kuhn_Resume.pdf` in `public/`. It's already linked on the homepage
+(`/Dean_Kuhn_Resume.pdf`) — just needs the file present.
+
+### 4. Confirm GitHub repo URLs
+Update these in `src/data/projects.ts` with the actual repo names once confirmed:
 - `https://github.com/DeanKuhn/kitchensync`
 - `https://github.com/DeanKuhn/music-growth-pipeline`
 - `https://github.com/DeanKuhn/market-cynic-pipeline`
 - `https://github.com/DeanKuhn/wgu-dsaii-project`
 
-### 7. Deploy to GitHub Pages
-When ready to deploy:
-1. Create a new GitHub repo: `DeanKuhn/portfolio` (or `DeanKuhn.github.io`)
-2. If using a project repo (not `username.github.io`), set `base` in `astro.config.mjs`:
-   ```js
-   base: '/portfolio',
-   ```
-3. In the GitHub repo settings: Settings → Pages → Source → "GitHub Actions"
-4. Push to `main` — the workflow in `.github/workflows/deploy.yml` handles the rest
-5. For a custom domain (`deankuhn.dev`): add a `CNAME` file to `public/` containing just the domain name, then configure DNS at your registrar
+### 5. Mobile — homepage
+The craigslist table layout doesn't collapse well on mobile. Add a `<style>` block
+inside `index.astro` with a media query that:
+- Hides the left sidebar column on screens < 600px
+- Shows a simplified header (name + links) at the top instead
+Keep it in the craigslist aesthetic — no modern CSS grid or flexbox magic.
 
----
-
-## Content Updates (after initial deploy)
-
-All project content is in `src/data/projects.ts`. To add or update a project:
-1. Edit the `projects` array in that file
-2. `npm run build` and push
-
-To update About/Skills content, edit the relevant component directly.
+### 6. Deploy
+When ready:
+1. Create GitHub repo named `deanslist` (or `DeanKuhn.github.io`)
+2. If project repo: uncomment `base: '/deanslist'` in `astro.config.mjs`
+3. Settings → Pages → Source → GitHub Actions
+4. Push to `main`
+5. Custom domain: add `public/CNAME` with `deanslist.dev`, configure DNS A records
+   to GitHub's IPs: 185.199.108.153 / .109 / .110 / .111
 
 ---
 
 ## What NOT to change
 
-- The design tokens in `global.css` — established intentionally
-- The font choices (Syne + IBM Plex Mono) — part of the aesthetic direction
-- The `projects.ts` data structure — components depend on the interface shape
-- The deploy workflow — it's correct for GitHub Pages
+- The craigslist aesthetic on the homepage — lean into it, don't "clean it up"
+- Design tokens in `Project.astro` — established intentionally
+- The `projects.ts` data structure — both pages depend on the interface shape
+- The deploy workflow
 
 ---
 
-## Known gaps / future work
+## Content updates after launch
 
-- No `<meta og:image>` — add a static OG image to `public/` and reference in `Base.astro`
-- No sitemap — add `@astrojs/sitemap` integration if SEO matters later
-- Market Cynic Pipeline: update `statusNote` in `projects.ts` when v2 is built
-- Longitudinal analysis results: add a "findings" field to the Music Growth Pipeline entry once data accumulates
+All project content is in `src/data/projects.ts`. Edit there and push.
+Status notes update automatically on both the homepage list and project pages.
