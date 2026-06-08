@@ -6,13 +6,32 @@ import { projects } from '../data/projects';
 const categories = [...new Set(projects.map((p) => p.category))];
 ---
 
+<style>
+  .mobile-header { display: none; }
+  @media (max-width: 600px) {
+    .mobile-header { display: block; }
+    .sidebar-col { display: none; }
+    .gap-col { display: none; }
+  }
+</style>
+
 <Craigslist>
+  <div class="mobile-header" style="padding: 8px 12px 10px; border-bottom: 1px solid #ccc; margin-bottom: 10px;">
+    <div style="font-size: 20px; font-weight: bold; color: #800000; letter-spacing: -1px;">dean's list</div>
+    <div style="font-size: 11px; color: #666; margin-top: 1px;">milwaukee, wi</div>
+    <div style="font-size: 12px; margin-top: 5px; line-height: 1.8;">
+      <a href="mailto:dakuhn1138@gmail.com">contact</a> &nbsp;·&nbsp;
+      <a href="https://github.com/DeanKuhn" target="_blank">github</a> &nbsp;·&nbsp;
+      <a href="https://linkedin.com/in/dean-kuhn-565249380" target="_blank">linkedin</a> &nbsp;·&nbsp;
+      <a href="/Dean_Kuhn_Resume.pdf" target="_blank">resume</a>
+    </div>
+  </div>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
-      <td width="16" valign="top"></td>
+      <td width="16" valign="top" class="gap-col"></td>
 
       <!-- Left column: branding + nav -->
-      <td width="200" valign="top" style="padding-right: 20px; border-right: 1px solid #ccc;">
+      <td width="200" valign="top" style="padding-right: 20px; border-right: 1px solid #ccc;" class="sidebar-col">
         <div style="text-align: center; margin-bottom: 16px;">
           <div style="font-size: 26px; font-weight: bold; color: #800000; letter-spacing: -1px;">
             dean's list
@@ -131,7 +150,7 @@ const categories = [...new Set(projects.map((p) => p.category))];
         </table>
       </td>
 
-      <td width="16"></td>
+      <td width="16" class="gap-col"></td>
     </tr>
   </table>
 </Craigslist>
