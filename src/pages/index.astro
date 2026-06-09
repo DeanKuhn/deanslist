@@ -20,7 +20,8 @@ const categories = [...new Set(projects.map((p) => p.category))];
     <div style="font-size: 20px; font-weight: bold; color: #800000; letter-spacing: -1px;">dean's list</div>
     <div style="font-size: 11px; color: #666; margin-top: 1px;">milwaukee, wi</div>
     <div style="font-size: 12px; margin-top: 5px; line-height: 1.8;">
-      <a href="#" title="dakuhn1138@gmail.com" onclick="navigator.clipboard.writeText('dakuhn1138@gmail.com');this.textContent='copied!';setTimeout(()=>this.textContent='contact',1500);return false;">contact</a> &nbsp;·&nbsp;
+      <a href="#about">about</a> &nbsp;·&nbsp;
+      <a href="#" onclick="navigator.clipboard.writeText('dakuhn1138@gmail.com');this.textContent='copied!';setTimeout(()=>this.textContent='email',1500);return false;">email</a> &nbsp;·&nbsp;
       <a href="https://github.com/DeanKuhn" target="_blank">github</a> &nbsp;·&nbsp;
       <a href="https://linkedin.com/in/dean-kuhn-565249380" target="_blank">linkedin</a> &nbsp;·&nbsp;
       <a href="/Dean_Kuhn_Resume.pdf" target="_blank">resume</a>
@@ -45,7 +46,7 @@ const categories = [...new Set(projects.map((p) => p.category))];
 
         <div style="font-size: 12px; line-height: 1.8; margin: 8px 0;">
           <a href="#about">about</a><br />
-          <a href="#" title="dakuhn1138@gmail.com" onclick="navigator.clipboard.writeText('dakuhn1138@gmail.com');this.textContent='copied!';setTimeout(()=>this.textContent='contact',1500);return false;">contact</a><br />
+          <a href="#" onclick="navigator.clipboard.writeText('dakuhn1138@gmail.com');this.textContent='copied!';setTimeout(()=>this.textContent='email',1500);return false;">email</a><br />
           <a href="https://github.com/DeanKuhn" target="_blank">github</a><br />
           <a href="https://linkedin.com/in/dean-kuhn-565249380" target="_blank">linkedin</a><br />
           <a href="/Dean_Kuhn_Resume.pdf" target="_blank">resume</a>
@@ -59,6 +60,7 @@ const categories = [...new Set(projects.map((p) => p.category))];
           <br />
           <div>dbt Fundamentals</div>
           <div>ITIL 4 Foundation</div>
+          <div>Linux Essentials</div>
         </div>
       </td>
 
@@ -107,10 +109,11 @@ const categories = [...new Set(projects.map((p) => p.category))];
                 </div>
                 <div style="font-size: 12px; color: #444; line-height: 1.8;">
                   <span style="font-weight: bold;">languages:</span> Python, SQL<br />
-                  <span style="font-weight: bold;">data &amp; storage:</span> PostgreSQL, Snowflake, dbt Core, pandas, PyArrow<br />
+                  <span style="font-weight: bold;">data &amp; storage:</span> PostgreSQL, Snowflake, dbt Core, pandas<br />
                   <span style="font-weight: bold;">ingestion:</span> FastAPI, REST APIs, Playwright, asyncio/httpx<br />
                   <span style="font-weight: bold;">ml:</span> LightGBM, scikit-learn, VADER sentiment<br />
                   <span style="font-weight: bold;">infra:</span> GitHub Actions, Neon, Git, Linux/WSL, AWS (exposure)<br />
+                  <span style="font-weight: bold;">learning:</span> PySpark/Spark, Airflow, Databricks, Azure<br />Spending time on cloud architecture, LLM integration, and data governance<br />
                 </div>
               </div>
 
@@ -122,13 +125,11 @@ const categories = [...new Set(projects.map((p) => p.category))];
                   about
                 </div>
                 <div style="font-size: 12px; color: #444; line-height: 1.8; max-width: 600px;">
-                  CS graduate (WGU, May 2026) based in the Milwaukee area.
-                  Looking for a junior data engineering role — Milwaukee area preferred, open to remote.
-                  Current focus is on pipeline infrastructure: ingestion, transformation, and serving layers
-                  that are reliable and maintainable rather than impressive once.
+                  CS graduate (WGU, May 2026) based in the Milwaukee area. I focus on data engineering: the pipeline infrastructure that makes everything else possible. Ingestion, transformation, serving, governance. What happens when the schema changes. What happens when the API goes down. What the stack looks like when cloud and AI tooling are assumed, not optional.
                   <br /><br />
-                  I work at Kwik Trip, which is why a kitchen production forecasting system
-                  was a natural problem to model.
+                  I work at Kwik Trip, which is why a kitchen production forecasting system was a natural first problem to model seriously. The goal wasn't to build something impressive. It was to understand what each layer actually does and why it breaks.
+                  <br /><br />
+                  Milwaukee area preferred. Open to remote.
                   <br /><br />
                   <a href="mailto:dakuhn1138@gmail.com">dakuhn1138@gmail.com</a>
                   &nbsp;·&nbsp;
@@ -143,7 +144,7 @@ const categories = [...new Set(projects.map((p) => p.category))];
               <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;" />
 
               <div style="font-size: 10px; color: #999;">
-                not affiliated with craigslist &nbsp;·&nbsp; milwaukee, wi &nbsp;·&nbsp; 2026
+                &copy 2026 deanslist
               </div>
             </td>
           </tr>
