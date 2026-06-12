@@ -5,3 +5,31 @@ node_modules/
 .env.*
 !.env.example
 .DS_Store
+
+
+A few things to have handy:
+
+1. The JSON path — data/ab_results.json in the DeanKuhn/kitchensync repo. Your Astro site will need to fetch it
+from the raw GitHub URL at build time, or you can use actions/checkout on the kitchensync repo as a step.
+2. Timing — schedule at 30 3 * * * (3:30 AM UTC). That gives the EC2 push at 3:10 AM a 20-minute buffer.
+3. The JSON shape — so you know what to destructure in your Astro component:
+{
+"cumulative": {
+    "days_run": 1,
+    "ml_avg_waste_pct": 17.57,
+    "baseline_avg_waste_pct": 12.04,
+    "ml_avg_service_level": 93.16,
+    "base_avg_service_level": 90.03
+},
+"daily": [
+    {
+    "date": "2026-06-11",
+    "ml": { "units_sold": 0, "stockouts": 0, "units_wasted": 0, "waste_cost": 0.0, "sales_revenue": 0.0 },
+    "baseline": { "units_sold": 0, "stockouts": 0, "units_wasted": 0, "waste_cost": 0.0, "sales_revenue": 0.0 }
+    }
+]
+}
+4. The honest finding worth surfacing on the portfolio site — ML reduces stockouts ~31% but increases waste ~5.5
+percentage points. That trade-off is a stronger talking point than just "ML wins."
+
+That should be everything the Claude session needs to write the workflow without asking follow-up questions.

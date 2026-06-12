@@ -8,7 +8,8 @@ Two-mode portfolio site. The homepage is a deliberate craigslist parody — Time
 
 - `src/data/projects.ts` — all content lives here. Both pages depend on the interface shape; don't change it without updating both pages.
 - `src/layouts/Craigslist.astro` — homepage layout. Plain HTML, no fonts, inline styles. Keep it craigslist.
-- `src/layouts/Project.astro` — project page layout. Dark, Syne + IBM Plex Mono. Uses `<style is:global>` so utility classes (`.container`, `.mono`, `.muted`, `.accent`) reach slot content.
+- `src/layouts/Project.astro` — project page layout. Dark, Space Grotesk + IBM Plex Mono. Uses `<style is:global>` so utility classes (`.container`, `.mono`, `.muted`, `.accent`) reach slot content.
+- `src/data/ab_mock.json` — mock A/B results used as fallback during dev/build when the live fetch fails.
 - `src/pages/index.astro` — homepage. Craigslist table layout with a mobile fallback header at < 600px.
 - `src/pages/projects/[slug].astro` — dynamic project pages with inline SVG architecture diagrams.
 
@@ -20,9 +21,9 @@ Two-mode portfolio site. The homepage is a deliberate craigslist parody — Time
 | `--bg-card` | `#15171a` |
 | `--accent` | `#f06a00` |
 | `--text` | `#e8e9ea` |
-| `--muted` | `#7a7f87` |
+| `--muted` | `#9ca3af` |
 | `--border` | `#2a2d32` |
-| Display font | Syne 800 |
+| Display font | Space Grotesk 700 |
 | Mono font | IBM Plex Mono |
 
 Homepage uses no CSS variables — all inline styles, intentionally.
@@ -33,6 +34,7 @@ Homepage uses no CSS variables — all inline styles, intentionally.
 - Design tokens in `Project.astro`
 - The `projects.ts` data structure
 - The deploy workflow (`.github/workflows/deploy.yml`)
+- The scheduled rebuild workflow (`.github/workflows/scheduled-rebuild.yml`) — runs at 3:30 AM UTC daily, 20-min buffer after EC2 pushes `ab_results.json` to kitchensync
 
 ## Deploy
 

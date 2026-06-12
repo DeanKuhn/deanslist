@@ -2,6 +2,7 @@
 import ProjectLayout from '../../layouts/Project.astro';
 import { projects } from '../../data/projects';
 import type { GetStaticPaths } from 'astro';
+import abMock from '../../data/ab_mock.json';
 
 export const getStaticPaths: GetStaticPaths = () => {
   return projects.map((p) => ({
@@ -11,6 +12,47 @@ export const getStaticPaths: GetStaticPaths = () => {
 };
 
 const { project } = Astro.props;
+
+let abData: {
+  cumulative: {
+    days_run: number;
+    ml_avg_waste_pct: number;
+    baseline_avg_waste_pct: number;
+    ml_avg_service_level: number;
+    base_avg_service_level: number;
+  };
+  daily: Array<{
+    date: string;
+    ml: { units_sold: number; stockouts: number; units_wasted: number; waste_cost: number; sales_revenue: number };
+    baseline: { units_sold: number; stockouts: number; units_wasted: number; waste_cost: number; sales_revenue: number };
+  }>;
+} | null = null;
+
+let wasteDeltaPp: number | null = null;
+let stockoutReductionPct: number | null = null;
+
+if (project.slug === 'kitchensync') {
+  try {
+    const res = await fetch(
+      'https://raw.githubusercontent.com/DeanKuhn/kitchensync/main/data/ab_results.json'
+    );
+    if (res.ok) {
+      abData = await res.json();
+    } else {
+      abData = abMock;
+      if (abData) {
+        wasteDeltaPp = abData.cumulative.ml_avg_waste_pct - abData.cumulative.baseline_avg_waste_pct;
+        const totalMl = abData.daily.reduce((s, d) => s + d.ml.stockouts, 0);
+        const totalBase = abData.daily.reduce((s, d) => s + d.baseline.stockouts, 0);
+        if (totalBase > 0) {
+          stockoutReductionPct = Math.round((1 - totalMl / totalBase) * 100);
+        }
+      }
+    }
+  } catch (_) {
+    abData = abMock;
+  }
+}
 ---
 
 <ProjectLayout title={project.title} description={project.tagline}>
@@ -40,7 +82,7 @@ const { project } = Astro.props;
 
       <h1 class="project-title">{project.title}</h1>
 
-      <p class="project-tagline muted">{project.tagline}</p>
+      <p class="project-tagline">{project.tagline}</p>
 
       {project.statusNote && (
         <div class="status-note mono muted">{project.statusNote}</div>
@@ -51,41 +93,109 @@ const { project } = Astro.props;
       </a>
     </header>
 
+    <!-- A/B Results (kitchensync only) -->
+    {project.slug === 'kitchensync' && abData && (
+      <div class="ab-section">
+        <div class="ab-header">
+          <span class="section-label mono muted">live a/b results</span>
+          <span class="ab-days mono muted">day {abData.cumulative.days_run}</span>
+        </div>
+        <div class="ab-grid">
+          <div class="ab-card">
+            <div class="ab-card-label mono">ml model</div>
+            <div class="ab-metric">
+              <span class="ab-value accent">{abData.cumulative.ml_avg_waste_pct.toFixed(1)}%</span>
+              <span class="ab-key mono muted">avg waste</span>
+            </div>
+            <div class="ab-metric">
+              <span class="ab-value">{abData.cumulative.ml_avg_service_level.toFixed(1)}%</span>
+              <span class="ab-key mono muted">service level</span>
+            </div>
+          </div>
+          <div class="ab-card">
+            <div class="ab-card-label mono muted">baseline</div>
+            <div class="ab-metric">
+              <span class="ab-value">{abData.cumulative.baseline_avg_waste_pct.toFixed(1)}%</span>
+              <span class="ab-key mono muted">avg waste</span>
+            </div>
+            <div class="ab-metric">
+              <span class="ab-value">{abData.cumulative.base_avg_service_level.toFixed(1)}%</span>
+              <span class="ab-key mono muted">service level</span>
+            </div>
+          </div>
+        </div>
+        <div class="ab-callout mono">
+          {stockoutReductionPct !== null
+            ? `ML cuts stockouts ${stockoutReductionPct}% but adds ${wasteDeltaPp!.toFixed(1)}pp waste — the trade-off is the point.`
+            : `ML improves service level but adds ${wasteDeltaPp!.toFixed(1)}pp waste — the trade-off is the point.`}
+        </div>
+      </div>
+    )}
+
     <div class="diagram-frame">
       <div class="diagram-label mono muted">architecture</div>
 
       {project.slug === 'kitchensync' && (
-        <svg width="100%" viewBox="0 0 480 560" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect x="130" y="10" width="220" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="30" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">POS Simulator</text>
-          <line x1="240" y1="50" x2="240" y2="83" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,83 240,90 244,83" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="248" y="70" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">POST /sale</text>
-          <rect x="110" y="90" width="260" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="110" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">FastAPI Ingest API</text>
-          <line x1="240" y1="130" x2="240" y2="163" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,163 240,170 244,163" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <rect x="50" y="170" width="380" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="190" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">Neon Postgres — 12 store schemas</text>
-          <line x1="240" y1="210" x2="240" y2="253" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,253 240,260 244,253" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="248" y="232" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">extract_to_snowflake.py</text>
-          <rect x="130" y="260" width="220" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="280" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">Snowflake RAW</text>
-          <line x1="240" y1="300" x2="240" y2="343" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,343 240,350 244,343" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="248" y="323" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">dbt Core</text>
-          <rect x="20" y="350" width="440" height="55" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
-          <text x="240" y="370" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Staging → Intermediate → Marts → Metrics</text>
-          <text x="240" y="389" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">3-layer dbt transform</text>
-          <line x1="240" y1="405" x2="240" y2="428" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,428 240,435 244,428" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <rect x="120" y="435" width="240" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="455" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">LightGBM Model</text>
-          <line x1="240" y1="475" x2="240" y2="508" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,508 240,515 244,508" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <rect x="50" y="515" width="380" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="535" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">Streamlit Dashboard — 60s refresh</text>
+        <svg width="100%" viewBox="0 0 560 750" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          {/* POS Simulator */}
+          <rect x="170" y="10" width="220" height="38" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+          <text x="280" y="29" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">POS Simulator — EC2</text>
+          <line x1="280" y1="48" x2="280" y2="80" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="276,80 280,87 284,80" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          <text x="288" y="64" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">POST /sales, /waste, /stockout</text>
+          {/* FastAPI */}
+          <rect x="150" y="87" width="260" height="38" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+          <text x="280" y="106" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">FastAPI Ingest API — EC2</text>
+          <line x1="280" y1="125" x2="280" y2="157" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="276,157 280,164 284,157" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          {/* Neon Postgres */}
+          <rect x="80" y="164" width="400" height="38" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+          <text x="280" y="183" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Neon Postgres — 12 store schemas</text>
+          <line x1="280" y1="202" x2="280" y2="242" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="276,242 280,249 284,242" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          <text x="288" y="219" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">2am UTC · extract_to_snowflake.py</text>
+          {/* Snowflake */}
+          <rect x="170" y="249" width="220" height="38" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+          <text x="280" y="268" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Snowflake — KS_DB.RAW</text>
+          <line x1="280" y1="287" x2="280" y2="322" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="276,322 280,329 284,322" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          <text x="288" y="305" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">dbt Core</text>
+          {/* dbt pipeline */}
+          <rect x="50" y="329" width="460" height="55" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
+          <text x="280" y="349" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Staging → Intermediate → Marts</text>
+          <text x="280" y="368" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">stg · int_rolling_features · mart_waste · mart_predictions</text>
+          <line x1="280" y1="384" x2="280" y2="412" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="276,412 280,419 284,412" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          {/* LightGBM */}
+          <rect x="170" y="419" width="220" height="38" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+          <text x="280" y="438" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">LightGBM — 190,773 preds</text>
+          {/* Split */}
+          <line x1="280" y1="457" x2="280" y2="490" stroke="#7a7f87" stroke-width="1.5"/>
+          <line x1="130" y1="490" x2="430" y2="490" stroke="#7a7f87" stroke-width="1.5"/>
+          <line x1="130" y1="490" x2="130" y2="522" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="126,522 130,529 134,522" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          <line x1="430" y1="490" x2="430" y2="522" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="426,522 430,529 434,522" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          {/* Streamlit (left) */}
+          <rect x="20" y="529" width="220" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+          <text x="130" y="549" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Streamlit Dashboard</text>
+          <text x="130" y="568" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">Kitchen + Chicken · 5min refresh</text>
+          {/* A/B Comparison (right) */}
+          <rect x="320" y="529" width="220" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+          <text x="430" y="549" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">A/B Comparison</text>
+          <text x="430" y="568" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">ML vs baseline · seeded demand</text>
+          <line x1="430" y1="584" x2="430" y2="618" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="426,618 430,625 434,618" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          <text x="438" y="602" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">git commit + push</text>
+          {/* ab_results.json */}
+          <rect x="320" y="625" width="220" height="35" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
+          <text x="430" y="642" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">data/ab_results.json</text>
+          <line x1="430" y1="660" x2="430" y2="693" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="426,693 430,700 434,693" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          <text x="438" y="677" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">nightly rebuild · 3:30am UTC</text>
+          {/* Astro Portfolio */}
+          <rect x="305" y="700" width="250" height="35" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+          <text x="430" y="717" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Astro Portfolio — deanslist.dev</text>
         </svg>
       )}
 
@@ -300,6 +410,7 @@ const { project } = Astro.props;
     line-height: 1.7;
     max-width: 600px;
     margin-bottom: 1rem;
+    color: var(--muted);
   }
 
   .status-note {
@@ -360,7 +471,7 @@ const { project } = Astro.props;
   }
 
   .section p {
-    color: var(--muted);
+    color: var(--text);
     font-size: 0.9375rem;
     line-height: 1.8;
     max-width: 700px;
@@ -378,7 +489,7 @@ const { project } = Astro.props;
     display: flex;
     gap: 0.75rem;
     font-size: 0.9rem;
-    color: var(--muted);
+    color: var(--text);
     line-height: 1.65;
     max-width: 700px;
   }
@@ -403,6 +514,88 @@ const { project } = Astro.props;
     border-radius: 2px;
     padding: 0.25rem 0.6rem;
     letter-spacing: 0.04em;
+  }
+
+  /* A/B Results */
+  .ab-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .ab-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+
+  .ab-days {
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    opacity: 0.5;
+  }
+
+  .ab-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .ab-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .ab-card-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+
+  .ab-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .ab-value {
+    font-family: var(--font-mono);
+    font-size: 1.375rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .ab-value.accent {
+    color: var(--accent);
+  }
+
+  .ab-key {
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .ab-callout {
+    font-size: 0.8125rem;
+    color: var(--muted);
+    border-left: 2px solid var(--accent);
+    padding: 0.5rem 0.875rem;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 480px) {
+    .ab-grid { grid-template-columns: 1fr; }
   }
 
   /* Page footer */
