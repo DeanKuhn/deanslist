@@ -62,11 +62,11 @@ export const projects: Project[] = [
     year: '2026',
     status: 'live',
     category: 'data engineering',
-    tagline: 'Weekly Last.fm pipeline tracking 7,755 artists — Postgres, dbt, GitHub Actions',
+    tagline: 'Tracked 24,770 artists over 7 weeks — underground acts (pages 1000+) grow 3× faster than mainstream in listener percentage',
     problem:
       "The Last.fm API returns only cumulative all-time stats — there is no native time series. To study whether chart position correlates with listener growth over time, you have to build the longitudinal dataset yourself by snapshotting repeatedly.",
     what:
-      'Weekly ingestion pipeline snapshots listener and playcount data for 7,755 artists from the Last.fm global chart into a cloud Postgres database on Neon. Artists split into mainstream tier (pages 1–50) and indie tier (pages 500–2000). A dbt transformation layer (staging + mart models) powers cross-sectional and longitudinal analysis. GitHub Actions runs the snapshot job every Sunday at 9AM UTC with zero manual intervention.',
+      'Weekly ingestion pipeline snapshots listener data for 24,770 artists from the Last.fm global chart into Postgres on Neon. Artists are split into tiers by chart page depth: mainstream (pages 1–50) vs indie (pages 51+). A dbt transformation layer (6 staging + 7 mart models) powers both cross-sectional and longitudinal analysis. After each weekly snapshot, dbt rebuilds the mart views, a stats script queries them and writes pipeline_stats.json to GitHub, and this portfolio page picks up the fresh data in its nightly rebuild.',
     techStack: [
       'Python',
       'PostgreSQL (Neon)',
@@ -76,12 +76,12 @@ export const projects: Project[] = [
       'SQL',
     ],
     highlights: [
-      '7,755 artists tracked: 250 mainstream (pages 1–50), 7,505 indie (pages 500–2000)',
-      'dbt mart models: artist_tiers, genre_stats, artist_similarity_network',
-      'Cross-sectional finding: ~4x plays-per-listener gap (mainstream median 74.76 vs indie 17.69) consistent across full distribution — not driven by outliers',
-      'Indie P90 listeners (782K) falls below mainstream P25 (2.3M) — distributions do not overlap',
-      'Genre associations: 15 genres × 500 artists; similarity networks: ~2,000 artists, 20 similar artists each',
-      'Longitudinal analysis accumulating — weekly snapshots running since April 2026',
+      '24,770 artists tracked across 8 weekly snapshots (April–June 2026): 250 mainstream (pages 1–50), 24,520 indie',
+      'Core finding: underground artists (pages 1000+) show P90 growth of 9.16% over 7 weeks vs mainstream 2.75% — the gap widens at the tail, not the median',
+      'dbt mart layer: listener_growth (LAG window function), artist_growth_summary, weekly_growth_by_tier, genre_growth — marts build on marts via ref()',
+      'Cross-sectional finding: ~4× plays-per-listener gap (mainstream median 74.76 vs indie 17.69) consistent across full distribution — indie P90 listeners (782K) falls below mainstream P25 (2.3M)',
+      'Genre signal: EDM shows highest median growth rate; classical and metal are slowest — genre appears secondary to chart depth as a growth predictor',
+      'Standout cases: several underground artists (pages 1500+) grew 100–400% over 7 weeks — growth patterns split between viral spikes and steady week-over-week acceleration',
     ],
     githubUrl: 'https://github.com/DeanKuhn/music-growth-pipeline',
   },
