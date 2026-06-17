@@ -23,7 +23,7 @@ export const projects: Project[] = [
     year: '2026',
     status: 'live',
     category: 'data engineering',
-    tagline: 'End-to-end kitchen production simulation — FastAPI, Snowflake, dbt, LightGBM, AWS EC2, nightly A/B evaluation',
+    tagline: 'Live kitchen production system — ML cuts stockouts 40% and lifts service level +1.6pp, but adds +3.3pp waste. The pipeline quantifies the trade-off nightly.',
     problem:
       'Retail kitchens waste food when production outpaces demand and miss revenue when they run short. Forecasting the right quantity per item per store at 15-minute grain, refreshed continuously, requires a real pipeline — not a spreadsheet. But the harder question is honest evaluation: does ML actually earn its complexity cost, and if so, at what trade-off? Modeled after the Kitchen Production System at Kwik Trip.',
     what:
