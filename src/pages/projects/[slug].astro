@@ -61,6 +61,25 @@ if (project.slug === 'kitchensync') {
     }
   }
 }
+
+let pipelineStats: {
+  generated_at: string;
+  summary: { artist_count: number; weeks_tracked: number; latest_snapshot: string };
+  growth_by_tier: Array<{ tier: string; artist_count: number; median_pct_growth: number; p90_pct_growth: number }>;
+  top_growing_artists: Array<{ artist_name: string; min_page: number; starting_count: number; ending_count: number; total_pct_growth: number }>;
+  genre_growth: Array<{ genre: string; artist_count: number; median_total_pct_growth: number }>;
+} | null = null;
+
+if (project.slug === 'music-growth-pipeline') {
+  try {
+    const res = await fetch(
+      'https://raw.githubusercontent.com/DeanKuhn/music-growth-pipeline/main/data/pipeline_stats.json'
+    );
+    if (res.ok) {
+      pipelineStats = await res.json();
+    }
+  } catch (_) {}
+}
 ---
 
 <ProjectLayout title={project.title} description={project.tagline}>
@@ -188,6 +207,67 @@ if (project.slug === 'kitchensync') {
       </div>
     )}
 
+    <!-- Pipeline Stats (music-growth-pipeline only) -->
+    {project.slug === 'music-growth-pipeline' && pipelineStats && (
+      <div class="ab-section">
+        <div class="ab-header">
+          <span class="section-label mono muted">live pipeline data</span>
+          <span class="ab-days mono muted">{pipelineStats.summary.weeks_tracked} weeks of data · updated {pipelineStats.summary.latest_snapshot}</span>
+        </div>
+
+        <div class="ab-grid">
+          {pipelineStats.growth_by_tier.filter(t => t.tier === 'mainstream').map(t => (
+            <div class="ab-card">
+              <div class="ab-card-label mono muted">mainstream · pages 1–50</div>
+              <div class="ab-metric">
+                <span class="ab-value">{t.median_pct_growth.toFixed(2)}%</span>
+                <span class="ab-key mono muted">median 7-week growth</span>
+              </div>
+              <div class="ab-metric">
+                <span class="ab-value">{t.p90_pct_growth.toFixed(2)}%</span>
+                <span class="ab-key mono muted">p90 growth</span>
+              </div>
+            </div>
+          ))}
+          {pipelineStats.growth_by_tier.filter(t => t.tier === 'indie').map(t => (
+            <div class="ab-card">
+              <div class="ab-card-label mono accent">indie · pages 51+</div>
+              <div class="ab-metric">
+                <span class="ab-value accent">{t.median_pct_growth.toFixed(2)}%</span>
+                <span class="ab-key mono muted">median 7-week growth</span>
+              </div>
+              <div class="ab-metric">
+                <span class="ab-value accent">{t.p90_pct_growth.toFixed(2)}%</span>
+                <span class="ab-key mono muted">p90 growth</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="ab-daily">
+          <div class="ab-daily-label mono muted">fastest-growing indie artists · {pipelineStats.summary.latest_snapshot}</div>
+          <div class="growth-list">
+            {pipelineStats.top_growing_artists.slice(0, 5).map(a => (
+              <div class="growth-row">
+                <span class="growth-name mono">{a.artist_name}</span>
+                <span class="growth-meta mono muted">pg {a.min_page}</span>
+                <span class="growth-value mono accent">+{a.total_pct_growth.toFixed(1)}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="ab-callout mono">
+          {(() => {
+            const indie = pipelineStats!.growth_by_tier.find(t => t.tier === 'indie');
+            const mainstream = pipelineStats!.growth_by_tier.find(t => t.tier === 'mainstream');
+            const ratio = indie && mainstream ? (indie.p90_pct_growth / mainstream.p90_pct_growth).toFixed(1) : '—';
+            return `Underground artists show ${indie?.p90_pct_growth.toFixed(1)}% P90 growth — ${ratio}× higher than mainstream (${mainstream?.p90_pct_growth.toFixed(1)}%). ${pipelineStats!.summary.artist_count.toLocaleString()} artists tracked.`;
+          })()}
+        </div>
+      </div>
+    )}
+
     <div class="diagram-frame">
       <div class="diagram-label mono muted">architecture</div>
 
@@ -256,30 +336,42 @@ if (project.slug === 'kitchensync') {
       )}
 
       {project.slug === 'music-growth-pipeline' && (
-        <svg width="100%" viewBox="0 0 480 460" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg width="100%" viewBox="0 0 480 560" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          {/* Last.fm API */}
           <rect x="60" y="10" width="360" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
           <text x="240" y="30" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">Last.fm API — chart.getTopArtists</text>
           <line x1="240" y1="50" x2="240" y2="93" stroke="#7a7f87" stroke-width="1.5"/>
           <polyline points="236,93 240,100 244,93" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="248" y="73" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">seed_artists.py</text>
+          <text x="248" y="73" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">seed_artists.py · snapshot_artists.py</text>
+          {/* Neon Postgres */}
           <rect x="80" y="100" width="320" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
           <text x="240" y="120" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">Neon Postgres</text>
-          <text x="240" y="139" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">artists · weekly_charts · snapshots · tags</text>
+          <text x="240" y="139" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">artists · weekly_charts · snapshots · genres</text>
           <line x1="240" y1="155" x2="240" y2="208" stroke="#7a7f87" stroke-width="1.5"/>
           <polyline points="236,208 240,215 244,208" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="248" y="184" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">dbt-postgres</text>
+          <text x="248" y="184" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">dbt-postgres · Sunday 9am UTC</text>
+          {/* dbt marts */}
           <rect x="40" y="215" width="400" height="55" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
           <text x="240" y="235" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Staging → Marts</text>
-          <text x="240" y="253" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">artist_tiers · genre_stats · artist_similarity_network</text>
+          <text x="240" y="253" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">listener_growth · artist_growth_summary · genre_growth</text>
           <line x1="240" y1="270" x2="240" y2="323" stroke="#7a7f87" stroke-width="1.5"/>
           <polyline points="236,323 240,330 244,323" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="248" y="299" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">GitHub Actions — weekly cron</text>
-          <rect x="80" y="330" width="320" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="350" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">GitHub Actions (Sunday 9AM UTC)</text>
-          <line x1="240" y1="370" x2="240" y2="403" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,403 240,410 244,403" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <rect x="100" y="410" width="280" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="430" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">analysis.sql</text>
+          <text x="248" y="299" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">generate_stats.py</text>
+          {/* pipeline_stats.json */}
+          <rect x="100" y="330" width="280" height="35" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
+          <text x="240" y="347" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">data/pipeline_stats.json</text>
+          <line x1="240" y1="365" x2="240" y2="398" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="236,398 240,405 244,398" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          <text x="248" y="384" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">git commit + push</text>
+          {/* GitHub Actions */}
+          <rect x="80" y="405" width="320" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+          <text x="240" y="425" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">GitHub Actions (Sunday 9am UTC)</text>
+          <line x1="240" y1="445" x2="240" y2="478" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="236,478 240,485 244,478" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          <text x="248" y="464" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">nightly rebuild · 3:30am UTC</text>
+          {/* Astro Portfolio */}
+          <rect x="80" y="485" width="320" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+          <text x="240" y="505" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Astro Portfolio — deanslist.dev</text>
         </svg>
       )}
 
@@ -586,7 +678,7 @@ if (project.slug === 'kitchensync') {
     letter-spacing: 0.04em;
   }
 
-  /* A/B Results */
+  /* A/B Results + Pipeline Stats shared styles */
   .ab-section {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -687,6 +779,41 @@ if (project.slug === 'kitchensync') {
     border-left: 2px solid var(--accent);
     padding: 0.5rem 0.875rem;
     line-height: 1.6;
+  }
+
+  /* Growth list (music pipeline) */
+  .growth-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .growth-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 1rem;
+    align-items: baseline;
+    font-size: 0.8125rem;
+    padding: 0.375rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .growth-row:last-child {
+    border-bottom: none;
+  }
+
+  .growth-name {
+    color: var(--text);
+  }
+
+  .growth-meta {
+    font-size: 0.6875rem;
+    opacity: 0.5;
+  }
+
+  .growth-value {
+    font-weight: 600;
+    letter-spacing: -0.01em;
   }
 
   @media (max-width: 480px) {
