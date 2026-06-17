@@ -32,7 +32,7 @@ let stockoutReductionPct: number | null = null;
 if (project.slug === 'kitchensync') {
   try {
     const res = await fetch(
-      'https://raw.githubusercontent.com/DeanKuhn/kitchensync/main/data/ab_results.json'
+      'https://raw.githubusercontent.com/DeanKuhn/kitchensync/master/data/ab_results.json'
     );
     if (res.ok) {
       abData = await res.json();
