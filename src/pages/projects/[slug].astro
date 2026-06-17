@@ -27,6 +27,11 @@ let abData: {
 } | null = null;
 
 let wasteDeltaPp: number | null = null;
+let latestDay: {
+  date: string;
+  ml: { waste_pct: number; service_level: number };
+  baseline: { waste_pct: number; service_level: number };
+} | null = null;
 
 if (project.slug === 'kitchensync') {
   try {
@@ -40,6 +45,20 @@ if (project.slug === 'kitchensync') {
 
   if (abData) {
     wasteDeltaPp = abData.cumulative.ml_avg_waste_pct - abData.cumulative.baseline_avg_waste_pct;
+    const d = abData.daily[abData.daily.length - 1];
+    if (d) {
+      latestDay = {
+        date: d.date,
+        ml: {
+          waste_pct: (d.ml.waste_cost / d.ml.sales_revenue) * 100,
+          service_level: (d.ml.units_sold / (d.ml.units_sold + d.ml.stockouts)) * 100,
+        },
+        baseline: {
+          waste_pct: (d.baseline.waste_cost / d.baseline.sales_revenue) * 100,
+          service_level: (d.baseline.units_sold / (d.baseline.units_sold + d.baseline.stockouts)) * 100,
+        },
+      };
+    }
   }
 }
 ---
@@ -113,6 +132,56 @@ if (project.slug === 'kitchensync') {
             </div>
           </div>
         </div>
+        {latestDay && (
+          <div class="ab-daily">
+            <div class="ab-daily-label mono muted">latest run · {latestDay.date}</div>
+            <div class="ab-grid">
+              <div class="ab-card">
+                <div class="ab-card-label mono">ml model</div>
+                <div class="ab-metric">
+                  <span class="ab-value accent">{latestDay.ml.waste_pct.toFixed(1)}%</span>
+                  <span class="ab-key mono muted">
+                    waste
+                    <span class:list={['delta', latestDay.ml.waste_pct < abData!.cumulative.ml_avg_waste_pct ? 'delta--better' : 'delta--worse']}>
+                      {(latestDay.ml.waste_pct - abData!.cumulative.ml_avg_waste_pct) >= 0 ? '+' : ''}{(latestDay.ml.waste_pct - abData!.cumulative.ml_avg_waste_pct).toFixed(1)}pp vs avg
+                    </span>
+                  </span>
+                </div>
+                <div class="ab-metric">
+                  <span class="ab-value">{latestDay.ml.service_level.toFixed(1)}%</span>
+                  <span class="ab-key mono muted">
+                    service level
+                    <span class:list={['delta', latestDay.ml.service_level > abData!.cumulative.ml_avg_service_level ? 'delta--better' : 'delta--worse']}>
+                      {(latestDay.ml.service_level - abData!.cumulative.ml_avg_service_level) >= 0 ? '+' : ''}{(latestDay.ml.service_level - abData!.cumulative.ml_avg_service_level).toFixed(1)}pp vs avg
+                    </span>
+                  </span>
+                </div>
+              </div>
+              <div class="ab-card">
+                <div class="ab-card-label mono muted">baseline</div>
+                <div class="ab-metric">
+                  <span class="ab-value">{latestDay.baseline.waste_pct.toFixed(1)}%</span>
+                  <span class="ab-key mono muted">
+                    waste
+                    <span class:list={['delta', latestDay.baseline.waste_pct < abData!.cumulative.baseline_avg_waste_pct ? 'delta--better' : 'delta--worse']}>
+                      {(latestDay.baseline.waste_pct - abData!.cumulative.baseline_avg_waste_pct) >= 0 ? '+' : ''}{(latestDay.baseline.waste_pct - abData!.cumulative.baseline_avg_waste_pct).toFixed(1)}pp vs avg
+                    </span>
+                  </span>
+                </div>
+                <div class="ab-metric">
+                  <span class="ab-value">{latestDay.baseline.service_level.toFixed(1)}%</span>
+                  <span class="ab-key mono muted">
+                    service level
+                    <span class:list={['delta', latestDay.baseline.service_level > abData!.cumulative.base_avg_service_level ? 'delta--better' : 'delta--worse']}>
+                      {(latestDay.baseline.service_level - abData!.cumulative.base_avg_service_level) >= 0 ? '+' : ''}{(latestDay.baseline.service_level - abData!.cumulative.base_avg_service_level).toFixed(1)}pp vs avg
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div class="ab-callout mono">
           {`ML lifts service level +${(abData.cumulative.ml_avg_service_level - abData.cumulative.base_avg_service_level).toFixed(1)}pp but adds +${wasteDeltaPp!.toFixed(1)}pp waste — the trade-off is the point.`}
         </div>
@@ -310,6 +379,13 @@ if (project.slug === 'kitchensync') {
         </ul>
       </div>
 
+      {project.challenges && (
+        <div class="section section--challenges">
+          <div class="section-label mono muted">what i learned the hard way</div>
+          <p>{project.challenges}</p>
+        </div>
+      )}
+
       <div class="section">
         <div class="section-label mono muted">stack</div>
         <div class="tags">
@@ -486,6 +562,13 @@ if (project.slug === 'kitchensync') {
     margin-top: 0.1rem;
   }
 
+  /* Challenges */
+  .section--challenges p {
+    border-left: 2px solid var(--accent);
+    padding-left: 1rem;
+    color: var(--muted);
+  }
+
   /* Tags */
   .tags {
     display: flex;
@@ -572,6 +655,31 @@ if (project.slug === 'kitchensync') {
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
+
+  .ab-daily {
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .ab-daily-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    opacity: 0.6;
+  }
+
+  .delta {
+    display: block;
+    font-size: 0.625rem;
+    letter-spacing: 0.04em;
+    margin-top: 0.125rem;
+    opacity: 0.7;
+  }
+
+  .delta--better { color: #4ade80; }
+  .delta--worse  { color: var(--muted); }
 
   .ab-callout {
     font-size: 0.8125rem;

@@ -12,6 +12,7 @@ export interface Project {
   what: string;
   techStack: string[];
   highlights: string[];
+  challenges?: string;
   githubUrl: string;
 }
 
@@ -26,7 +27,7 @@ export const projects: Project[] = [
     problem:
       'Retail kitchens waste food when production outpaces demand and miss revenue when they run short. Forecasting the right quantity per item per store at 15-minute grain, refreshed continuously, requires a real pipeline — not a spreadsheet. But the harder question is honest evaluation: does ML actually earn its complexity cost, and if so, at what trade-off? Modeled after the Kitchen Production System at Kwik Trip.',
     what:
-      'End-to-end simulation of a Kwik Trip-style Kitchen Production System running live on AWS EC2. An async FastAPI ingest API receives simulated POS events from 12 stores using Poisson arrivals, FIFO batch inventory, and slot-boundary production logic. A nightly cron at 2am UTC extracts events to Snowflake, runs a three-layer dbt pipeline, retrains a LightGBM model, and generates 190,773 predictions at 15-minute slot grain. A Streamlit dashboard surfaces split Kitchen and Chicken production queues with 5-minute auto-refresh. A parallel A/B script pits ML against a naive hourly-average baseline under identical seeded demand — results write to ab_results.json, commit to GitHub, and trigger this portfolio site to rebuild nightly at 3:30am UTC.',
+      'End-to-end simulation of a Kwik Trip-style Kitchen Production System running live on AWS EC2. An async FastAPI ingest API receives simulated POS events from 12 stores using Poisson arrivals, FIFO batch inventory, and slot-boundary production logic. A nightly cron at 2am UTC extracts events to Snowflake, runs a three-layer dbt pipeline, and generates 338,688 predictions at 15-minute slot grain. A Streamlit dashboard surfaces split Kitchen and Chicken production queues with 5-minute auto-refresh. A parallel A/B script pits ML against a naive hourly-average baseline under identical seeded demand — results write to ab_results.json, commit to GitHub, and trigger this portfolio site to rebuild nightly at 3:30am UTC.',
     techStack: [
       'Python',
       'FastAPI',
@@ -34,23 +35,25 @@ export const projects: Project[] = [
       'Snowflake',
       'dbt Core',
       'LightGBM',
-      'scikit-learn',
       'Streamlit',
       'asyncio / httpx',
+      'Docker',
       'AWS EC2',
       'systemd',
       'GitHub Actions',
       'uv',
     ],
     highlights: [
-      'Live on EC2: API and simulator run as systemd services; nightly cron runs extract → dbt → retrain → predict → A/B comparison → git push',
-      'Honest finding: ML cuts stockouts ~31% but adds ~5.5pp waste — 4× more production checks create 4× more minimum-batch cook opportunities',
-      'Per-store schema isolation in Neon for writes; single consolidated Snowflake table for analytics — same data, two structures, two different jobs',
-      '190,773 predictions: 12 stores × 42 items × 672 weekly slots at 15-minute grain; cold-start fallback for items with fewer than 4 data points',
-      'QUALIFY ROW_NUMBER() for per-store snapshots — never a global LIMIT 1 that silently returns only the most-advanced store',
-      'Slot-boundary production logic: cook decisions fire once per 15-minute slot, look-ahead = hold_time × 4 slots to cover full shelf life',
-      'Streamlit split into Kitchen and Chicken queues matching real KPS layout; session state persists checkboxes across 5-minute auto-refresh',
+      'Discovered and fixed a conditional mean bias bug: the demand profile was computing E[X|X>0] by averaging only days with sales, inflating predictions 3–4x at low-traffic stores — fixed by dividing sum(quantity) by total days including zero-sale days',
+      'Tracked down a silent training failure: a day_of_week convention mismatch (Snowflake EXTRACT returns Sunday=0; ISO weekday is Monday=0) caused 2.37M training rows to have slot_quantity=0 — the model learned a constant near zero until the join condition was corrected',
+      'Honest A/B finding: ML cuts stockouts ~40% and lifts service level +1.6pp, but adds +3.3pp waste — 4× more production checks create 4× more minimum-batch cook opportunities; a production system would need a cost function to tune the trade-off',
+      'Per-store schema isolation in Neon for transactional writes; single consolidated Snowflake table for cross-store analytics and model training — same data, two structures, two different jobs',
+      '338,688 predictions: 12 stores × 42 items × 672 weekly slots at 15-minute grain; cold-start fallback for new items with fewer than 4 data points; simulator resumes from Snowflake watermark on restart',
+      'Slot-boundary production logic: cook decisions fire once per 15-minute slot, look-ahead = hold_time × 4 slots; batch sizes scale with RUSH_CURVE to prevent over-production at 3am and under-production at noon',
+      'API and simulator deployed as systemd services on EC2 with auto-restart; nightly cron chains extract → dbt → predict → A/B → git push; GitHub Actions rebuilds this site each morning',
     ],
+    challenges:
+      "The hardest bugs were silent ones. The model trained for weeks on 2.37M rows where slot_quantity was 0 for every row — a day_of_week convention mismatch between Snowflake's EXTRACT(DAYOFWEEK) (Sunday=0) and ISO weekday (Monday=0) meant the training join never matched. The model learned a constant near zero and I had no idea until I queried the training data directly. A separate bug inflated predictions 3–4x at low-traffic stores: the demand profile was computing a conditional mean E[X|X>0] by averaging only days with sales, rather than the true expected demand E[X] across all days. Both fixes required understanding the data at a level that unit tests would never catch.",
     githubUrl: 'https://github.com/DeanKuhn/kitchensync',
   },
   {
