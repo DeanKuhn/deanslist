@@ -2,8 +2,6 @@
 import ProjectLayout from '../../layouts/Project.astro';
 import { projects } from '../../data/projects';
 import type { GetStaticPaths } from 'astro';
-import abMock from '../../data/ab_mock.json';
-
 export const getStaticPaths: GetStaticPaths = () => {
   return projects.map((p) => ({
     params: { slug: p.slug },
@@ -38,19 +36,16 @@ if (project.slug === 'kitchensync') {
     );
     if (res.ok) {
       abData = await res.json();
-    } else {
-      abData = abMock;
-      if (abData) {
-        wasteDeltaPp = abData.cumulative.ml_avg_waste_pct - abData.cumulative.baseline_avg_waste_pct;
-        const totalMl = abData.daily.reduce((s, d) => s + d.ml.stockouts, 0);
-        const totalBase = abData.daily.reduce((s, d) => s + d.baseline.stockouts, 0);
-        if (totalBase > 0) {
-          stockoutReductionPct = Math.round((1 - totalMl / totalBase) * 100);
-        }
-      }
     }
-  } catch (_) {
-    abData = abMock;
+  } catch (_) {}
+
+  if (abData) {
+    wasteDeltaPp = abData.cumulative.ml_avg_waste_pct - abData.cumulative.baseline_avg_waste_pct;
+    const totalMl = abData.daily.reduce((s, d) => s + d.ml.stockouts, 0);
+    const totalBase = abData.daily.reduce((s, d) => s + d.baseline.stockouts, 0);
+    if (totalBase > 0) {
+      stockoutReductionPct = Math.round((1 - totalMl / totalBase) * 100);
+    }
   }
 }
 ---
