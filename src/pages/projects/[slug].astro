@@ -27,7 +27,6 @@ let abData: {
 } | null = null;
 
 let wasteDeltaPp: number | null = null;
-let stockoutReductionPct: number | null = null;
 
 if (project.slug === 'kitchensync') {
   try {
@@ -41,11 +40,6 @@ if (project.slug === 'kitchensync') {
 
   if (abData) {
     wasteDeltaPp = abData.cumulative.ml_avg_waste_pct - abData.cumulative.baseline_avg_waste_pct;
-    const totalMl = abData.daily.reduce((s, d) => s + d.ml.stockouts, 0);
-    const totalBase = abData.daily.reduce((s, d) => s + d.baseline.stockouts, 0);
-    if (totalBase > 0) {
-      stockoutReductionPct = Math.round((1 - totalMl / totalBase) * 100);
-    }
   }
 }
 ---
@@ -120,9 +114,7 @@ if (project.slug === 'kitchensync') {
           </div>
         </div>
         <div class="ab-callout mono">
-          {stockoutReductionPct !== null
-            ? `ML cuts stockouts ${stockoutReductionPct}% but adds ${wasteDeltaPp!.toFixed(1)}pp waste — the trade-off is the point.`
-            : `ML improves service level but adds ${wasteDeltaPp!.toFixed(1)}pp waste — the trade-off is the point.`}
+          {`ML lifts service level +${(abData.cumulative.ml_avg_service_level - abData.cumulative.base_avg_service_level).toFixed(1)}pp but adds +${wasteDeltaPp!.toFixed(1)}pp waste — the trade-off is the point.`}
         </div>
       </div>
     )}
