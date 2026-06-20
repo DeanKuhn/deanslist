@@ -21,7 +21,7 @@ try {
 const artistCount = pipelineStats?.summary?.artist_count != null
   ? Number(pipelineStats.summary.artist_count).toLocaleString() : null;
 const weeksTracked = pipelineStats?.summary?.weeks_tracked ?? null;
-const latestSnapshot = pipelineStats?.summary?.latest_snapshot ?? null;
+const latestSnapshot = kitchenStats?.daily?.at(-1)?.date ?? null;
 const indieP90 = (() => {
   const tier = pipelineStats?.growth_by_tier?.find((t: any) => t.tier === 'indie');
   return tier?.p90_pct_growth != null ? `${tier.p90_pct_growth.toFixed(2)}%` : null;
