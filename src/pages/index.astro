@@ -4,6 +4,34 @@ import { projects } from '../data/projects';
 
 // Group projects by category
 const categories = [...new Set(projects.map((p) => p.category))];
+
+let pipelineStats: any = null;
+let kitchenStats: any = null;
+
+try {
+  const r = await fetch('https://raw.githubusercontent.com/DeanKuhn/music-growth-pipeline/main/data/pipeline_stats.json');
+  if (r.ok) pipelineStats = await r.json();
+} catch {}
+
+try {
+  const r = await fetch('https://raw.githubusercontent.com/DeanKuhn/kitchensync/master/data/ab_results.json');
+  if (r.ok) kitchenStats = await r.json();
+} catch {}
+
+const artistCount = pipelineStats?.summary?.artist_count != null
+  ? Number(pipelineStats.summary.artist_count).toLocaleString() : null;
+const weeksTracked = pipelineStats?.summary?.weeks_tracked ?? null;
+const latestSnapshot = pipelineStats?.summary?.latest_snapshot ?? null;
+const indieP90 = (() => {
+  const tier = pipelineStats?.growth_by_tier?.find((t: any) => t.tier === 'indie');
+  return tier?.p90_pct_growth != null ? `${tier.p90_pct_growth.toFixed(2)}%` : null;
+})();
+const mlServiceLevel = kitchenStats?.cumulative?.ml_avg_service_level != null
+  ? `${Number(kitchenStats.cumulative.ml_avg_service_level).toFixed(1)}%` : null;
+const mlWastePct = kitchenStats?.cumulative?.ml_avg_waste_pct != null
+  ? `${Number(kitchenStats.cumulative.ml_avg_waste_pct).toFixed(1)}%` : null;
+
+const showStats = pipelineStats !== null || kitchenStats !== null;
 ---
 
 <style>
@@ -19,6 +47,7 @@ const categories = [...new Set(projects.map((p) => p.category))];
   <div class="mobile-header" style="padding: 8px 12px 10px; border-bottom: 1px solid #ccc; margin-bottom: 10px;">
     <div style="font-size: 20px; font-weight: bold; color: #800000; letter-spacing: -1px;">dean's list</div>
     <div style="font-size: 12px; color: #666; margin-top: 1px;">milwaukee, wi</div>
+    <div style="font-size: 11px; color: #666; font-style: italic; margin-top: 4px;">craigslist, but for engineers.</div>
     <div style="font-size: 13px; margin-top: 5px; line-height: 1.8;">
       <a href="#about">about</a> &nbsp;·&nbsp;
       <a href="#" onclick="navigator.clipboard.writeText('dakuhn1138@gmail.com');this.textContent='copied!';setTimeout(()=>this.textContent='email',1500);return false;">email</a> &nbsp;·&nbsp;
@@ -26,6 +55,20 @@ const categories = [...new Set(projects.map((p) => p.category))];
       <a href="https://linkedin.com/in/dean-kuhn-565249380" target="_blank">linkedin</a> &nbsp;·&nbsp;
       <a href="/Dean_Kuhn_Resume.pdf" target="_blank">resume</a>
     </div>
+    {showStats && (
+      <div style="margin-top: 10px;">
+        <div style="font-size: 13px; font-weight: bold; color: #800000; margin-bottom: 2px;">— live pipeline stats —</div>
+        <div style="font-size: 12px; color: #666; line-height: 1.8;">
+          {pipelineStats && artistCount && (
+            <div>{artistCount} artists tracked across {weeksTracked} weeks{indieP90 ? `  ·  indie P90 growth: ${indieP90}` : ''}</div>
+          )}
+          {kitchenStats && mlServiceLevel && (
+            <div>ML service level: {mlServiceLevel}{mlWastePct ? `  ·  waste rate: ${mlWastePct}` : ''}</div>
+          )}
+          {latestSnapshot && <div>last updated: {latestSnapshot}</div>}
+        </div>
+      </div>
+    )}
   </div>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
@@ -39,6 +82,9 @@ const categories = [...new Set(projects.map((p) => p.category))];
           </div>
           <div style="font-size: 12px; color: #666; margin-top: 2px;">
             milwaukee, wi
+          </div>
+          <div style="font-size: 11px; color: #666; font-style: italic; text-align: center; margin-top: 4px;">
+            craigslist, but for engineers.
           </div>
         </div>
 
@@ -74,6 +120,24 @@ const categories = [...new Set(projects.map((p) => p.category))];
               <div style="font-size: 14px; font-weight: bold; margin-bottom: 12px;">
                 portfolio — projects by <a href="#about">dean kuhn</a>
               </div>
+
+              {showStats && (
+                <>
+                  <div style="margin-bottom: 16px;">
+                    <div style="font-size: 13px; font-weight: bold; color: #800000; margin-bottom: 2px;">— live pipeline stats —</div>
+                    <div style="font-size: 12px; color: #666; line-height: 1.8;">
+                      {pipelineStats && artistCount && (
+                        <div>{artistCount} artists tracked across {weeksTracked} weeks{indieP90 ? `  ·  indie P90 growth: ${indieP90}` : ''}</div>
+                      )}
+                      {kitchenStats && mlServiceLevel && (
+                        <div>ML service level: {mlServiceLevel}{mlWastePct ? `  ·  waste rate: ${mlWastePct}` : ''}</div>
+                      )}
+                      {latestSnapshot && <div>last updated: {latestSnapshot}</div>}
+                    </div>
+                  </div>
+                  <hr style="border: none; border-top: 1px solid #ccc; margin: 8px 0 16px;" />
+                </>
+              )}
 
               {categories.map((cat) => (
                 <div style="margin-bottom: 20px;">
