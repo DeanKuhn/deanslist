@@ -268,6 +268,25 @@ if (project.slug === 'music-growth-pipeline') {
       </div>
     )}
 
+    <!-- Power BI Report Preview (music-growth-pipeline only) -->
+    {project.slug === 'music-growth-pipeline' && (
+      <div class="report-section">
+        <div class="report-header">
+          <span class="section-label mono muted">power bi report</span>
+        </div>
+        <div class="report-grid">
+          <a href="/powerbi/music-growth-main.png" target="_blank" rel="noopener" class="report-card">
+            <div class="report-card-label mono muted">main dashboard</div>
+            <img src="/powerbi/music-growth-main.png" alt="Music Growth Pipeline — main Power BI dashboard" class="report-img" />
+          </a>
+          <a href="/powerbi/music-growth-drillthrough.png" target="_blank" rel="noopener" class="report-card">
+            <div class="report-card-label mono muted">artist drill-through</div>
+            <img src="/powerbi/music-growth-drillthrough.png" alt="Music Growth Pipeline — artist drill-through Power BI page" class="report-img" />
+          </a>
+        </div>
+      </div>
+    )}
+
     <div class="diagram-frame">
       <div class="diagram-label mono muted">architecture</div>
 
@@ -818,6 +837,59 @@ if (project.slug === 'music-growth-pipeline') {
 
   @media (max-width: 480px) {
     .ab-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Power BI report preview */
+  .report-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .report-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .report-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .report-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    transition: border-color 0.15s;
+    text-decoration: none;
+  }
+
+  .report-card:hover {
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
+  .report-card-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .report-img {
+    width: 100%;
+    display: block;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+  }
+
+  @media (max-width: 600px) {
+    .report-grid { grid-template-columns: 1fr; }
   }
 
   /* Page footer */
