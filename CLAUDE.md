@@ -11,7 +11,8 @@ Dark portfolio site for Dean Kuhn. One coherent dark industrial theme across the
 - `src/layouts/Project.astro` — shared layout for all pages. Dark, Space Grotesk + IBM Plex Mono. Uses `<style is:global>` so utility classes (`.container`, `.mono`, `.muted`, `.accent`) reach slot content.
 - `src/lib/fetchProjectData.ts` — shared build-time fetch utility. Both the homepage and project pages import from here. Returns a `FetchResult<T>` discriminated union: `{ state: 'ok', data }` | `{ state: 'omitted' }` (fetch failed) | `{ state: 'pending' }` (no live source yet, e.g. Market Cynic). Project pages use `ok`/`omitted` only; the homepage also uses `pending` to render an "in development" card state.
 - `src/pages/index.astro` — homepage. Dark theme. Hero → stat cards grid → about section.
-- `src/pages/projects/[slug].astro` — dynamic project pages with inline SVG architecture diagrams. Fetches live data via `src/lib/fetchProjectData.ts`.
+- `src/components/charts/KitchenSyncChart.tsx` — Preact island (Chart.js) for the KitchenSync A/B chart. Receives pre-computed arrays as props from the slug page at build time; hydrates `client:visible`. 58 kB gzip, loaded on kitchensync page only.
+- `src/pages/projects/[slug].astro` — dynamic project pages. Fetches live data via `src/lib/fetchProjectData.ts`. See "Project page pattern" below for the established signature visual structure.
 
 ## Design tokens (site-wide)
 
@@ -35,12 +36,30 @@ Both fetches happen at build time — data is baked into static HTML, not client
 
 The nightly scheduled rebuild at 3:30 AM UTC keeps both panels current without a manual push.
 
+## Project page pattern (established in Pass 2, KitchenSync pilot)
+
+Each project page follows this three-part structure:
+
+1. **"Live results"** — a bespoke data visualization built from the project's own live data. For KitchenSync this is a dual-line Chart.js chart (service level % and waste rate %, ML vs baseline, over time). Data is computed in the Astro frontmatter and passed as serialized props to a `client:visible` Preact island. If the fetch fails (`omitted` state), this section silently omits — no broken chart, no fallback mock.
+
+2. **"How it's built"** — the existing SVG architecture diagram. Keep the label "how it's built."
+
+3. **"Explore further"** — outbound link buttons to fuller external tools (Streamlit, Power BI, etc.). Only render a button if a real URL exists. Use a visible pending state for URLs that exist but haven't been confirmed yet. Omit entirely if no external tool applies.
+
+**Next up**: Music Growth Pipeline and WGUPS pages should follow this same shape. Music Growth's visualization will be a tier-growth chart from `pipeline_stats.json`. WGUPS's will be a data-driven route animation once the GA JSON export exists.
+
 ## Scope notes
 
-- **Pass 1 (current)**: homepage redesigned to dark theme. Project pages are mostly unchanged.
-- **Pass 2 (future)**: signature visuals per project page — each page gets a distinct visual treatment.
-- **WGUPS stat card**: stub with placeholder animation on homepage. Will be replaced with a data-driven animated SVG once the GA route/generation JSON export exists.
-- **Market Cynic**: renders as a `pending` card on the homepage (no metric, "in development" label). Will go live once v2 is built.
+- **Pass 1**: homepage redesigned to dark theme.
+- **Pass 2**: KitchenSync gets the signature visual pattern (pilot). Music Growth and WGUPS are next.
+- **WGUPS stat card**: stub animation on homepage. Will become data-driven once GA route/generation JSON export exists.
+- **Market Cynic**: `pending` card on homepage. Will go live once v2 is built.
+- **Streamlit URL** (`STREAMLIT_URL` in `[slug].astro`): currently `null` — fill in once confirmed.
+- **Power BI button**: intentionally omitted until a real URL exists.
+
+## Interactive islands
+
+The site uses `@astrojs/preact` for interactive components. This is intentional and scoped — don't add Preact islands to other pages without a reason. The integration is in `astro.config.mjs`. Chart.js is registered once at module level inside each component to avoid duplicate registration warnings if multiple instances mount.
 
 ## What NOT to change
 
