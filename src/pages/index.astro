@@ -1,222 +1,917 @@
 ---
-import Craigslist from '../layouts/Craigslist.astro';
+import ProjectLayout from '../layouts/Project.astro';
 import { projects } from '../data/projects';
+import { fetchKitchenSync, fetchMusicPipeline } from '../lib/fetchProjectData';
+import { Icon } from 'astro-icon/components';
 
-// Group projects by category
-const categories = [...new Set(projects.map((p) => p.category))];
+const [kitchenResult, musicResult] = await Promise.all([
+  fetchKitchenSync(),
+  fetchMusicPipeline(),
+]);
 
-let pipelineStats: any = null;
-let kitchenStats: any = null;
+const kitchenData = kitchenResult.state === 'ok' ? kitchenResult.data : null;
+const musicData = musicResult.state === 'ok' ? musicResult.data : null;
 
-try {
-  const r = await fetch('https://raw.githubusercontent.com/DeanKuhn/music-growth-pipeline/main/data/pipeline_stats.json');
-  if (r.ok) pipelineStats = await r.json();
-} catch {}
+// Live status line
+const timestamps: string[] = [];
+if (kitchenData) {
+  const last = kitchenData.daily.at(-1);
+  if (last) timestamps.push(last.date);
+}
+if (musicData?.summary.latest_snapshot) {
+  timestamps.push(musicData.summary.latest_snapshot);
+}
+timestamps.sort((a, b) => (b > a ? 1 : -1));
+const lastRun = timestamps[0] ?? null;
 
-try {
-  const r = await fetch('https://raw.githubusercontent.com/DeanKuhn/kitchensync/master/data/ab_results.json');
-  if (r.ok) kitchenStats = await r.json();
-} catch {}
+const liveProjects = projects.filter((p) => p.status === 'live').length;
+const devProjects = 1; // Market Cynic
 
-const artistCount = pipelineStats?.summary?.artist_count != null
-  ? Number(pipelineStats.summary.artist_count).toLocaleString() : null;
-const weeksTracked = pipelineStats?.summary?.weeks_tracked ?? null;
-const latestSnapshot = kitchenStats?.daily?.at(-1)?.date ?? null;
-const indieP90 = (() => {
-  const tier = pipelineStats?.growth_by_tier?.find((t: any) => t.tier === 'indie');
-  return tier?.p90_pct_growth != null ? `${tier.p90_pct_growth.toFixed(2)}%` : null;
-})();
-const mlServiceLevel = kitchenStats?.cumulative?.ml_avg_service_level != null
-  ? `${Number(kitchenStats.cumulative.ml_avg_service_level).toFixed(1)}%` : null;
-const mlWastePct = kitchenStats?.cumulative?.ml_avg_waste_pct != null
-  ? `${Number(kitchenStats.cumulative.ml_avg_waste_pct).toFixed(1)}%` : null;
+// KitchenSync card metrics
+const mlServiceLevel = kitchenData
+  ? kitchenData.cumulative.ml_avg_service_level.toFixed(1)
+  : null;
+const baseServiceLevel = kitchenData
+  ? kitchenData.cumulative.base_avg_service_level.toFixed(1)
+  : null;
+const daysRun = kitchenData?.cumulative.days_run ?? null;
+const wasteDelta =
+  kitchenData != null
+    ? (kitchenData.cumulative.ml_avg_waste_pct - kitchenData.cumulative.baseline_avg_waste_pct).toFixed(1)
+    : null;
 
-const showStats = pipelineStats !== null || kitchenStats !== null;
+// KitchenSync sparkline — last 14 days ML service level
+const sparkValues = kitchenData
+  ? kitchenData.daily.slice(-14).map((d) =>
+      (d.ml.units_sold / (d.ml.units_sold + d.ml.stockouts)) * 100
+    )
+  : [];
+const sparkMin = sparkValues.length ? Math.min(...sparkValues) : 0;
+const sparkMax = sparkValues.length ? Math.max(...sparkValues) : 100;
+const sparkRange = sparkMax - sparkMin || 1;
+const sparkW = 120;
+const sparkH = 28;
+const sparkPath = sparkValues
+  .map((v, i) => {
+    const x = (i / (sparkValues.length - 1)) * sparkW;
+    const y = sparkH - ((v - sparkMin) / sparkRange) * sparkH;
+    return `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`;
+  })
+  .join(' ');
+
+// Music card metrics
+const artistCount = musicData
+  ? Number(musicData.summary.artist_count).toLocaleString()
+  : null;
+const weeksTracked = musicData?.summary.weeks_tracked ?? null;
+const indieTier = musicData?.growth_by_tier.find((t) => t.tier === 'indie');
+const mainstreamTier = musicData?.growth_by_tier.find((t) => t.tier === 'mainstream');
+const indieP90 = indieTier ? indieTier.p90_pct_growth.toFixed(1) : null;
+const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) : null;
 ---
 
-<style>
-  .mobile-header { display: none; }
-  @media (max-width: 600px) {
-    .mobile-header { display: block; }
-    .sidebar-col { display: none; }
-    .gap-col { display: none; }
-  }
-</style>
+<ProjectLayout title="dean's list" description="Data engineer. Milwaukee, WI.">
 
-<Craigslist>
-  <div class="mobile-header" style="padding: 8px 12px 10px; border-bottom: 1px solid #ccc; margin-bottom: 10px;">
-    <div style="font-size: 20px; font-weight: bold; color: #800000; letter-spacing: -1px;">dean's list</div>
-    <div style="font-size: 12px; color: #666; margin-top: 1px;">milwaukee, wi</div>
-    <div style="font-size: 11px; color: #666; font-style: italic; margin-top: 4px;">craigslist, but for engineers</div>
-    <div style="font-size: 13px; margin-top: 5px; line-height: 1.8;">
-      <a href="#about">about</a> &nbsp;·&nbsp;
-      <a href="#" onclick="navigator.clipboard.writeText('dakuhn1138@gmail.com');this.textContent='copied!';setTimeout(()=>this.textContent='email',1500);return false;">email</a> &nbsp;·&nbsp;
-      <a href="https://github.com/DeanKuhn" target="_blank">github</a> &nbsp;·&nbsp;
-      <a href="https://linkedin.com/in/dean-kuhn-565249380" target="_blank">linkedin</a> &nbsp;·&nbsp;
-      <a href="/Dean_Kuhn_Resume.pdf" target="_blank">resume</a>
+  <!-- Nav bar -->
+  <header class="nav-bar">
+    <div class="container nav-inner">
+      <span class="nav-brand mono">dean's list</span>
+      <nav class="nav-links mono">
+        <a href="https://github.com/DeanKuhn" target="_blank" rel="noopener">github</a>
+        <a href="https://linkedin.com/in/dean-kuhn-565249380" target="_blank" rel="noopener">linkedin</a>
+        <a href="/Dean_Kuhn_Resume.pdf" target="_blank" rel="noopener">resume</a>
+      </nav>
     </div>
-    {showStats && (
-      <div style="margin-top: 10px;">
-        <div style="font-size: 13px; font-weight: bold; color: #800000; margin-bottom: 2px;">— live pipeline stats —</div>
-        <div style="font-size: 12px; color: #666; line-height: 1.8;">
-          {pipelineStats && artistCount && (
-            <div>{artistCount} artists tracked across {weeksTracked} weeks{indieP90 ? `  ·  indie P90 growth: ${indieP90}` : ''}</div>
-          )}
-          {kitchenStats && mlServiceLevel && (
-            <div>ML service level: {mlServiceLevel}{mlWastePct ? `  ·  waste rate: ${mlWastePct}` : ''}</div>
-          )}
-          {latestSnapshot && <div>last updated: {latestSnapshot}</div>}
-        </div>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="hero container">
+      <div class="hero-eyebrow mono muted">
+        <span class="status-dot"></span>
+        data engineer · milwaukee, wi
       </div>
-    )}
-  </div>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-    <tr>
-      <td width="16" valign="top" class="gap-col"></td>
+      <h1 class="hero-headline">
+        Dean Kuhn
+      </h1>
+      <p class="hero-sub muted">
+        I build data pipelines end-to-end — ingestion, transformation, warehousing, ML, and dashboarding.
+        WGU CS graduate (May 2026), looking for roles where raw data becomes something useful.
+      </p>
 
-      <!-- Left column: branding + nav -->
-      <td width="200" valign="top" style="padding-right: 20px; border-right: 1px solid #ccc;" class="sidebar-col">
-        <div style="text-align: center; margin-bottom: 16px;">
-          <div style="font-size: 26px; font-weight: bold; color: #800000; letter-spacing: -1px;">
-            dean's list
+      {lastRun && (
+        <div class="hero-status mono muted">
+          <Icon name="tabler:activity" class="status-icon" />
+          Last pipeline run: {lastRun}
+          &nbsp;·&nbsp;
+          {liveProjects} project{liveProjects !== 1 ? 's' : ''} live, {devProjects} in development
+        </div>
+      )}
+
+      <div class="hero-ctas">
+        <a href="#projects" class="btn-primary">
+          View projects
+          <Icon name="tabler:arrow-down" class="btn-icon" />
+        </a>
+        <a href="/Dean_Kuhn_Resume.pdf" target="_blank" rel="noopener" class="btn-secondary mono">
+          Resume (PDF)
+          <Icon name="tabler:external-link" class="btn-icon" />
+        </a>
+      </div>
+    </section>
+
+    <!-- Stat cards grid -->
+    <section id="projects" class="cards-section container">
+      <div class="section-label mono muted">projects</div>
+
+      <div class="cards-grid">
+
+        <!-- KitchenSync -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">KitchenSync</div>
+              <div class="card-subtitle mono muted">data engineering · live</div>
+            </div>
+            <span class="live-badge mono">● live</span>
           </div>
-          <div style="font-size: 12px; color: #666; margin-top: 2px;">
-            milwaukee, wi
+
+          <div class="card-body">
+            {kitchenData ? (
+              <>
+                <div class="card-metric">
+                  <span class="metric-value accent">{mlServiceLevel}%</span>
+                  <span class="metric-label mono muted">ML service level</span>
+                </div>
+                <div class="card-metric-row">
+                  <div>
+                    <span class="metric-sm">{baseServiceLevel}%</span>
+                    <span class="metric-sm-label mono muted">baseline</span>
+                  </div>
+                  <div>
+                    <span class="metric-sm">+{wasteDelta}pp</span>
+                    <span class="metric-sm-label mono muted">waste trade-off</span>
+                  </div>
+                  <div>
+                    <span class="metric-sm">{daysRun}</span>
+                    <span class="metric-sm-label mono muted">days run</span>
+                  </div>
+                </div>
+                {sparkValues.length > 1 && (
+                  <div class="sparkline-wrap">
+                    <div class="sparkline-label mono muted">ML service level · last {sparkValues.length} days</div>
+                    <svg width={sparkW} height={sparkH} class="sparkline">
+                      <path d={sparkPath} fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div class="card-omitted mono muted">live data unavailable at build time</div>
+            )}
           </div>
-          <div style="font-size: 11px; color: #666; font-style: italic; text-align: center; margin-top: 4px;">
-            craigslist, but for engineers
+
+          <div class="card-footer">
+            <span class="card-tagline muted">ML forecasting for a Kwik Trip-style kitchen production system</span>
+            <a href="/projects/kitchensync" class="card-link mono accent">
+              View project <Icon name="tabler:arrow-right" class="link-icon" />
+            </a>
           </div>
         </div>
 
-        <hr style="border: none; border-top: 1px solid #ccc; margin: 8px 0;" />
+        <!-- Music Growth Pipeline -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Music Growth Pipeline</div>
+              <div class="card-subtitle mono muted">data engineering · live</div>
+            </div>
+            <span class="live-badge mono">● live</span>
+          </div>
 
-        <div style="font-size: 13px; line-height: 1.8; margin: 8px 0;">
-          <a href="#about">about</a><br />
-          <a href="#" onclick="navigator.clipboard.writeText('dakuhn1138@gmail.com');this.textContent='copied!';setTimeout(()=>this.textContent='email',1500);return false;">email</a><br />
-          <a href="https://github.com/DeanKuhn" target="_blank">github</a><br />
-          <a href="https://linkedin.com/in/dean-kuhn-565249380" target="_blank">linkedin</a><br />
-          <a href="/Dean_Kuhn_Resume.pdf" target="_blank">resume</a>
-        </div>
-
-        <hr style="border: none; border-top: 1px solid #ccc; margin: 8px 0;" />
-
-        <div style="font-size: 11px; color: #666; line-height: 1.7;">
-          <div>B.S. Computer Science</div>
-          <div>WGU · May 2026</div>
-          <br />
-          <div>dbt Fundamentals</div>
-          <div>ITIL 4 Foundation</div>
-          <div>Linux Essentials</div>
-        </div>
-      </td>
-
-      <td width="16" valign="top"></td>
-
-      <!-- Main column: project listings -->
-      <td valign="top">
-        <table width="100%" cellpadding="0" cellspacing="0">
-          <tr>
-            <td>
-              <div style="font-size: 14px; font-weight: bold; margin-bottom: 12px;">
-                portfolio — projects by <a href="#about">dean kuhn</a>
-              </div>
-
-              {showStats && (
-                <>
-                  <div style="margin-bottom: 16px;">
-                    <div style="font-size: 13px; font-weight: bold; color: #800000; margin-bottom: 2px;">— live pipeline stats —</div>
-                    <div style="font-size: 12px; color: #666; line-height: 1.8;">
-                      {pipelineStats && artistCount && (
-                        <div>{artistCount} artists tracked across {weeksTracked} weeks{indieP90 ? `  ·  indie P90 growth: ${indieP90}` : ''}</div>
-                      )}
-                      {kitchenStats && mlServiceLevel && (
-                        <div>ML service level: {mlServiceLevel}{mlWastePct ? `  ·  waste rate: ${mlWastePct}` : ''}</div>
-                      )}
-                      {latestSnapshot && <div>last updated: {latestSnapshot}</div>}
+          <div class="card-body">
+            {musicData ? (
+              <>
+                <div class="card-metric">
+                  <span class="metric-value accent">{artistCount}</span>
+                  <span class="metric-label mono muted">artists tracked · {weeksTracked} weeks</span>
+                </div>
+                {indieTier && mainstreamTier && (
+                  <div class="tier-bars">
+                    <div class="tier-row">
+                      <span class="tier-label mono muted">mainstream P90</span>
+                      <div class="tier-bar-track">
+                        <div class="tier-bar" style={`width: ${Math.min(100, (mainstreamTier.p90_pct_growth / (indieTier.p90_pct_growth || 1)) * 100)}%`}></div>
+                      </div>
+                      <span class="tier-val mono">{mainstreamP90}%</span>
+                    </div>
+                    <div class="tier-row">
+                      <span class="tier-label mono muted">indie P90</span>
+                      <div class="tier-bar-track">
+                        <div class="tier-bar tier-bar--accent" style="width: 100%"></div>
+                      </div>
+                      <span class="tier-val mono accent">{indieP90}%</span>
                     </div>
                   </div>
-                  <hr style="border: none; border-top: 1px solid #ccc; margin: 8px 0 16px;" />
-                </>
-              )}
+                )}
+              </>
+            ) : (
+              <div class="card-omitted mono muted">live data unavailable at build time</div>
+            )}
+          </div>
 
-              {categories.map((cat) => (
-                <div style="margin-bottom: 20px;">
-                  <div style="font-size: 14px; font-weight: bold; margin-bottom: 6px; color: #800000;">
-                    {cat}
-                  </div>
-                  <table cellpadding="0" cellspacing="0" style="width: 100%;">
-                    {projects
-                      .filter((p) => p.category === cat)
-                      .map((p) => (
-                        <tr>
-                          <td style="padding: 1px 0; vertical-align: top; white-space: nowrap; padding-right: 8px;">
-                            <span style="color: #666; font-size: 13px;">
-                              {p.status === 'live' ? '●' : p.status === 'paused' ? '◌' : '✓'}
-                            </span>
-                          </td>
-                          <td style="padding: 1px 0;">
-                            <a href={`/projects/${p.slug}`} style="font-size: 14px;">
-                              {p.title}
-                            </a>
-                            <span style="color: #444; font-size: 13px;"> — {p.tagline}</span>
-                          </td>
-                        </tr>
-                      ))}
-                  </table>
-                </div>
-              ))}
+          <div class="card-footer">
+            <span class="card-tagline muted">Underground artists grow 3× faster than mainstream in listener %</span>
+            <a href="/projects/music-growth-pipeline" class="card-link mono accent">
+              View project <Icon name="tabler:arrow-right" class="link-icon" />
+            </a>
+          </div>
+        </div>
 
-              <!-- Stack callout -->
-              <div style="margin-top: 16px; margin-bottom: 20px;">
-                <div style="font-size: 14px; font-weight: bold; margin-bottom: 6px; color: #800000;">
-                  skills
-                </div>
-                <div style="font-size: 13px; color: #444; line-height: 1.8;">
-                  <span style="font-weight: bold;">languages:</span> Python, SQL<br />
-                  <span style="font-weight: bold;">data &amp; storage:</span> PostgreSQL, Snowflake, dbt Core, pandas<br />
-                  <span style="font-weight: bold;">ingestion:</span> FastAPI, REST APIs, Playwright, asyncio/httpx<br />
-                  <span style="font-weight: bold;">ml:</span> LightGBM, scikit-learn, VADER sentiment<br />
-                  <span style="font-weight: bold;">viz:</span> Streamlit, Power BI, Plotly, Excel<br />
-                  <span style="font-weight: bold;">infra:</span> GitHub Actions, Neon, Git, Linux/WSL, AWS<br />
-                  <span style="font-weight: bold;">learning:</span> PySpark/Spark, Airflow, Databricks, Azure<br />Spending time on cloud architecture, LLM integration, and data governance<br />
-                </div>
-              </div>
+        <!-- WGUPS Package Routing — stub -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Package Delivery Routing</div>
+              <div class="card-subtitle mono muted">algorithms · complete</div>
+            </div>
+            <span class="complete-badge mono">✓ complete</span>
+          </div>
 
-              <hr style="border: none; border-top: 1px solid #ccc; margin: 12px 0;" />
+          <div class="card-body card-body--stub">
+            <div class="route-anim" aria-hidden="true">
+              <svg viewBox="0 0 200 80" class="route-svg">
+                <circle class="node" cx="20" cy="40" r="4" />
+                <circle class="node" cx="70" cy="15" r="3" />
+                <circle class="node" cx="100" cy="55" r="3" />
+                <circle class="node" cx="145" cy="20" r="3" />
+                <circle class="node" cx="180" cy="40" r="4" />
+                <path class="route route-1" d="M20,40 Q45,10 70,15 Q85,18 100,55 Q120,80 145,20 Q160,5 180,40" fill="none" />
+                <path class="route route-2" d="M20,40 Q50,65 100,55 Q150,45 180,40" fill="none" />
+                <circle class="truck" r="3">
+                  <animateMotion dur="3s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1">
+                    <mpath href="#truck-path-1" />
+                  </animateMotion>
+                </circle>
+                <circle class="truck truck-2" r="3">
+                  <animateMotion dur="3s" begin="1.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1">
+                    <mpath href="#truck-path-2" />
+                  </animateMotion>
+                </circle>
+                <path id="truck-path-1" d="M20,40 Q45,10 70,15 Q85,18 100,55 Q120,80 145,20 Q160,5 180,40" fill="none" />
+                <path id="truck-path-2" d="M20,40 Q50,65 100,55 Q150,45 180,40" fill="none" />
+              </svg>
+              <div class="stub-note mono muted">GA route animation · data-driven version pending JSON export</div>
+            </div>
+          </div>
 
-              <!-- About -->
-              <div id="about" style="margin-top: 12px;">
-                <div style="font-size: 14px; font-weight: bold; margin-bottom: 6px; color: #800000;">
-                  about
-                </div>
-                <div style="font-size: 13px; color: #444; line-height: 1.8; max-width: 600px;">
-                  CS graduate (WGU, May 2026) based in the Milwaukee area. I'm looking for roles where the work involves getting data from raw to useful, whether that's engineering the pipeline, modeling the warehouse, or doing the analysis downstream.
-                  <br /><br />
-                  My projects run the full stack: ingestion, transformation, warehousing, ML forecasting, and dashboarding. I built them that way on purpose. Understanding why a pipeline breaks is easier when you've written the transformation layer yourself. Understanding what analysts actually need is easier when you've been the one pulling from the marts.
-                  <br /><br />
-                  Milwaukee area preferred. Open to remote.
-                  <br /><br />
-                  <a href="mailto:dakuhn1138@gmail.com">dakuhn1138@gmail.com</a>
-                  &nbsp;·&nbsp;
-                  <a href="https://linkedin.com/in/dean-kuhn-565249380" target="_blank">linkedin</a>
-                  &nbsp;·&nbsp;
-                  <a href="https://github.com/DeanKuhn" target="_blank">github</a>
-                  &nbsp;·&nbsp;
-                  <a href="/Dean_Kuhn_Resume.pdf" target="_blank">resume (pdf)</a>
-                </div>
-              </div>
+          <div class="card-footer">
+            <span class="card-tagline muted">GA solves vehicle routing + loading simultaneously in one chromosome</span>
+            <a href="/projects/package-router" class="card-link mono accent">
+              View project <Icon name="tabler:arrow-right" class="link-icon" />
+            </a>
+          </div>
+        </div>
 
-              <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;" />
+        <!-- Market Cynic — pending -->
+        <div class="card card--pending">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Market Cynic Pipeline</div>
+              <div class="card-subtitle mono muted">data engineering</div>
+            </div>
+            <span class="dev-badge mono">◌ in development</span>
+          </div>
 
-              <div style="font-size: 10px; color: #999;">
-                &copy 2026 deanslist
-              </div>
-            </td>
-          </tr>
-        </table>
-      </td>
+          <div class="card-body card-body--pending">
+            <div class="pending-label mono muted">v2 in development</div>
+            <p class="pending-desc muted">
+              Reddit OAuth + Airflow orchestration + Spark processing.
+              Automated runs paused after Reddit shut down the public .json endpoints.
+            </p>
+          </div>
 
-      <td width="16" class="gap-col"></td>
-    </tr>
-  </table>
-</Craigslist>
+          <div class="card-footer">
+            <span class="card-tagline muted">Bronze→Silver→Gold pipeline correlating Reddit sentiment with stock prices</span>
+            <a href="/projects/market-cynic-pipeline" class="card-link mono muted">
+              See architecture <Icon name="tabler:arrow-right" class="link-icon" />
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="about-section container">
+      <div class="section-label mono muted">about</div>
+
+      <div class="about-inner">
+        <div class="about-text">
+          <p>
+            CS graduate (WGU, May 2026) based in the Milwaukee area. Looking for roles where the work involves
+            getting data from raw to useful — engineering the pipeline, modeling the warehouse, or doing the analysis downstream.
+          </p>
+          <p>
+            My projects run the full stack on purpose: ingestion, transformation, warehousing, ML forecasting,
+            and dashboarding. Understanding why a pipeline breaks is easier when you've written the transformation layer yourself.
+          </p>
+          <div class="about-links mono">
+            <a href="mailto:dakuhn1138@gmail.com">
+              <Icon name="tabler:mail" class="about-icon" />
+              dakuhn1138@gmail.com
+            </a>
+            <a href="https://github.com/DeanKuhn" target="_blank" rel="noopener">
+              <Icon name="tabler:brand-github" class="about-icon" />
+              github
+            </a>
+            <a href="https://linkedin.com/in/dean-kuhn-565249380" target="_blank" rel="noopener">
+              <Icon name="tabler:brand-linkedin" class="about-icon" />
+              linkedin
+            </a>
+          </div>
+        </div>
+
+        <div class="skills">
+          <div class="skills-label mono muted">stack</div>
+          <div class="skill-pills">
+            {[
+              'Python', 'SQL', 'dbt Core', 'PostgreSQL', 'Snowflake',
+              'FastAPI', 'LightGBM', 'scikit-learn', 'pandas',
+              'Streamlit', 'Power BI', 'GitHub Actions',
+              'AWS EC2', 'Docker', 'Linux/WSL',
+            ].map((s) => (
+              <span class="pill mono">{s}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer container mono muted">
+      <span>&copy; 2026 deanslist.dev</span>
+      <span>Milwaukee, WI · open to remote</span>
+    </footer>
+
+  </main>
+
+</ProjectLayout>
+
+<style>
+  /* Nav */
+  .nav-bar {
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 10;
+  }
+
+  .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .nav-brand {
+    font-size: 0.875rem;
+    color: var(--accent);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.8125rem;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    transition: color 0.15s;
+  }
+
+  .nav-links a:hover {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  /* Hero */
+  .hero {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 6px #4ade80;
+    flex-shrink: 0;
+  }
+
+  .hero-headline {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-sub {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    max-width: 580px;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    margin-bottom: 2rem;
+  }
+
+  .status-icon {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 0.875rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--radius);
+    transition: opacity 0.15s;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.88;
+    text-decoration: none;
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.8125rem;
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--radius);
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--muted);
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .btn-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /* Cards */
+  .cards-section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
+  .section-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 1rem;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.15s;
+  }
+
+  .card:hover {
+    border-color: #3d4148;
+  }
+
+  .card--pending {
+    opacity: 0.75;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.25rem 1.25rem 0;
+    gap: 0.5rem;
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .card-subtitle {
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+  }
+
+  .live-badge {
+    font-size: 0.625rem;
+    color: #4ade80;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    margin-top: 0.1rem;
+  }
+
+  .complete-badge {
+    font-size: 0.625rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    margin-top: 0.1rem;
+  }
+
+  .dev-badge {
+    font-size: 0.625rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    margin-top: 0.1rem;
+  }
+
+  .card-body {
+    padding: 1.25rem;
+    flex: 1;
+  }
+
+  .card-omitted {
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    padding: 1rem 0;
+  }
+
+  .card-body--pending {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .pending-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .pending-desc {
+    font-size: 0.8125rem;
+    line-height: 1.65;
+  }
+
+  .card-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .metric-value {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .metric-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .card-metric-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .metric-sm {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text);
+    display: block;
+  }
+
+  .metric-sm-label {
+    font-size: 0.625rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: block;
+    margin-top: 0.125rem;
+  }
+
+  .sparkline-wrap {
+    margin-top: 0.5rem;
+  }
+
+  .sparkline-label {
+    font-size: 0.625rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.375rem;
+  }
+
+  .sparkline {
+    display: block;
+  }
+
+  /* Tier bars */
+  .tier-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    margin-top: 0.5rem;
+  }
+
+  .tier-row {
+    display: grid;
+    grid-template-columns: 90px 1fr 50px;
+    align-items: center;
+    gap: 0.625rem;
+  }
+
+  .tier-label {
+    font-size: 0.625rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .tier-bar-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .tier-bar {
+    height: 100%;
+    background: var(--muted);
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+
+  .tier-bar--accent {
+    background: var(--accent);
+  }
+
+  .tier-val {
+    font-size: 0.75rem;
+    text-align: right;
+  }
+
+  /* Route animation stub */
+  .card-body--stub {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .route-anim {
+    text-align: center;
+    width: 100%;
+  }
+
+  .route-svg {
+    width: 100%;
+    max-width: 200px;
+    height: 80px;
+    display: block;
+    margin: 0 auto 0.5rem;
+  }
+
+  .node {
+    fill: var(--muted);
+  }
+
+  .route {
+    stroke: var(--border);
+    stroke-width: 1;
+  }
+
+  .truck {
+    fill: var(--accent);
+  }
+
+  .truck-2 {
+    fill: var(--muted);
+  }
+
+  .stub-note {
+    font-size: 0.625rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Card footer */
+  .card-footer {
+    padding: 1rem 1.25rem 1.25rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+  }
+
+  .card-tagline {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .card-link {
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+  }
+
+  .card-link:hover {
+    text-decoration: none;
+    opacity: 0.75;
+  }
+
+  .link-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  /* About */
+  .about-section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .about-inner {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 3rem;
+    align-items: start;
+    margin-top: 1.5rem;
+  }
+
+  .about-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .about-text p {
+    font-size: 0.9375rem;
+    line-height: 1.8;
+    color: var(--muted);
+    max-width: 560px;
+  }
+
+  .about-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    font-size: 0.8125rem;
+    margin-top: 0.5rem;
+  }
+
+  .about-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--muted);
+    transition: color 0.15s;
+  }
+
+  .about-links a:hover {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .about-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .skills-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .skill-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+
+  .pill {
+    font-size: 0.6875rem;
+    color: var(--muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 0.25rem 0.6rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* Footer */
+  .site-footer {
+    padding-top: 1.5rem;
+    padding-bottom: 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+  }
+
+  /* Mobile */
+  @media (max-width: 700px) {
+    .hero {
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+    }
+
+    .hero-headline {
+      font-size: clamp(2rem, 10vw, 3rem);
+    }
+
+    .cards-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .about-inner {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .nav-links {
+      gap: 1rem;
+    }
+
+    .site-footer {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .hero-ctas {
+      flex-direction: column;
+    }
+
+    .tier-row {
+      grid-template-columns: 70px 1fr 44px;
+    }
+  }
+</style>
