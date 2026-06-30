@@ -8,6 +8,8 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "astro": "^4.16.0"
+    "@iconify-json/tabler": "^1.2.35",
+    "astro": "^4.16.0",
+    "astro-icon": "^1.1.5"
   }
 }
