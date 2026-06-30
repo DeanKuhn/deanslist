@@ -1,6 +1,7 @@
 ---
 import ProjectLayout from '../../layouts/Project.astro';
 import { projects } from '../../data/projects';
+import { fetchKitchenSync, fetchMusicPipeline } from '../../lib/fetchProjectData';
 import type { GetStaticPaths } from 'astro';
 export const getStaticPaths: GetStaticPaths = () => {
   return projects.map((p) => ({
@@ -11,20 +12,11 @@ export const getStaticPaths: GetStaticPaths = () => {
 
 const { project } = Astro.props;
 
-let abData: {
-  cumulative: {
-    days_run: number;
-    ml_avg_waste_pct: number;
-    baseline_avg_waste_pct: number;
-    ml_avg_service_level: number;
-    base_avg_service_level: number;
-  };
-  daily: Array<{
-    date: string;
-    ml: { units_sold: number; stockouts: number; units_wasted: number; waste_cost: number; sales_revenue: number };
-    baseline: { units_sold: number; stockouts: number; units_wasted: number; waste_cost: number; sales_revenue: number };
-  }>;
-} | null = null;
+const kitchenResult = project.slug === 'kitchensync' ? await fetchKitchenSync() : { state: 'omitted' as const };
+const musicResult = project.slug === 'music-growth-pipeline' ? await fetchMusicPipeline() : { state: 'omitted' as const };
+
+const abData = kitchenResult.state === 'ok' ? kitchenResult.data : null;
+const pipelineStats = musicResult.state === 'ok' ? musicResult.data : null;
 
 let wasteDeltaPp: number | null = null;
 let latestDay: {
@@ -33,52 +25,22 @@ let latestDay: {
   baseline: { waste_pct: number; service_level: number };
 } | null = null;
 
-if (project.slug === 'kitchensync') {
-  try {
-    const res = await fetch(
-      'https://raw.githubusercontent.com/DeanKuhn/kitchensync/master/data/ab_results.json'
-    );
-    if (res.ok) {
-      abData = await res.json();
-    }
-  } catch (_) {}
-
-  if (abData) {
-    wasteDeltaPp = abData.cumulative.ml_avg_waste_pct - abData.cumulative.baseline_avg_waste_pct;
-    const d = abData.daily[abData.daily.length - 1];
-    if (d) {
-      latestDay = {
-        date: d.date,
-        ml: {
-          waste_pct: (d.ml.waste_cost / d.ml.sales_revenue) * 100,
-          service_level: (d.ml.units_sold / (d.ml.units_sold + d.ml.stockouts)) * 100,
-        },
-        baseline: {
-          waste_pct: (d.baseline.waste_cost / d.baseline.sales_revenue) * 100,
-          service_level: (d.baseline.units_sold / (d.baseline.units_sold + d.baseline.stockouts)) * 100,
-        },
-      };
-    }
+if (abData) {
+  wasteDeltaPp = abData.cumulative.ml_avg_waste_pct - abData.cumulative.baseline_avg_waste_pct;
+  const d = abData.daily[abData.daily.length - 1];
+  if (d) {
+    latestDay = {
+      date: d.date,
+      ml: {
+        waste_pct: (d.ml.waste_cost / d.ml.sales_revenue) * 100,
+        service_level: (d.ml.units_sold / (d.ml.units_sold + d.ml.stockouts)) * 100,
+      },
+      baseline: {
+        waste_pct: (d.baseline.waste_cost / d.baseline.sales_revenue) * 100,
+        service_level: (d.baseline.units_sold / (d.baseline.units_sold + d.baseline.stockouts)) * 100,
+      },
+    };
   }
-}
-
-let pipelineStats: {
-  generated_at: string;
-  summary: { artist_count: number; weeks_tracked: number; latest_snapshot: string };
-  growth_by_tier: Array<{ tier: string; artist_count: number; median_pct_growth: number; p90_pct_growth: number }>;
-  top_growing_artists: Array<{ artist_name: string; min_page: number; starting_count: number; ending_count: number; total_pct_growth: number }>;
-  genre_growth: Array<{ genre: string; artist_count: number; median_total_pct_growth: number }>;
-} | null = null;
-
-if (project.slug === 'music-growth-pipeline') {
-  try {
-    const res = await fetch(
-      'https://raw.githubusercontent.com/DeanKuhn/music-growth-pipeline/main/data/pipeline_stats.json'
-    );
-    if (res.ok) {
-      pipelineStats = await res.json();
-    }
-  } catch (_) {}
 }
 ---
 
