@@ -2,6 +2,7 @@
 import ProjectLayout from '../../layouts/Project.astro';
 import { projects } from '../../data/projects';
 import { fetchKitchenSync, fetchMusicPipeline } from '../../lib/fetchProjectData';
+import KitchenSyncChart from '../../components/charts/KitchenSyncChart';
 import type { GetStaticPaths } from 'astro';
 export const getStaticPaths: GetStaticPaths = () => {
   return projects.map((p) => ({
@@ -24,6 +25,17 @@ let latestDay: {
   ml: { waste_pct: number; service_level: number };
   baseline: { waste_pct: number; service_level: number };
 } | null = null;
+
+const chartData = abData ? {
+  dates: abData.daily.map((d) => d.date),
+  mlSvc: abData.daily.map((d) => (d.ml.units_sold / (d.ml.units_sold + d.ml.stockouts)) * 100),
+  baseSvc: abData.daily.map((d) => (d.baseline.units_sold / (d.baseline.units_sold + d.baseline.stockouts)) * 100),
+  mlWaste: abData.daily.map((d) => (d.ml.waste_cost / d.ml.sales_revenue) * 100),
+  baseWaste: abData.daily.map((d) => (d.baseline.waste_cost / d.baseline.sales_revenue) * 100),
+} : null;
+
+// TODO: fill in once Streamlit URL is confirmed
+const STREAMLIT_URL: string | null = null;
 
 if (abData) {
   wasteDeltaPp = abData.cumulative.ml_avg_waste_pct - abData.cumulative.baseline_avg_waste_pct;
@@ -81,6 +93,27 @@ if (abData) {
         view on github ↗
       </a>
     </header>
+
+    <!-- Live results chart (kitchensync only) -->
+    {project.slug === 'kitchensync' && chartData && (
+      <div class="live-results-section">
+        <div class="live-results-header">
+          <span class="section-label mono muted">live results</span>
+          <span class="mono muted live-results-days">day {abData!.cumulative.days_run} of a/b test</span>
+        </div>
+        <div class="live-results-summary mono muted">
+          ML lifts service level +{(abData!.cumulative.ml_avg_service_level - abData!.cumulative.base_avg_service_level).toFixed(1)}pp · adds +{wasteDeltaPp!.toFixed(1)}pp waste · {chartData.dates.at(-1)} through {chartData.dates[0]}
+        </div>
+        <KitchenSyncChart
+          dates={chartData.dates}
+          mlSvc={chartData.mlSvc}
+          baseSvc={chartData.baseSvc}
+          mlWaste={chartData.mlWaste}
+          baseWaste={chartData.baseWaste}
+          client:visible
+        />
+      </div>
+    )}
 
     <!-- A/B Results (kitchensync only) -->
     {project.slug === 'kitchensync' && abData && (
@@ -250,7 +283,7 @@ if (abData) {
     )}
 
     <div class="diagram-frame">
-      <div class="diagram-label mono muted">architecture</div>
+      <div class="diagram-label mono muted">how it's built</div>
 
       {project.slug === 'kitchensync' && (
         <svg width="100%" viewBox="0 0 560 750" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -469,6 +502,26 @@ if (abData) {
       </div>
 
     </div>
+
+    <!-- Explore further (kitchensync only) -->
+    {project.slug === 'kitchensync' && (
+      <div class="explore-section">
+        <div class="section-label mono muted">explore further</div>
+        <div class="explore-links">
+          {STREAMLIT_URL ? (
+            <a href={STREAMLIT_URL} target="_blank" rel="noopener" class="explore-btn mono">
+              Open live dashboard ↗
+            </a>
+          ) : (
+            <span class="explore-btn explore-btn--pending mono" title="URL pending">
+              Open live dashboard ↗
+              <span class="explore-pending mono muted">(url pending)</span>
+            </span>
+          )}
+          {/* Power BI button intentionally omitted until URL is confirmed */}
+        </div>
+      </div>
+    )}
 
     <!-- Footer -->
     <div class="page-footer">
@@ -866,5 +919,79 @@ if (abData) {
 
   .page-footer a {
     font-size: 0.8125rem;
+  }
+
+  /* Live results chart section */
+  .live-results-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .live-results-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .live-results-days {
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    opacity: 0.5;
+  }
+
+  .live-results-summary {
+    font-size: 0.8rem;
+    margin-bottom: 1.25rem;
+    letter-spacing: 0.02em;
+  }
+
+  /* Explore further section */
+  .explore-section {
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .explore-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .explore-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.5rem 1rem;
+    color: var(--accent);
+    transition: border-color 0.15s;
+  }
+
+  .explore-btn:hover {
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
+  .explore-btn--pending {
+    color: var(--muted);
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  .explore-btn--pending:hover {
+    border-color: var(--border);
+  }
+
+  .explore-pending {
+    font-size: 0.7rem;
   }
 </style>
