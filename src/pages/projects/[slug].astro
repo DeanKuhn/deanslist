@@ -102,7 +102,7 @@ if (abData) {
           <span class="mono muted live-results-days">day {abData!.cumulative.days_run} of a/b test</span>
         </div>
         <div class="live-results-summary mono muted">
-          ML lifts service level +{(abData!.cumulative.ml_avg_service_level - abData!.cumulative.base_avg_service_level).toFixed(1)}pp · adds +{wasteDeltaPp!.toFixed(1)}pp waste · {chartData.dates.at(-1)} through {chartData.dates[0]}
+          {chartData.dates[0]} through {chartData.dates.at(-1)}
         </div>
         <KitchenSyncChart
           dates={chartData.dates}
@@ -119,7 +119,7 @@ if (abData) {
     {project.slug === 'kitchensync' && abData && (
       <div class="ab-section">
         <div class="ab-header">
-          <span class="section-label mono muted">live a/b results</span>
+          <span class="section-label mono muted">cumulative stats</span>
           <span class="ab-days mono muted">day {abData.cumulative.days_run}</span>
         </div>
         <div class="ab-grid">

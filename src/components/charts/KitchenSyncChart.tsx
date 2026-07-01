@@ -244,6 +244,7 @@ export default function KitchenSyncChart({ dates, mlSvc, baseSvc, mlWaste, baseW
           border: 1px solid var(--border);
           border-radius: 4px;
           padding: 1rem;
+          min-width: 0;
         }
         .ks-chart-label {
           font-family: 'IBM Plex Mono', monospace;
