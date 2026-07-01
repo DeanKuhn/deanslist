@@ -103,8 +103,7 @@ const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) 
         Dean Kuhn
       </h1>
       <p class="hero-sub muted">
-        I build end-to-end data systems — pipelines, transformations, warehousing, ML, and the dashboards that make it usable.
-        WGU CS graduate (May 2026), looking for a junior data engineering, analytics engineering, or data analysis role where I can own a problem from raw input to shipped result.
+        I work across the full data lifecycle. The pipelines, transformations, warehousing, ML, and dashboards that make it usable. WGU CS graduate (May 2026), looking for a junior data engineering, analytics engineering, or data analysis role where I can own a problem from raw input to shipped result.
       </p>
 
       {lastRun && (
@@ -317,13 +316,12 @@ const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) 
           <div class="card-body card-body--pending">
             <div class="pending-label mono muted">v2 in development</div>
             <p class="pending-desc muted">
-              Reddit OAuth + Airflow orchestration + Spark processing.
-              Automated runs paused after Reddit shut down the public .json endpoints.
+              Rebuilding on Databricks, Azure Data Lake Storage Gen2, Delta Lake, PySpark, and Apache Airflow. Shifting from Reddit sentiment to S&P 500 breakout signal detection. v1's automated runs are paused after Reddit shut down the public .json endpoints.
             </p>
           </div>
 
           <div class="card-footer">
-            <span class="card-tagline muted">Bronze→Silver→Gold pipeline correlating Reddit sentiment with stock prices</span>
+            <span class="card-tagline muted">Bronze→Silver→Gold Delta Lake pipeline detecting S&P 500 breakout signals from price and volume data.</span>
             <a href="/projects/market-cynic-pipeline" class="card-link mono muted">
               See architecture <Icon name="tabler:arrow-right" class="link-icon" />
             </a>
@@ -340,8 +338,7 @@ const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) 
       <div class="about-inner">
         <div class="about-text">
           <p>
-            CS graduate (WGU, May 2026) based in the Milwaukee area. Looking for roles where the work involves
-            getting data from raw to useful — engineering the pipeline, modeling the warehouse, or doing the analysis downstream.
+            CS graduate (WGU, May 2026) based in the Milwaukee area. Looking for roles where the work involves getting data from raw to useful. Engineering the pipeline, modeling the warehouse, or doing the analysis downstream.
           </p>
           <p>
             My projects run the full stack on purpose: ingestion, transformation, warehousing, ML forecasting,
@@ -365,14 +362,23 @@ const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) 
 
         <div class="skills">
           <div class="skills-label mono muted">stack</div>
-          <div class="skill-pills">
+          <div class="skill-groups">
             {[
-              'Python', 'SQL', 'dbt Core', 'PostgreSQL', 'Snowflake',
-              'FastAPI', 'LightGBM', 'scikit-learn', 'pandas',
-              'Streamlit', 'Power BI', 'GitHub Actions',
-              'AWS EC2', 'Docker', 'Linux/WSL',
-            ].map((s) => (
-              <span class="pill mono">{s}</span>
+              { label: 'languages', items: ['Python', 'SQL'] },
+              { label: 'data & storage', items: ['PostgreSQL', 'Snowflake', 'dbt Core', 'pandas', 'FastAPI'] },
+              { label: 'ml', items: ['LightGBM', 'scikit-learn'] },
+              { label: 'viz', items: ['Streamlit', 'Power BI'] },
+              { label: 'infra', items: ['GitHub Actions', 'AWS EC2', 'Docker', 'Linux/WSL'] },
+              { label: 'learning', items: ['Databricks', 'Azure Data Lake Storage Gen2', 'Delta Lake', 'PySpark', 'Apache Airflow'] },
+            ].map((group) => (
+              <div class="skill-group">
+                <div class="skill-group-label mono muted">{group.label}</div>
+                <div class="skill-pills">
+                  {group.items.map((s) => (
+                    <span class="pill mono">{s}</span>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -858,10 +864,9 @@ const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) 
   }
 
   .about-inner {
-    display: grid;
-    grid-template-columns: 1fr 280px;
-    gap: 3rem;
-    align-items: start;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
     margin-top: 1.5rem;
   }
 
@@ -911,6 +916,20 @@ const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) 
     margin-bottom: 0.75rem;
   }
 
+  .skill-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem 2.5rem;
+  }
+
+  .skill-group-label {
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 0.375rem;
+  }
+
   .skill-pills {
     display: flex;
     flex-wrap: wrap;
@@ -950,11 +969,6 @@ const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) 
 
     .cards-grid {
       grid-template-columns: 1fr;
-    }
-
-    .about-inner {
-      grid-template-columns: 1fr;
-      gap: 2rem;
     }
 
     .nav-links {
