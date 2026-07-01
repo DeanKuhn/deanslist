@@ -93,7 +93,7 @@ export const projects: Project[] = [
     statusNote:
       'Automated runs paused — Reddit shut down the public .json endpoints used for ingestion and blocked GitHub Actions IPs. v2 planned with proper OAuth, Airflow orchestration, and Spark processing.',
     category: 'data engineering',
-    tagline: 'Bronze→Silver→Gold pipeline correlating Reddit sentiment with Yahoo Finance prices',
+    tagline: 'Bronze→Silver→Gold Delta Lake pipeline detecting S&P 500 breakout signals from price and volume data',
     problem:
       'When a stock is heavily discussed with positive retail sentiment but its price is simultaneously falling, that divergence is a signal worth watching. Detecting it requires correlating two noisy, differently-structured data streams in near real time.',
     what:
