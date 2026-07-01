@@ -1,8 +1,9 @@
 ---
 import ProjectLayout from '../../layouts/Project.astro';
 import { projects } from '../../data/projects';
-import { fetchKitchenSync, fetchMusicPipeline } from '../../lib/fetchProjectData';
+import { fetchKitchenSync, fetchMusicPipeline, fetchWgups } from '../../lib/fetchProjectData';
 import KitchenSyncChart from '../../components/charts/KitchenSyncChart';
+import WgupsConvergenceChart from '../../components/charts/WgupsConvergenceChart';
 import type { GetStaticPaths } from 'astro';
 export const getStaticPaths: GetStaticPaths = () => {
   return projects.map((p) => ({
@@ -15,9 +16,16 @@ const { project } = Astro.props;
 
 const kitchenResult = project.slug === 'kitchensync' ? await fetchKitchenSync() : { state: 'omitted' as const };
 const musicResult = project.slug === 'music-growth-pipeline' ? await fetchMusicPipeline() : { state: 'omitted' as const };
+const wgupsResult = project.slug === 'package-router' ? await fetchWgups() : { state: 'omitted' as const };
 
 const abData = kitchenResult.state === 'ok' ? kitchenResult.data : null;
 const pipelineStats = musicResult.state === 'ok' ? musicResult.data : null;
+const wgupsData = wgupsResult.state === 'ok' ? wgupsResult.data : null;
+
+const convergenceData = wgupsData ? {
+  generations: wgupsData.convergence.map((c) => c.generation),
+  scores: wgupsData.convergence.map((c) => c.score),
+} : null;
 
 let wasteDeltaPp: number | null = null;
 let latestDay: {
@@ -93,6 +101,24 @@ if (abData) {
         view on github ↗
       </a>
     </header>
+
+    <!-- Live results chart (package-router only) -->
+    {project.slug === 'package-router' && convergenceData && (
+      <div class="live-results-section">
+        <div class="live-results-header">
+          <span class="section-label mono muted">live results</span>
+          <span class="mono muted live-results-days">run {wgupsData!.run_timestamp.slice(0, 10)}</span>
+        </div>
+        <div class="live-results-summary mono muted">
+          final fitness score {wgupsData!.final_score.toFixed(1)} · {wgupsData!.parameters.packages} packages · {wgupsData!.parameters.trucks} trucks · converged at generation {convergenceData.generations.at(-1)}
+        </div>
+        <WgupsConvergenceChart
+          generations={convergenceData.generations}
+          scores={convergenceData.scores}
+          client:visible
+        />
+      </div>
+    )}
 
     <!-- Live results chart (kitchensync only) -->
     {project.slug === 'kitchensync' && chartData && (
