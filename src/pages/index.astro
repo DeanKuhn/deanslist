@@ -271,14 +271,14 @@ const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) 
                   <div class="route-anim" aria-hidden="true">
                     <svg viewBox="0 0 200 200" class="route-svg route-svg--wgups">
                       {wgupsRoute.truckPaths.map((t) => (
-                        <path id={`wgups-path-${t.truckId}`} class:list={['route', `route-c${t.colorIndex}`]} d={t.d} fill="none" />
+                        <path id={`wgups-path-${t.truckId}`} class:list={['route', `route-c${t.colorIndex}`]} d={t.d} fill="none" style={`stroke-width: ${wgupsRoute!.strokeWidth}`} />
                       ))}
-                      {wgupsRoute.stops.map((s) => (
-                        <circle class="node" cx={s.x} cy={s.y} r="3" />
+                      {wgupsRoute.showNodes && wgupsRoute.stops.map((s) => (
+                        <circle class="node" cx={s.x} cy={s.y} r={wgupsRoute!.nodeRadius} />
                       ))}
                       <circle class="hub-node" cx={wgupsRoute.hub.x} cy={wgupsRoute.hub.y} r="5" />
                       {wgupsRoute.truckPaths.map((t, i) => (
-                        <circle class:list={['truck', `truck-c${t.colorIndex}`]} r="3">
+                        <circle class:list={['truck', `truck-c${t.colorIndex}`]} r={wgupsRoute!.truckRadius}>
                           <animateMotion dur={`${4 + (i % 3)}s`} begin={`${(i * 0.6).toFixed(1)}s`} repeatCount="indefinite" calcMode="linear">
                             <mpath href={`#wgups-path-${t.truckId}`} />
                           </animateMotion>
@@ -769,7 +769,6 @@ const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) 
 
   .route {
     stroke: var(--border);
-    stroke-width: 1;
   }
 
   .truck {

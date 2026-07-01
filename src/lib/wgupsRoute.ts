@@ -8,7 +8,26 @@ export type WgupsRouteVisual = {
   hub: { x: number; y: number };
   stops: Array<{ x: number; y: number; address: string }>;
   truckPaths: Array<{ truckId: number; d: string; colorIndex: number }>;
+  nodeRadius: number;
+  showNodes: boolean;
+  strokeWidth: number;
+  truckRadius: number;
 };
+
+// Node/stroke sizing shrinks as stop count grows so dense runs (100+ stops)
+// don't render as an overlapping blob — chord length between adjacent stops
+// on the circle shrinks with n, so dot/stroke size has to shrink with it too.
+function computeSizing(n: number) {
+  if (n <= 1) {
+    return { nodeRadius: 3, showNodes: true, strokeWidth: 1, truckRadius: 3 };
+  }
+  const chord = 2 * RADIUS * Math.sin(Math.PI / n);
+  const nodeRadius = Math.min(3, chord * 0.3);
+  const showNodes = nodeRadius >= 1.2;
+  const strokeWidth = n > 80 ? 0.5 : n > 40 ? 0.75 : 1;
+  const truckRadius = Math.max(2, Math.min(3, chord * 0.35));
+  return { nodeRadius, showNodes, strokeWidth, truckRadius };
+}
 
 // Lays out stops evenly on a circle (hub at center) since the source data
 // is a distance matrix, not real coordinates — deterministic per run, not geographic.
@@ -47,5 +66,5 @@ export function buildWgupsRouteVisual(data: WgupsData): WgupsRouteVisual {
       return { truckId: truck.truck_id, d, colorIndex: i % 4 };
     });
 
-  return { hub: { x: CX, y: CY }, stops, truckPaths };
+  return { hub: { x: CX, y: CY }, stops, truckPaths, ...computeSizing(n) };
 }
