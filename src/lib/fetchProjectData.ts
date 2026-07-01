@@ -49,3 +49,44 @@ export async function fetchMusicPipeline(): Promise<FetchResult<MusicPipelineDat
     return { state: 'omitted' };
   }
 }
+
+export type WgupsData = {
+  run_timestamp: string;
+  parameters: {
+    packages: number;
+    trucks: number;
+    capacity: number;
+    refrig_trucks: number;
+    deadline_pct: number;
+    delay_pct: number;
+    refrig_pct: number;
+    pop_size: number;
+    generations: number;
+    mutation_rate: number;
+    seed: number;
+  };
+  final_score: number;
+  convergence: Array<{
+    generation: number;
+    score: number;
+    distance_score: number;
+    minutes_late: number;
+    late_count: number;
+  }>;
+  routes: Array<{
+    truck_id: number;
+    stops: Array<{ package_ids: number[]; address: string; arrival_time: string; status: string }>;
+  }>;
+};
+
+export async function fetchWgups(): Promise<FetchResult<WgupsData>> {
+  try {
+    const res = await fetch(
+      'https://raw.githubusercontent.com/DeanKuhn/ga-combined-routing-loading/main/data/ga_results.json'
+    );
+    if (res.ok) return { state: 'ok', data: await res.json() };
+    return { state: 'omitted' };
+  } catch {
+    return { state: 'omitted' };
+  }
+}
