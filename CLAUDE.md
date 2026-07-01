@@ -13,6 +13,7 @@ Dark portfolio site for Dean Kuhn. One coherent dark industrial theme across the
 - `src/lib/wgupsRoute.ts` — build-time layout helper for the WGUPS route visual. Takes `WgupsData` and lays stops evenly around a circle (hub at center), since the source is a distance matrix with no real coordinates. Returns SVG path strings per truck for the homepage card.
 - `src/pages/index.astro` — homepage. Dark theme. Hero → stat cards grid → about section.
 - `src/components/charts/KitchenSyncChart.tsx` — Preact island (Chart.js) for the KitchenSync A/B chart. Receives pre-computed arrays as props from the slug page at build time; hydrates `client:visible`. 58 kB gzip, loaded on kitchensync page only.
+- `src/components/charts/WgupsConvergenceChart.tsx` — Preact island (Chart.js) for the WGUPS convergence chart (fitness score vs. generation). Single-series, numeric x-axis; only registers the Chart.js modules it needs (no `CategoryScale`/`Legend`), so it's much smaller than KitchenSync's. Loaded on the package-router page only.
 - `src/pages/projects/[slug].astro` — dynamic project pages. Fetches live data via `src/lib/fetchProjectData.ts`. See "Project page pattern" below for the established signature visual structure.
 
 ## Design tokens (site-wide)
@@ -34,7 +35,7 @@ All fetches happen at build time — data is baked into static HTML, not client-
 
 - **KitchenSync** — fetches `https://raw.githubusercontent.com/DeanKuhn/kitchensync/master/data/ab_results.json` (note: `master`, not `main`). Renders cumulative A/B results panel + latest daily run on project page; headline metric card on homepage.
 - **Music Growth Pipeline** — fetches `https://raw.githubusercontent.com/DeanKuhn/music-growth-pipeline/main/data/pipeline_stats.json`. Renders tier growth cards + top artists list on project page; headline metric card on homepage.
-- **WGUPS (Package Delivery Routing)** — fetches `https://raw.githubusercontent.com/DeanKuhn/ga-combined-routing-loading/main/data/ga_results.json`. Homepage-only for now (the project page itself hasn't had its signature-visual pass yet). Renders final fitness score, run parameters (packages/trucks/refrigerated), and a build-time SVG route visual on the homepage card — see "Homepage-only visuals" below. Card falls back to `omitted` state, same as the others, if the fetch fails or no successful scheduled run exists yet.
+- **WGUPS (Package Delivery Routing)** — fetches `https://raw.githubusercontent.com/DeanKuhn/ga-combined-routing-loading/main/data/ga_results.json`. Renders final fitness score, run parameters (packages/trucks/refrigerated), and a build-time SVG route visual on the homepage card — see "Homepage-only visuals" below. On the project page, renders a Chart.js convergence chart (fitness score vs. generation, from the `convergence` array) via `src/components/charts/WgupsConvergenceChart.tsx`. Falls back to `omitted` state, same as the others, if the fetch fails or no successful scheduled run exists yet.
 
 The nightly scheduled rebuild at 3:30 AM UTC keeps all three panels current without a manual push.
 
@@ -46,19 +47,19 @@ For visuals that are structural/graph-like rather than a numeric time series (WG
 
 Each project page follows this three-part structure:
 
-1. **"Live results"** — a bespoke data visualization built from the project's own live data. For KitchenSync this is a dual-line Chart.js chart (service level % and waste rate %, ML vs baseline, over time). Data is computed in the Astro frontmatter and passed as serialized props to a `client:visible` Preact island. If the fetch fails (`omitted` state), this section silently omits — no broken chart, no fallback mock.
+1. **"Live results"** — a bespoke data visualization built from the project's own live data. For KitchenSync this is a dual-line Chart.js chart (service level % and waste rate %, ML vs baseline, over time). For WGUPS it's a single-line Chart.js convergence chart (fitness score vs. generation, numeric x-axis since generation counts vary run to run). Data is computed in the Astro frontmatter and passed as serialized props to a `client:visible` Preact island. If the fetch fails (`omitted` state), this section silently omits — no broken chart, no fallback mock.
 
 2. **"How it's built"** — the existing SVG architecture diagram. Keep the label "how it's built."
 
 3. **"Explore further"** — outbound link buttons to fuller external tools (Streamlit, Power BI, etc.). Only render a button if a real URL exists. Use a visible pending state for URLs that exist but haven't been confirmed yet. Omit entirely if no external tool applies.
 
-**Next up**: Music Growth Pipeline and WGUPS project pages should follow this same shape. Music Growth's visualization will be a tier-growth chart from `pipeline_stats.json`. WGUPS's will reuse the route-visual approach already shipped on the homepage (see `src/lib/wgupsRoute.ts`).
+**Next up**: Music Growth Pipeline's project page should follow this same shape — its visualization will be a tier-growth chart from `pipeline_stats.json`.
 
 ## Scope notes
 
 - **Pass 1**: homepage redesigned to dark theme.
-- **Pass 2**: KitchenSync gets the signature visual pattern (pilot). Music Growth and WGUPS project pages are next.
-- **WGUPS homepage card**: now live — data-driven route visual from `ga_results.json` (see above). The WGUPS *project page* itself is still the Pass-1 layout and hasn't had its signature-visual pass.
+- **Pass 2**: KitchenSync gets the signature visual pattern (pilot). WGUPS project page follows with a convergence chart. Music Growth project page is next.
+- **WGUPS**: live on both homepage (route visual) and project page (convergence chart) — see "Live data fetches" above.
 - **Market Cynic**: `pending` card on homepage. Will go live once v2 is built.
 - **Streamlit URL** (`STREAMLIT_URL` in `[slug].astro`): currently `null` — fill in once confirmed.
 - **Power BI button**: intentionally omitted until a real URL exists.
