@@ -10,6 +10,7 @@ Dark portfolio site for Dean Kuhn. One coherent dark industrial theme across the
 - `src/layouts/Craigslist.astro` — old craigslist layout, no longer used by the homepage. Keep for reference.
 - `src/layouts/Project.astro` — shared layout for all pages. Dark, Space Grotesk + IBM Plex Mono. Uses `<style is:global>` so utility classes (`.container`, `.mono`, `.muted`, `.accent`) reach slot content.
 - `src/lib/fetchProjectData.ts` — shared build-time fetch utility. Both the homepage and project pages import from here. Returns a `FetchResult<T>` discriminated union: `{ state: 'ok', data }` | `{ state: 'omitted' }` (fetch failed) | `{ state: 'pending' }` (no live source yet, e.g. Market Cynic). Project pages use `ok`/`omitted` only; the homepage also uses `pending` to render an "in development" card state.
+- `src/lib/wgupsRoute.ts` — build-time layout helper for the WGUPS route visual. Takes `WgupsData` and lays stops evenly around a circle (hub at center), since the source is a distance matrix with no real coordinates. Returns SVG path strings per truck for the homepage card.
 - `src/pages/index.astro` — homepage. Dark theme. Hero → stat cards grid → about section.
 - `src/components/charts/KitchenSyncChart.tsx` — Preact island (Chart.js) for the KitchenSync A/B chart. Receives pre-computed arrays as props from the slug page at build time; hydrates `client:visible`. 58 kB gzip, loaded on kitchensync page only.
 - `src/pages/projects/[slug].astro` — dynamic project pages. Fetches live data via `src/lib/fetchProjectData.ts`. See "Project page pattern" below for the established signature visual structure.
@@ -29,12 +30,17 @@ Dark portfolio site for Dean Kuhn. One coherent dark industrial theme across the
 
 ## Live data fetches
 
-Both fetches happen at build time — data is baked into static HTML, not client-side. Implemented in `src/lib/fetchProjectData.ts`.
+All fetches happen at build time — data is baked into static HTML, not client-side. Implemented in `src/lib/fetchProjectData.ts`.
 
 - **KitchenSync** — fetches `https://raw.githubusercontent.com/DeanKuhn/kitchensync/master/data/ab_results.json` (note: `master`, not `main`). Renders cumulative A/B results panel + latest daily run on project page; headline metric card on homepage.
 - **Music Growth Pipeline** — fetches `https://raw.githubusercontent.com/DeanKuhn/music-growth-pipeline/main/data/pipeline_stats.json`. Renders tier growth cards + top artists list on project page; headline metric card on homepage.
+- **WGUPS (Package Delivery Routing)** — fetches `https://raw.githubusercontent.com/DeanKuhn/ga-combined-routing-loading/main/data/ga_results.json`. Homepage-only for now (the project page itself hasn't had its signature-visual pass yet). Renders final fitness score, run parameters (packages/trucks/refrigerated), and a build-time SVG route visual on the homepage card — see "Homepage-only visuals" below. Card falls back to `omitted` state, same as the others, if the fetch fails or no successful scheduled run exists yet.
 
-The nightly scheduled rebuild at 3:30 AM UTC keeps both panels current without a manual push.
+The nightly scheduled rebuild at 3:30 AM UTC keeps all three panels current without a manual push.
+
+## Homepage-only visuals (process/graph-style data)
+
+For visuals that are structural/graph-like rather than a numeric time series (WGUPS's route diagram), the default is **static SVG generated at build time in the `.astro` frontmatter, animated with native SMIL (`animateMotion`) — no client framework, no JS bundle**. This matches the existing architecture-diagram pattern on project pages. Reserve Chart.js/Preact islands (`client:visible`) for numeric time-series charts like KitchenSync's dual-line chart, where a real charting library earns its bundle cost.
 
 ## Project page pattern (established in Pass 2, KitchenSync pilot)
 
@@ -46,13 +52,13 @@ Each project page follows this three-part structure:
 
 3. **"Explore further"** — outbound link buttons to fuller external tools (Streamlit, Power BI, etc.). Only render a button if a real URL exists. Use a visible pending state for URLs that exist but haven't been confirmed yet. Omit entirely if no external tool applies.
 
-**Next up**: Music Growth Pipeline and WGUPS pages should follow this same shape. Music Growth's visualization will be a tier-growth chart from `pipeline_stats.json`. WGUPS's will be a data-driven route animation once the GA JSON export exists.
+**Next up**: Music Growth Pipeline and WGUPS project pages should follow this same shape. Music Growth's visualization will be a tier-growth chart from `pipeline_stats.json`. WGUPS's will reuse the route-visual approach already shipped on the homepage (see `src/lib/wgupsRoute.ts`).
 
 ## Scope notes
 
 - **Pass 1**: homepage redesigned to dark theme.
-- **Pass 2**: KitchenSync gets the signature visual pattern (pilot). Music Growth and WGUPS are next.
-- **WGUPS stat card**: stub animation on homepage. Will become data-driven once GA route/generation JSON export exists.
+- **Pass 2**: KitchenSync gets the signature visual pattern (pilot). Music Growth and WGUPS project pages are next.
+- **WGUPS homepage card**: now live — data-driven route visual from `ga_results.json` (see above). The WGUPS *project page* itself is still the Pass-1 layout and hasn't had its signature-visual pass.
 - **Market Cynic**: `pending` card on homepage. Will go live once v2 is built.
 - **Streamlit URL** (`STREAMLIT_URL` in `[slug].astro`): currently `null` — fill in once confirmed.
 - **Power BI button**: intentionally omitted until a real URL exists.
