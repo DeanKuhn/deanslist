@@ -23,11 +23,11 @@ export const projects: Project[] = [
     year: '2026',
     status: 'live',
     category: 'data engineering',
-    tagline: 'Live kitchen production system — ML cuts stockouts 40% and lifts service level +1.6pp, but adds +3.3pp waste — the pipeline quantifies the trade-off nightly',
+    tagline: 'Live kitchen production system. ML cuts stockouts 40% and lifts service level +1.6pp, but adds +3.3pp waste. The pipeline quantifies the trade-off nightly.',
     problem:
-      'Retail kitchens waste food when production outpaces demand and miss revenue when they run short. Forecasting the right quantity per item per store at 15-minute grain, refreshed continuously, requires a real pipeline — not a spreadsheet. But the harder question is honest evaluation: does ML actually earn its complexity cost, and if so, at what trade-off? Modeled after the Kitchen Production System at Kwik Trip.',
+      'Retail kitchens waste food when production outpaces demand and miss revenue when they run short. When you\'re forecasting the right quantity per item per store at a 15-minute grain and refreshing metrics continuously, a real pipeline is required, not a spreadsheet. But the harder question is honest evaluation: does ML actually earn its complexity cost, and if so, at what trade-off? Modeled after the Kitchen Production System (KPS) at Kwik Trip.',
     what:
-      'End-to-end simulation of a Kwik Trip-style Kitchen Production System running live on AWS EC2. An async FastAPI ingest API receives simulated POS events from 12 stores using Poisson arrivals, FIFO batch inventory, and slot-boundary production logic. A nightly cron at 2am UTC extracts events to Snowflake, runs a three-layer dbt pipeline, and generates 338,688 predictions at 15-minute slot grain. A Streamlit dashboard surfaces split Kitchen and Chicken production queues with 5-minute auto-refresh. A parallel A/B script pits ML against a naive hourly-average baseline under identical seeded demand — results write to ab_results.json, commit to GitHub, and trigger this portfolio site to rebuild nightly at 3:30am UTC.',
+      'End-to-end simulation of a Kwik Trip-style Kitchen Production System running live on AWS EC2. An async FastAPI ingest API receives simulated POS events from 12 stores using Poisson arrivals, FIFO batch inventory, and slot-boundary production logic. A nightly cron at 2am UTC extracts events to Snowflake, runs a three-layer dbt pipeline, and generates 338,688 predictions at 15-minute slot grain. A Streamlit dashboard surfaces split Kitchen and Chicken production queues with 5-minute auto-refresh. A parallel A/B script puts ML against a naive hourly-average baseline under identical seeded demand. Results write to ab_results.json, commit to GitHub, and trigger this portfolio site to rebuild nightly at 3:30am UTC.',
     techStack: [
       'Python',
       'FastAPI',
@@ -53,7 +53,7 @@ export const projects: Project[] = [
       'API and simulator deployed as systemd services on EC2 with auto-restart; nightly cron chains extract → dbt → predict → A/B → git push; GitHub Actions rebuilds this site each morning',
     ],
     challenges:
-      "The hardest bugs were silent ones. The model trained for weeks on 2.37M rows where slot_quantity was 0 for every row — a day_of_week convention mismatch between Snowflake's EXTRACT(DAYOFWEEK) (Sunday=0) and ISO weekday (Monday=0) meant the training join never matched. The model learned a constant near zero and I had no idea until I queried the training data directly. A separate bug inflated predictions 3–4x at low-traffic stores: the demand profile was computing a conditional mean E[X|X>0] by averaging only days with sales, rather than the true expected demand E[X] across all days. Both fixes required understanding the data at a level that unit tests would never catch.",
+      "The hardest bugs were silent ones. The model trained for weeks on 2.37M rows where slot_quantity was 0 for every row. A day_of_week convention mismatch between Snowflake's EXTRACT(DAYOFWEEK) (Sunday=0) and ISO weekday (Monday=0) meant the training join never matched. The model learned a constant near zero and I had no idea until I queried the training data directly. A separate bug inflated predictions 3–4x at low-traffic stores: the demand profile was computing a conditional mean E[X|X>0] by averaging only days with sales, rather than the true expected demand E[X] across all days. Both fixes required understanding the data at a level that unit tests would never catch.",
     githubUrl: 'https://github.com/DeanKuhn/kitchensync',
   },
   {
@@ -62,7 +62,7 @@ export const projects: Project[] = [
     year: '2026',
     status: 'live',
     category: 'data engineering',
-    tagline: 'Tracked 7,751 artists over 7+ weeks — underground acts (pages 1000+) grow 3× faster than mainstream in listener percentage',
+    tagline: 'Tracked 7,751 artists over 7+ weeks. Underground acts (pages 1000+) grow 3× faster than mainstream in listener percentage.',
     problem:
       "The Last.fm API returns only cumulative all-time stats — there is no native time series. To study whether chart position correlates with listener growth over time, you have to build the longitudinal dataset yourself by snapshotting repeatedly.",
     what:
@@ -124,11 +124,11 @@ export const projects: Project[] = [
     year: '2026',
     status: 'complete',
     category: 'algorithms',
-    tagline: 'VRP-TW solver where one GA co-evolves truck loading and delivery sequence simultaneously — no two-pass split',
+    tagline: 'VRP-TW solver where one GA co-evolves truck loading and delivery sequence simultaneously — no two-pass split.',
     problem:
-      'The VRP-TW has two interleaved sub-problems: which packages go on which truck (assignment) and in what order each truck delivers them (sequencing). Most implementations solve these in two separate passes. The WGU capstone that preceded this did worse — hard-coded package-to-truck assignments written directly into source, a fixed 40-package / 3-truck assumption, and no tolerance for variable constraints. Any change required a developer and a redeploy.',
+      'The VRP-TW shares two interwoven problems: which packages go on which truck (assignment) and in what order each truck delivers them (sequencing). Most implementations solve these in two separate passes. The WGU capstone that preceded this did worse — it hard-coded package-to-truck assignments written directly into source, a fixed 40-package / 3-truck assumption, and no tolerance for variable constraints. Any change required a developer and a redeploy.',
     what:
-      'A configurable GA that solves assignment and sequencing in a single chromosome, letting the two decisions co-evolve and inform each other across generations. Packages are procedurally generated per run with configurable deadline, delay, and refrigeration distributions. A bundle pre-processing step groups packages by address and validates constraint compatibility before the GA starts — reducing search space without losing solution quality. The fitness function scores five weighted objectives including a gradient deadline penalty. All major parameters are surfaced through a CLI; no source changes required to run different scenarios. Post-run, the CLI supports package status lookup by ID or address at any timestamp, reconstructed from simulation output.',
+      'A configurable GA that solves assignment and sequencing in a single chromosome, letting the two decisions co-evolve and inform each other across generations. Packages are procedurally generated per run with configurable deadline, delay, and refrigeration distributions. A bundle pre-processing step groups packages by address and validates constraint compatibility before the GA starts, reducing search space without losing solution quality. The fitness function scores five weighted objectives including a gradient deadline penalty. All major parameters are surfaced through a CLI; no source changes required to run different scenarios. Post-run, the CLI supports package status lookup by ID or address at any timestamp, reconstructed from simulation output.',
     techStack: ['Python', 'uv', 'CLI'],
     highlights: [
       'Sentinel chromosome: negative integers act as truck boundaries in a flat array — a single crossover or mutation can affect both which truck a package goes on and the delivery order within that truck',
@@ -140,7 +140,7 @@ export const projects: Project[] = [
       'Early termination after 500 stagnant generations enables convergence mode: set generations to a large number and let the algorithm run until done',
     ],
     challenges:
-      "Two bugs stalled performance for a while. First: Truck objects were maintaining state across fitness evaluations — departure time set in generation N carried into generation N+1, corrupting the simulation for every subsequent chromosome. The fix was reinitializing truck state at the start of each route evaluation in fitness(). Second: the original sentinel encoding used strings ('|1|', '|2|', ...), requiring isinstance(gene, str) on every gene in every fitness call across thousands of generations. Replacing sentinels with negative integers (checking gene < 0) is the fastest comparison available in Python — a meaningful gain in a tight hot loop.",
+      "Two bugs stalled performance for a while. First: Truck objects were maintaining state across fitness evaluations. Departure time set in generation N carried into generation N+1, corrupting the simulation for every subsequent chromosome. The fix was reinitializing truck state at the start of each route evaluation in fitness(). Second: the original sentinel encoding used strings ('|1|', '|2|', ...), requiring isinstance(gene, str) on every gene in every fitness call across thousands of generations. Replacing sentinels with negative integers (checking gene < 0) is the fastest comparison available in Python, allowing for a meaningful gain of efficiency in a tight hot loop.",
     githubUrl: 'https://github.com/DeanKuhn/ga-combined-routing-loading',
   },
 ];
