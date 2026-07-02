@@ -103,7 +103,8 @@ const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) 
         Dean Kuhn
       </h1>
       <p class="hero-sub muted">
-        I work across the full data lifecycle. The pipelines, transformations, warehousing, ML, and dashboards that make it usable. WGU CS graduate (May 2026), looking for a junior data engineering, analytics engineering, or data analysis role where I can own a problem from raw input to shipped result.
+        <span class="hero-sub-line">I work across the full data lifecycle. The pipelines, transformations, warehousing, ML, and dashboards that make it usable.</span>
+        <span class="hero-sub-line hero-sub-line--gap">WGU CS graduate (May 2026), looking for a junior data engineering, analytics engineering, or data analysis role where I can own a problem from raw input to shipped result.</span>
       </p>
 
       {lastRun && (
@@ -321,7 +322,7 @@ const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) 
           </div>
 
           <div class="card-footer">
-            <span class="card-tagline muted">Bronze→Silver→Gold Delta Lake pipeline detecting S&P 500 breakout signals from price and volume data.</span>
+            <span class="card-tagline muted">Bronze→Silver→Gold Delta Lake pipeline detecting S&P 500 breakout signals from price and volume data</span>
             <a href="/projects/market-cynic-pipeline" class="card-link mono muted">
               See architecture <Icon name="tabler:arrow-right" class="link-icon" />
             </a>
@@ -472,6 +473,14 @@ const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) 
     line-height: 1.75;
     max-width: 580px;
     margin-bottom: 1.5rem;
+  }
+
+  .hero-sub-line {
+    display: block;
+  }
+
+  .hero-sub-line--gap {
+    margin-top: 0.5rem;
   }
 
   .hero-status {
