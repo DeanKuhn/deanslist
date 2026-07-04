@@ -42,8 +42,7 @@ const chartData = abData ? {
   baseWaste: abData.daily.map((d) => (d.baseline.waste_cost / d.baseline.sales_revenue) * 100),
 } : null;
 
-// TODO: fill in once Streamlit URL is confirmed
-const STREAMLIT_URL: string | null = null;
+const STREAMLIT_URL: string | null = 'https://kitchensync.streamlit.app/';
 
 if (abData) {
   wasteDeltaPp = abData.cumulative.ml_avg_waste_pct - abData.cumulative.baseline_avg_waste_pct;

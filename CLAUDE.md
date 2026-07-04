@@ -61,7 +61,7 @@ Each project page follows this three-part structure:
 - **Pass 2**: KitchenSync gets the signature visual pattern (pilot). WGUPS project page follows with a convergence chart. Music Growth project page is next.
 - **WGUPS**: live on both homepage (route visual) and project page (convergence chart) — see "Live data fetches" above.
 - **Market Cynic**: `pending` card on homepage. Will go live once v2 is built.
-- **Streamlit URL** (`STREAMLIT_URL` in `[slug].astro`): currently `null` — fill in once confirmed.
+- **Streamlit URL** (`STREAMLIT_URL` in `[slug].astro`): confirmed, `https://kitchensync.streamlit.app/`.
 - **Power BI button**: intentionally omitted until a real URL exists.
 
 ## Interactive islands
