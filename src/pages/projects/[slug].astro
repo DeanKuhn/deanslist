@@ -101,6 +101,19 @@ if (abData) {
       </a>
     </header>
 
+    <!-- Live dashboard callout (kitchensync only) -->
+    {project.slug === 'kitchensync' && STREAMLIT_URL && (
+      <a href={STREAMLIT_URL} target="_blank" rel="noopener" class="dashboard-callout">
+        <div class="dashboard-callout-header">
+          <span class="section-label mono accent">live streamlit dashboard</span>
+          <span class="dashboard-callout-cta mono">open dashboard ↗</span>
+        </div>
+        <p class="dashboard-callout-note mono muted">
+          This is what kitchen staff cook from all shift — live Kitchen and Chicken production queues plus running waste and sales metrics, refreshed every 5 minutes.
+        </p>
+      </a>
+    )}
+
     <!-- Live results chart (package-router only) -->
     {project.slug === 'package-router' && convergenceData && (
       <div class="live-results-section">
@@ -528,26 +541,6 @@ if (abData) {
 
     </div>
 
-    <!-- Explore further (kitchensync only) -->
-    {project.slug === 'kitchensync' && (
-      <div class="explore-section">
-        <div class="section-label mono muted">explore further</div>
-        <div class="explore-links">
-          {STREAMLIT_URL ? (
-            <a href={STREAMLIT_URL} target="_blank" rel="noopener" class="explore-btn mono">
-              Open live dashboard ↗
-            </a>
-          ) : (
-            <span class="explore-btn explore-btn--pending mono" title="URL pending">
-              Open live dashboard ↗
-              <span class="explore-pending mono muted">(url pending)</span>
-            </span>
-          )}
-          {/* Power BI button intentionally omitted until URL is confirmed */}
-        </div>
-      </div>
-    )}
-
     <!-- Footer -->
     <div class="page-footer">
       <a href="/" class="mono muted">← all projects</a>
@@ -974,49 +967,40 @@ if (abData) {
     letter-spacing: 0.02em;
   }
 
-  /* Explore further section */
-  .explore-section {
-    margin-top: 3rem;
-    margin-bottom: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .explore-links {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    margin-top: 1rem;
-  }
-
-  .explore-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.8125rem;
-    border: 1px solid var(--border);
+  /* Live dashboard callout */
+  .dashboard-callout {
+    display: block;
+    background: var(--bg-card);
+    border: 1px solid var(--accent);
     border-radius: var(--radius);
-    padding: 0.5rem 1rem;
-    color: var(--accent);
-    transition: border-color 0.15s;
+    padding: 1.5rem;
+    margin-bottom: 3rem;
+    text-decoration: none;
+    transition: box-shadow 0.15s;
   }
 
-  .explore-btn:hover {
-    border-color: var(--accent);
+  .dashboard-callout:hover {
+    box-shadow: 0 0 0 1px var(--accent);
     text-decoration: none;
   }
 
-  .explore-btn--pending {
-    color: var(--muted);
-    cursor: default;
-    opacity: 0.6;
+  .dashboard-callout-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
 
-  .explore-btn--pending:hover {
-    border-color: var(--border);
+  .dashboard-callout-cta {
+    font-size: 0.8125rem;
+    color: var(--accent);
+    white-space: nowrap;
   }
 
-  .explore-pending {
-    font-size: 0.7rem;
+  .dashboard-callout-note {
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    margin-top: 0.75rem;
   }
 </style>
