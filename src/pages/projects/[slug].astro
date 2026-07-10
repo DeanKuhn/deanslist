@@ -44,6 +44,15 @@ const chartData = abData ? {
 
 const STREAMLIT_URL: string | null = 'https://kitchensync.streamlit.app/';
 
+const POWERBI_URLS: Record<string, string> = {
+  kitchensync: 'https://app.powerbi.com/groups/me/reports/1a4846f5-fc83-4766-ab0a-7db7a0b00da0/d24e24d7b21f280c17ba?experience=power-bi',
+  'music-growth-pipeline': 'https://app.powerbi.com/groups/me/reports/a0d9fc1f-0ae9-4896-afc1-8e43ea054d72/730616348ba9d9dea087?experience=power-bi',
+};
+const powerbiUrl: string | null = POWERBI_URLS[project.slug] ?? null;
+const powerbiNote = project.slug === 'kitchensync'
+  ? 'Stores ranked by waste % level, drill-through to individual store stats — sales/waste trends and highest-stockout items — plus an item performance page sliced by category or store.'
+  : 'Listener growth by tier and genre, a listener count vs. growth rate plot with per-artist drill-through, and an Artist Spotlight page showing listener growth over time and week-over-week change.';
+
 if (abData) {
   wasteDeltaPp = abData.cumulative.ml_avg_waste_pct - abData.cumulative.baseline_avg_waste_pct;
   const d = abData.daily[abData.daily.length - 1];
@@ -110,6 +119,19 @@ if (abData) {
         </div>
         <p class="dashboard-callout-note mono muted">
           This is what kitchen staff cook from all shift — live Kitchen and Chicken production queues plus running waste and sales metrics, refreshed every 5 minutes.
+        </p>
+      </a>
+    )}
+
+    <!-- Live Power BI dashboard callout (kitchensync + music-growth-pipeline) -->
+    {powerbiUrl && (
+      <a href={powerbiUrl} target="_blank" rel="noopener" class="dashboard-callout">
+        <div class="dashboard-callout-header">
+          <span class="section-label mono accent">live power bi dashboard</span>
+          <span class="dashboard-callout-cta mono">open dashboard ↗</span>
+        </div>
+        <p class="dashboard-callout-note mono muted">
+          {powerbiNote}
         </p>
       </a>
     )}
@@ -301,25 +323,6 @@ if (abData) {
       </div>
     )}
 
-    <!-- Power BI Report Preview (music-growth-pipeline only) -->
-    {project.slug === 'music-growth-pipeline' && (
-      <div class="report-section">
-        <div class="report-header">
-          <span class="section-label mono muted">power bi report</span>
-        </div>
-        <div class="report-grid">
-          <a href="/powerbi/music-growth-main.png" target="_blank" rel="noopener" class="report-card">
-            <div class="report-card-label mono muted">main dashboard</div>
-            <img src="/powerbi/music-growth-main.png" alt="Music Growth Pipeline — main Power BI dashboard" class="report-img" />
-          </a>
-          <a href="/powerbi/music-growth-drillthrough.png" target="_blank" rel="noopener" class="report-card">
-            <div class="report-card-label mono muted">artist drill-through</div>
-            <img src="/powerbi/music-growth-drillthrough.png" alt="Music Growth Pipeline — artist drill-through Power BI page" class="report-img" />
-          </a>
-        </div>
-      </div>
-    )}
-
     <div class="diagram-frame">
       <div class="diagram-label mono muted">how it's built</div>
 
@@ -355,7 +358,7 @@ if (abData) {
           <line x1="280" y1="384" x2="280" y2="412" stroke="#7a7f87" stroke-width="1.5"/>
           <polyline points="276,412 280,419 284,412" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
           {/* LightGBM */}
-          <rect x="170" y="419" width="220" height="38" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+          <rect x="150" y="419" width="260" height="38" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
           <text x="280" y="438" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">LightGBM — 12 stores × 45 items</text>
           {/* Split */}
           <line x1="280" y1="457" x2="280" y2="490" stroke="#7a7f87" stroke-width="1.5"/>
@@ -870,59 +873,6 @@ if (abData) {
 
   @media (max-width: 480px) {
     .ab-grid { grid-template-columns: 1fr; }
-  }
-
-  /* Power BI report preview */
-  .report-section {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    margin-bottom: 3rem;
-  }
-
-  .report-header {
-    margin-bottom: 1.25rem;
-  }
-
-  .report-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-
-  .report-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.625rem;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1rem;
-    transition: border-color 0.15s;
-    text-decoration: none;
-  }
-
-  .report-card:hover {
-    border-color: var(--accent);
-    text-decoration: none;
-  }
-
-  .report-card-label {
-    font-size: 0.6875rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .report-img {
-    width: 100%;
-    display: block;
-    border-radius: 2px;
-    border: 1px solid var(--border);
-  }
-
-  @media (max-width: 600px) {
-    .report-grid { grid-template-columns: 1fr; }
   }
 
   /* Page footer */
