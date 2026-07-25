@@ -327,7 +327,7 @@ if (abData) {
       <div class="diagram-label mono muted">how it's built</div>
 
       {project.slug === 'kitchensync' && (
-        <svg width="100%" viewBox="0 0 560 750" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg width="100%" viewBox="0 0 560 800" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           {/* POS Simulator */}
           <rect x="170" y="10" width="220" height="38" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
           <text x="280" y="29" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">POS Simulator — EC2</text>
@@ -340,53 +340,59 @@ if (abData) {
           <line x1="280" y1="125" x2="280" y2="157" stroke="#7a7f87" stroke-width="1.5"/>
           <polyline points="276,157 280,164 284,157" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
           {/* Neon Postgres */}
-          <rect x="80" y="164" width="400" height="38" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+          <rect x="80" y="164" width="400" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
           <text x="280" y="183" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Neon Postgres — 12 store schemas</text>
-          <line x1="280" y1="202" x2="280" y2="242" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="276,242 280,249 284,242" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="288" y="219" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">2am UTC · extract_to_snowflake.py</text>
-          {/* Snowflake */}
-          <rect x="170" y="249" width="220" height="38" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="280" y="268" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Snowflake — KS_DB.RAW</text>
-          <line x1="280" y1="287" x2="280" y2="322" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="276,322 280,329 284,322" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="288" y="305" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">dbt Core</text>
-          {/* dbt pipeline */}
-          <rect x="50" y="329" width="460" height="55" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
-          <text x="280" y="349" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Staging → Intermediate → Marts</text>
-          <text x="280" y="368" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">stg · int_rolling_features · mart_waste · mart_predictions</text>
-          <line x1="280" y1="384" x2="280" y2="412" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="276,412 280,419 284,412" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          {/* LightGBM */}
-          <rect x="150" y="419" width="260" height="38" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="280" y="438" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">LightGBM — 12 stores × 45 items</text>
-          {/* Split */}
-          <line x1="280" y1="457" x2="280" y2="490" stroke="#7a7f87" stroke-width="1.5"/>
-          <line x1="130" y1="490" x2="430" y2="490" stroke="#7a7f87" stroke-width="1.5"/>
-          <line x1="130" y1="490" x2="130" y2="522" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="126,522 130,529 134,522" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <line x1="430" y1="490" x2="430" y2="522" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="426,522 430,529 434,522" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          <text x="280" y="201" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">+ public.predictions + public.baseline_profile</text>
+          <line x1="280" y1="219" x2="280" y2="252" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="276,252 280,259 284,252" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          <text x="288" y="235" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">2am UTC · build_baseline_profile.py</text>
+          {/* Split: Streamlit / A/B */}
+          <line x1="130" y1="259" x2="430" y2="259" stroke="#7a7f87" stroke-width="1.5"/>
+          <line x1="130" y1="259" x2="130" y2="291" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="126,291 130,298 134,291" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          <line x1="430" y1="259" x2="430" y2="291" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="426,291 430,298 434,291" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
           {/* Streamlit (left) */}
-          <rect x="20" y="529" width="220" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="130" y="549" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Streamlit Dashboard</text>
-          <text x="130" y="568" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">Kitchen + Chicken · 5min refresh</text>
+          <rect x="20" y="298" width="220" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+          <text x="130" y="318" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Streamlit Dashboard</text>
+          <text x="130" y="337" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">Kitchen + Chicken · 5min refresh</text>
           {/* A/B Comparison (right) */}
-          <rect x="320" y="529" width="220" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="430" y="549" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">A/B Comparison</text>
-          <text x="430" y="568" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">ML vs baseline · seeded demand</text>
-          <line x1="430" y1="584" x2="430" y2="618" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="426,618 430,625 434,618" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="438" y="602" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">git commit + push</text>
+          <rect x="320" y="298" width="220" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+          <text x="430" y="318" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">A/B Comparison</text>
+          <text x="430" y="337" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">ML vs baseline · seeded demand</text>
+          <line x1="430" y1="353" x2="430" y2="387" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="426,387 430,394 434,387" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          <text x="438" y="371" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">git commit + push</text>
           {/* ab_results.json */}
-          <rect x="320" y="625" width="220" height="35" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
-          <text x="430" y="642" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">data/ab_results.json</text>
-          <line x1="430" y1="660" x2="430" y2="693" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="426,693 430,700 434,693" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="430" y="677" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">nightly rebuild · 3:30am UTC</text>
+          <rect x="320" y="394" width="220" height="35" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
+          <text x="430" y="411" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">data/ab_results.json</text>
+          <line x1="430" y1="429" x2="430" y2="462" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="426,462 430,469 434,462" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          <text x="420" y="446" text-anchor="end" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">nightly rebuild · 3:30am UTC</text>
           {/* Astro Portfolio */}
-          <rect x="305" y="700" width="250" height="35" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="430" y="717" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Astro Portfolio — deanslist.dev</text>
+          <rect x="305" y="469" width="250" height="35" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+          <text x="430" y="486" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Astro Portfolio — deanslist.dev</text>
+
+          {/* Manual retrain branch */}
+          <rect x="30" y="540" width="500" height="235" rx="2" fill="none" stroke="#2a2d32" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="50" y="562" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace" letter-spacing="0.05em">MANUAL RETRAIN — ON DEMAND ONLY</text>
+          <line x1="280" y1="574" x2="280" y2="588" stroke="#2a2d32" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <polyline points="276,588 280,595 284,588" fill="none" stroke="#2a2d32" stroke-width="1.5"/>
+          {/* Snowflake */}
+          <rect x="170" y="595" width="220" height="38" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
+          <text x="280" y="614" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Snowflake — resumed on demand</text>
+          <line x1="280" y1="633" x2="280" y2="656" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="276,656 280,663 284,656" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          {/* dbt pipeline */}
+          <rect x="50" y="663" width="460" height="45" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
+          <text x="280" y="681" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">dbt: Staging → Intermediate → Marts</text>
+          <text x="280" y="698" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">rebuilds MART_ML_TRAINING_FEATURES</text>
+          <line x1="280" y1="708" x2="280" y2="731" stroke="#7a7f87" stroke-width="1.5"/>
+          <polyline points="276,731 280,738 284,731" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+          {/* LightGBM + export */}
+          <rect x="50" y="738" width="460" height="38" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
+          <text x="280" y="753" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">LightGBM train/predict</text>
+          <text x="280" y="768" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="9" font-family="IBM Plex Mono, monospace">export_predictions_to_neon.py → public.predictions</text>
         </svg>
       )}
 
@@ -529,7 +535,9 @@ if (abData) {
       {project.challenges && (
         <div class="section section--challenges">
           <div class="section-label mono muted">what i learned the hard way</div>
-          <p>{project.challenges}</p>
+          {project.challenges.split('\n\n').map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
         </div>
       )}
 
@@ -710,10 +718,17 @@ if (abData) {
   }
 
   /* Challenges */
+  .section--challenges {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
   .section--challenges p {
     border-left: 2px solid var(--accent);
     padding-left: 1rem;
     color: var(--text);
+    margin: 0;
   }
 
   /* Tags */
