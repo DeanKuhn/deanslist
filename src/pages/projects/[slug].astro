@@ -1,7 +1,7 @@
 ---
 import ProjectLayout from '../../layouts/Project.astro';
 import { projects } from '../../data/projects';
-import { fetchKitchenSync, fetchMusicPipeline, fetchWgups } from '../../lib/fetchProjectData';
+import { fetchKitchenSync, fetchMusicPipeline, fetchWgups, listenerBandLabel, formatListeners } from '../../lib/fetchProjectData';
 import KitchenSyncChart from '../../components/charts/KitchenSyncChart';
 import WgupsConvergenceChart from '../../components/charts/WgupsConvergenceChart';
 import type { GetStaticPaths } from 'astro';
@@ -21,6 +21,21 @@ const wgupsResult = project.slug === 'package-router' ? await fetchWgups() : { s
 const abData = kitchenResult.state === 'ok' ? kitchenResult.data : null;
 const pipelineStats = musicResult.state === 'ok' ? musicResult.data : null;
 const wgupsData = wgupsResult.state === 'ok' ? wgupsResult.data : null;
+
+// Growth by starting-listener quintile, smallest band first
+const rawQuintiles = [...(pipelineStats?.growth_by_size_quintile ?? [])]
+  .sort((a, b) => a.quintile - b.quintile);
+const sizeQuintiles = rawQuintiles.map((q) => ({
+  ...q,
+  label: listenerBandLabel(q, rawQuintiles.length),
+}));
+const quintileMedianMax = Math.max(...sizeQuintiles.map((q) => q.median_pct_growth), 0.0001);
+
+const smallestQ = sizeQuintiles[0];
+const largestQ = sizeQuintiles[sizeQuintiles.length - 1];
+const quintileCallout = smallestQ && largestQ
+  ? `Median growth falls with artist size: ${smallestQ.median_pct_growth.toFixed(2)}% for the smallest fifth (${smallestQ.label} listeners) down to ${largestQ.median_pct_growth.toFixed(2)}% for the largest (${largestQ.label}). Averages run far higher (${smallestQ.avg_pct_growth.toFixed(2)}% in the smallest band) — a thin tail of viral outliers pulls them up, which is why the median is the honest number. ${pipelineStats!.summary.artist_count.toLocaleString()} artists tracked.`
+  : '';
 
 const convergenceData = wgupsData ? {
   generations: wgupsData.convergence.map((c) => c.generation),
@@ -270,56 +285,48 @@ if (abData) {
           <span class="ab-days mono muted">{pipelineStats.summary.weeks_tracked} weeks of data · updated {pipelineStats.summary.latest_snapshot}</span>
         </div>
 
-        <div class="ab-grid">
-          {pipelineStats.growth_by_tier.filter(t => t.tier === 'mainstream').map(t => (
-            <div class="ab-card">
-              <div class="ab-card-label mono muted">mainstream · pages 1–50</div>
-              <div class="ab-metric">
-                <span class="ab-value">{t.median_pct_growth.toFixed(2)}%</span>
-                <span class="ab-key mono muted">median 7-week growth</span>
+        {sizeQuintiles.length > 0 && (
+        <div class="quintile-block">
+          <div class="ab-daily-label mono muted">median {pipelineStats.summary.weeks_tracked}-week growth by starting listener size</div>
+          <div class="quintile-list">
+            {sizeQuintiles.map(q => (
+              <div class="quintile-row">
+                <span class="quintile-band mono">{q.label}</span>
+                <div class="quintile-track">
+                  <div class="quintile-bar" style={`width: ${(q.median_pct_growth / quintileMedianMax) * 100}%`}></div>
+                </div>
+                <span class="quintile-median mono accent">{q.median_pct_growth.toFixed(2)}%</span>
+                <span class="quintile-meta mono muted">
+                  avg {q.avg_pct_growth.toFixed(2)}% · p90 {q.p90_pct_growth.toFixed(2)}% · n={q.artist_count.toLocaleString()}
+                </span>
               </div>
-              <div class="ab-metric">
-                <span class="ab-value">{t.p90_pct_growth.toFixed(2)}%</span>
-                <span class="ab-key mono muted">p90 growth</span>
-              </div>
-            </div>
-          ))}
-          {pipelineStats.growth_by_tier.filter(t => t.tier === 'indie').map(t => (
-            <div class="ab-card">
-              <div class="ab-card-label mono accent">indie · pages 51+</div>
-              <div class="ab-metric">
-                <span class="ab-value accent">{t.median_pct_growth.toFixed(2)}%</span>
-                <span class="ab-key mono muted">median 7-week growth</span>
-              </div>
-              <div class="ab-metric">
-                <span class="ab-value accent">{t.p90_pct_growth.toFixed(2)}%</span>
-                <span class="ab-key mono muted">p90 growth</span>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div class="quintile-axis mono muted">
+            rows run smallest to largest · quintiles cut on listener count at the start of the window
+          </div>
         </div>
+        )}
 
         <div class="ab-daily">
           <div class="ab-daily-label mono muted">fastest-growing indie artists · {pipelineStats.summary.latest_snapshot}</div>
+          <div class="list-scope mono muted">indie tier only (chart pages 51–2000), 5,000+ starting listeners — not the full tracked catalogue</div>
           <div class="growth-list">
             {pipelineStats.top_growing_artists.slice(0, 5).map(a => (
               <div class="growth-row">
                 <span class="growth-name mono">{a.artist_name}</span>
-                <span class="growth-meta mono muted">pg {a.min_page}</span>
+                <span class="growth-meta mono muted">{formatListeners(a.starting_count)} → {formatListeners(a.ending_count)}</span>
                 <span class="growth-value mono accent">+{a.total_pct_growth.toFixed(1)}%</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div class="ab-callout mono">
-          {(() => {
-            const indie = pipelineStats!.growth_by_tier.find(t => t.tier === 'indie');
-            const mainstream = pipelineStats!.growth_by_tier.find(t => t.tier === 'mainstream');
-            const ratio = indie && mainstream ? (indie.p90_pct_growth / mainstream.p90_pct_growth).toFixed(1) : '—';
-            return `Underground artists show ${indie?.p90_pct_growth.toFixed(1)}% P90 growth — ${ratio}× higher than mainstream (${mainstream?.p90_pct_growth.toFixed(1)}%). ${pipelineStats!.summary.artist_count.toLocaleString()} artists tracked.`;
-          })()}
-        </div>
+        {quintileCallout && (
+          <div class="ab-callout mono">
+            {quintileCallout}
+          </div>
+        )}
       </div>
     )}
 
@@ -851,7 +858,78 @@ if (abData) {
     line-height: 1.6;
   }
 
+  /* Size-quintile bars (music pipeline) */
+  .quintile-block {
+    margin-bottom: 1.25rem;
+  }
+
+  .quintile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .quintile-row {
+    display: grid;
+    grid-template-columns: 96px 1fr 62px;
+    grid-template-areas:
+      'band track median'
+      'band meta  meta';
+    align-items: center;
+    gap: 0.25rem 0.875rem;
+  }
+
+  .quintile-band {
+    grid-area: band;
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    color: var(--text);
+  }
+
+  .quintile-track {
+    grid-area: track;
+    height: 6px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .quintile-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .quintile-median {
+    grid-area: median;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .quintile-meta {
+    grid-area: meta;
+    font-size: 0.625rem;
+    opacity: 0.65;
+  }
+
+  .quintile-axis {
+    font-size: 0.625rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-top: 0.75rem;
+    padding-left: calc(96px + 0.875rem);
+  }
+
   /* Growth list (music pipeline) */
+  .list-scope {
+    font-size: 0.625rem;
+    letter-spacing: 0.04em;
+    opacity: 0.6;
+    margin: -0.5rem 0 0.875rem;
+  }
+
   .growth-list {
     display: flex;
     flex-direction: column;

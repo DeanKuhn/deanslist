@@ -21,10 +21,38 @@ export type KitchenSyncData = {
 export type MusicPipelineData = {
   generated_at: string;
   summary: { artist_count: number; weeks_tracked: number; latest_snapshot: string };
-  growth_by_tier: Array<{ tier: string; artist_count: number; median_pct_growth: number; p90_pct_growth: number }>;
-  top_growing_artists: Array<{ artist_name: string; min_page: number; starting_count: number; ending_count: number; total_pct_growth: number }>;
+  growth_by_size_quintile: Array<{
+    quintile: number;
+    artist_count: number;
+    band_min: number;
+    band_max: number;
+    avg_pct_growth: number;
+    median_pct_growth: number;
+    p90_pct_growth: number;
+  }>;
+  top_growing_artists: Array<{ artist_name: string; starting_count: number; ending_count: number; total_pct_growth: number }>;
   genre_growth: Array<{ genre: string; artist_count: number; median_total_pct_growth: number }>;
 };
+
+// Compact listener counts for axis-style labels: 69347 -> "69k", 1240000 -> "1.2M"
+export function formatListeners(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
+  if (n >= 1_000) {
+    const k = n / 1_000;
+    return `${k < 10 ? k.toFixed(1).replace(/\.0$/, '') : Math.round(k)}k`;
+  }
+  return String(n);
+}
+
+// "under 69k" / "69k–137k" / "470k+" for a quintile's starting-listener band
+export function listenerBandLabel(
+  q: { quintile: number; band_min: number; band_max: number },
+  total: number
+): string {
+  if (q.quintile === 1) return `under ${formatListeners(q.band_max)}`;
+  if (q.quintile === total) return `${formatListeners(q.band_min)}+`;
+  return `${formatListeners(q.band_min)}–${formatListeners(q.band_max)}`;
+}
 
 export async function fetchKitchenSync(): Promise<FetchResult<KitchenSyncData>> {
   try {

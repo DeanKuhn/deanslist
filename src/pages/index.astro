@@ -1,7 +1,7 @@
 ---
 import ProjectLayout from '../layouts/Project.astro';
 import { projects } from '../data/projects';
-import { fetchKitchenSync, fetchMusicPipeline, fetchWgups } from '../lib/fetchProjectData';
+import { fetchKitchenSync, fetchMusicPipeline, fetchWgups, listenerBandLabel } from '../lib/fetchProjectData';
 import { buildWgupsRouteVisual } from '../lib/wgupsRoute';
 import { Icon } from 'astro-icon/components';
 
@@ -71,10 +71,10 @@ const artistCount = musicData
   ? Number(musicData.summary.artist_count).toLocaleString()
   : null;
 const weeksTracked = musicData?.summary.weeks_tracked ?? null;
-const indieTier = musicData?.growth_by_tier.find((t) => t.tier === 'indie');
-const mainstreamTier = musicData?.growth_by_tier.find((t) => t.tier === 'mainstream');
-const indieP90 = indieTier ? indieTier.p90_pct_growth.toFixed(1) : null;
-const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) : null;
+const sizeQuintiles = [...(musicData?.growth_by_size_quintile ?? [])]
+  .sort((a, b) => a.quintile - b.quintile)
+  .map((q, _i, arr) => ({ ...q, label: listenerBandLabel(q, arr.length) }));
+const quintileMedianMax = Math.max(...sizeQuintiles.map((q) => q.median_pct_growth), 0.0001);
 ---
 
 <ProjectLayout description="Data engineer. Milwaukee, WI.">
@@ -204,22 +204,18 @@ const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) 
                   <span class="metric-value accent">{artistCount}</span>
                   <span class="metric-label mono muted">artists tracked · {weeksTracked} weeks</span>
                 </div>
-                {indieTier && mainstreamTier && (
+                {sizeQuintiles.length > 0 && (
                   <div class="tier-bars">
-                    <div class="tier-row">
-                      <span class="tier-label mono muted">mainstream P90</span>
-                      <div class="tier-bar-track">
-                        <div class="tier-bar" style={`width: ${Math.min(100, (mainstreamTier.p90_pct_growth / (indieTier.p90_pct_growth || 1)) * 100)}%`}></div>
+                    <div class="tier-caption mono muted">median growth by listener size</div>
+                    {sizeQuintiles.map((q) => (
+                      <div class="tier-row">
+                        <span class="tier-label mono muted">{q.label}</span>
+                        <div class="tier-bar-track">
+                          <div class="tier-bar tier-bar--accent" style={`width: ${(q.median_pct_growth / quintileMedianMax) * 100}%`}></div>
+                        </div>
+                        <span class="tier-val mono accent">{q.median_pct_growth.toFixed(2)}%</span>
                       </div>
-                      <span class="tier-val mono">{mainstreamP90}%</span>
-                    </div>
-                    <div class="tier-row">
-                      <span class="tier-label mono muted">indie P90</span>
-                      <div class="tier-bar-track">
-                        <div class="tier-bar tier-bar--accent" style="width: 100%"></div>
-                      </div>
-                      <span class="tier-val mono accent">{indieP90}%</span>
-                    </div>
+                    ))}
                   </div>
                 )}
               </>
@@ -229,7 +225,7 @@ const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) 
           </div>
 
           <div class="card-footer">
-            <span class="card-tagline muted">Underground artists grow 3× faster than mainstream in listener %</span>
+            <span class="card-tagline muted">Median listener growth falls steadily as artists get larger</span>
             <a href="/projects/music-growth-pipeline" class="card-link mono accent">
               View project <Icon name="tabler:arrow-right" class="link-icon" />
             </a>
@@ -717,6 +713,13 @@ const mainstreamP90 = mainstreamTier ? mainstreamTier.p90_pct_growth.toFixed(1) 
     flex-direction: column;
     gap: 0.625rem;
     margin-top: 0.5rem;
+  }
+
+  .tier-caption {
+    font-size: 0.625rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.125rem;
   }
 
   .tier-row {

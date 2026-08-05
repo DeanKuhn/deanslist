@@ -64,11 +64,11 @@ export const projects: Project[] = [
     year: '2026',
     status: 'live',
     category: 'data engineering',
-    tagline: 'Tracked 7,751 artists over 7+ weeks. Underground acts (pages 1000+) grow 3× faster than mainstream in listener percentage.',
+    tagline: 'Longitudinal listener tracking across weekly Last.fm snapshots. Median growth falls monotonically as artists get larger.',
     problem:
-      "The Last.fm API returns only cumulative all-time stats — there is no native time series. To study whether chart position correlates with listener growth over time, you have to build the longitudinal dataset yourself by snapshotting repeatedly.",
+      "The Last.fm API returns only cumulative all-time stats — there is no native time series. To study whether an artist's audience size correlates with listener growth over time, you have to build the longitudinal dataset yourself by snapshotting repeatedly.",
     what:
-      'Weekly ingestion pipeline snapshots listener data for 7,751 artists from the Last.fm global chart into Postgres on Neon. Artists are split into tiers by chart page depth: mainstream (pages 1–50) vs indie (pages 51+). A dbt transformation layer (6 staging + 7 mart models) powers both cross-sectional and longitudinal analysis. After each weekly snapshot, dbt rebuilds the mart views, a stats script queries them and writes pipeline_stats.json to GitHub, and this portfolio page picks up the fresh data in its nightly rebuild.',
+      'Weekly ingestion pipeline snapshots listener data for artists from the Last.fm global chart into Postgres on Neon. Artists are bucketed into size quintiles by their listener count at the start of the measurement window, so growth is compared across audience size rather than chart position. A dbt transformation layer (6 staging + 7 mart models) powers both cross-sectional and longitudinal analysis. After each weekly snapshot, dbt rebuilds the mart views, a stats script queries them and writes pipeline_stats.json to GitHub, and this portfolio page picks up the fresh data in its nightly rebuild.',
     techStack: [
       'Python',
       'PostgreSQL (Neon)',
@@ -78,12 +78,12 @@ export const projects: Project[] = [
       'SQL',
     ],
     highlights: [
-      '7,751 artists tracked across 7 weekly snapshots (April–June 2026): 250 mainstream (pages 1–50), 7,501 indie',
-      'Core finding: underground artists (pages 1000+) show P90 growth of 9.16% over 7 weeks vs mainstream 2.75% — the gap widens at the tail, not the median',
+      'Artists tracked across weekly snapshots and split into five equal-sized bands by listener count at the start of the window (live counts on the project page)',
+      'Core finding: median listener growth declines monotonically with artist size — the smallest band grows roughly 1.5× the median rate of the largest',
       'dbt mart layer: listener_growth (LAG window function), artist_growth_summary, weekly_growth_by_tier, genre_growth — marts build on marts via ref()',
-      'Cross-sectional finding: ~4× plays-per-listener gap (mainstream median 74.76 vs indie 17.69) consistent across full distribution — indie P90 listeners (782K) falls below mainstream P25 (2.3M)',
-      'Genre signal: EDM shows highest median growth rate; classical and metal are slowest — genre appears secondary to chart depth as a growth predictor',
-      'Standout cases: several underground artists (pages 1500+) grew 100–400% over 7 weeks — growth patterns split between viral spikes and steady week-over-week acceleration',
+      'Averages sit well above medians in every band — a thin tail of viral breakouts skews the mean, so the median carries the finding',
+      'Genre signal: EDM shows highest median growth rate; classical and metal are slowest — genre appears secondary to artist size as a growth predictor',
+      'Standout cases: several small artists grew 100–400% over the window — growth patterns split between viral spikes and steady week-over-week acceleration',
     ],
     githubUrl: 'https://github.com/DeanKuhn/music-growth-pipeline',
   },
