@@ -1,0 +1,98 @@
+---
+import { fetchWgups } from '../../lib/fetchProjectData';
+import WgupsConvergenceChart from '../charts/WgupsConvergenceChart';
+import DiagramFrame from './DiagramFrame.astro';
+
+const wgupsResult = await fetchWgups();
+const wgupsData = wgupsResult.state === 'ok' ? wgupsResult.data : null;
+
+const convergenceData = wgupsData ? {
+  generations: wgupsData.convergence.map((c) => c.generation),
+  scores: wgupsData.convergence.map((c) => c.score),
+} : null;
+---
+
+{convergenceData && (
+  <div class="live-results-section">
+    <div class="live-results-header">
+      <span class="section-label mono muted">live results</span>
+      <span class="mono muted live-results-days">run {wgupsData!.run_timestamp.slice(0, 10)}</span>
+    </div>
+    <div class="live-results-summary mono muted">
+      final fitness score {wgupsData!.final_score.toFixed(1)} · {wgupsData!.parameters.packages} packages · {wgupsData!.parameters.trucks} trucks · converged at generation {convergenceData.generations.at(-1)}
+    </div>
+    <WgupsConvergenceChart
+      generations={convergenceData.generations}
+      scores={convergenceData.scores}
+      client:visible
+    />
+  </div>
+)}
+
+<DiagramFrame>
+  <svg width="100%" viewBox="0 0 480 545" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <rect x="90" y="10" width="300" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+    <text x="240" y="30" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">Random package generation</text>
+    <line x1="240" y1="50" x2="240" y2="83" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="236,83 240,90 244,83" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <rect x="50" y="90" width="380" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+    <text x="240" y="110" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Population init — capacity-aware seeding</text>
+    <line x1="240" y1="130" x2="240" y2="173" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="236,173 240,180 244,173" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <rect x="60" y="180" width="360" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+    <text x="240" y="200" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">Fitness function</text>
+    <text x="240" y="219" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">distance_score + deadline_penalty + capacity</text>
+    <line x1="240" y1="235" x2="240" y2="298" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="236,298 240,305 244,298" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <text x="248" y="261" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">repeat until convergence</text>
+    <text x="248" y="276" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">or 500 stagnant generations</text>
+    <rect x="50" y="305" width="380" height="55" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
+    <text x="240" y="325" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Selection → Crossover (OX) → Mutation</text>
+    <text x="240" y="343" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">swap | scramble | inversion + adaptive rate</text>
+    <line x1="240" y1="360" x2="240" y2="413" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="236,413 240,420 244,413" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <rect x="50" y="420" width="380" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+    <text x="240" y="440" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Best chromosome → delivery routes per truck</text>
+    <line x1="240" y1="460" x2="240" y2="493" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="236,493 240,500 244,493" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <rect x="100" y="500" width="280" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+    <text x="240" y="520" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">CLI — status lookup by ID</text>
+  </svg>
+</DiagramFrame>
+
+<style>
+  .section-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.625rem;
+    opacity: 0.85;
+  }
+
+  .live-results-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .live-results-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .live-results-days {
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    opacity: 0.5;
+  }
+
+  .live-results-summary {
+    font-size: 0.8rem;
+    margin-bottom: 1.25rem;
+    letter-spacing: 0.02em;
+  }
+</style>

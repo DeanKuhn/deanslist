@@ -1,0 +1,41 @@
+---
+import DiagramFrame from './DiagramFrame.astro';
+---
+
+<DiagramFrame>
+  <svg width="100%" viewBox="0 0 560 500" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <rect x="30" y="10" width="220" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+    <text x="140" y="30" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Yahoo Finance (Playwright)</text>
+    <rect x="310" y="10" width="220" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+    <text x="420" y="30" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Reddit — 4 subreddits</text>
+    <line x1="140" y1="50" x2="140" y2="83" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="136,83 140,90 144,83" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <line x1="420" y1="50" x2="420" y2="83" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="416,83 420,90 424,83" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <rect x="30" y="90" width="220" height="50" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
+    <text x="140" y="108" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Bronze layer</text>
+    <text x="140" y="126" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">raw_stocks.json</text>
+    <rect x="310" y="90" width="220" height="50" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
+    <text x="420" y="108" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Bronze layer</text>
+    <text x="420" y="126" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">Reddit posts + VADER</text>
+    <polyline points="140,140 140,185 280,185" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="420,140 420,185 280,185" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <line x1="280" y1="185" x2="280" y2="203" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="276,203 280,210 284,203" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <rect x="80" y="210" width="400" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+    <text x="280" y="230" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Silver — Pydantic validation</text>
+    <line x1="280" y1="250" x2="280" y2="283" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="276,283 280,290 284,283" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <rect x="60" y="290" width="440" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+    <text x="280" y="310" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Gold — divergence detection</text>
+    <text x="280" y="328" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">sentiment_momentum &gt; 0 AND price_momentum &lt; 0</text>
+    <line x1="280" y1="345" x2="280" y2="368" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="276,368 280,375 284,368" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <rect x="100" y="375" width="360" height="40" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
+    <text x="280" y="395" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">market_history.parquet (append-only)</text>
+    <line x1="280" y1="415" x2="280" y2="448" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="276,448 280,455 284,448" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <rect x="120" y="455" width="320" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+    <text x="280" y="475" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Streamlit Dashboard</text>
+  </svg>
+</DiagramFrame>

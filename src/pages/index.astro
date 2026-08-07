@@ -32,7 +32,7 @@ timestamps.sort((a, b) => (b > a ? 1 : -1));
 const lastRun = timestamps[0] ?? null;
 
 const liveProjects = projects.filter((p) => p.status === 'live').length + 1; // + WGUPS (live route data; project itself is complete)
-const devProjects = 1; // Market Cynic
+const devProjects = 2; // PharmaWatch + Market Cynic
 
 // KitchenSync card metrics
 const mlServiceLevel = kitchenData
@@ -97,14 +97,14 @@ const quintileMedianMax = Math.max(...sizeQuintiles.map((q) => q.median_pct_grow
     <section class="hero container">
       <div class="hero-eyebrow mono muted">
         <span class="status-dot"></span>
-        analytics engineer · milwaukee, wi
+        data engineering & analytics · milwaukee, wi
       </div>
       <h1 class="hero-headline">
         Dean Kuhn
       </h1>
       <p class="hero-sub muted">
-        <span class="hero-sub-line">I work across the full data lifecycle. The pipelines, transformations, warehousing, ML, and dashboards that make it usable.</span>
-        <span class="hero-sub-line hero-sub-line--gap">WGU CS graduate (May 2026), looking for a junior data engineering, analytics engineering, or data analysis role where I can own a problem from raw input to shipped result.</span>
+        <span class="hero-sub-line">I build data pipelines that end in something you can actually use. Not another Power BI report, but a live, interactive product.</span>
+        <span class="hero-sub-line hero-sub-line--gap">I'm already solving real problems on my own. Looking for the right team to contribute as a data analyst / analytics engineer / data engineer.</span>
       </p>
 
       {lastRun && (
@@ -133,6 +133,51 @@ const quintileMedianMax = Math.max(...sizeQuintiles.map((q) => q.median_pct_grow
       <div class="section-label mono muted">projects</div>
 
       <div class="cards-grid">
+
+        <!-- Music Growth Pipeline -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Music Growth Pipeline</div>
+              <div class="card-subtitle mono muted">data engineering · live</div>
+            </div>
+            <span class="live-badge mono">● live</span>
+          </div>
+
+          <div class="card-body">
+            {musicData ? (
+              <>
+                <div class="card-metric">
+                  <span class="metric-value accent">{artistCount}</span>
+                  <span class="metric-label mono muted">artists tracked · {weeksTracked} weeks</span>
+                </div>
+                {sizeQuintiles.length > 0 && (
+                  <div class="tier-bars">
+                    <div class="tier-caption mono muted">median growth by listener size</div>
+                    {sizeQuintiles.map((q) => (
+                      <div class="tier-row">
+                        <span class="tier-label mono muted">{q.label}</span>
+                        <div class="tier-bar-track">
+                          <div class="tier-bar tier-bar--accent" style={`width: ${(q.median_pct_growth / quintileMedianMax) * 100}%`}></div>
+                        </div>
+                        <span class="tier-val mono accent">{q.median_pct_growth.toFixed(2)}%</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div class="card-omitted mono muted">live data unavailable at build time</div>
+            )}
+          </div>
+
+          <div class="card-footer">
+            <span class="card-tagline muted">Median listener growth falls steadily as artists get larger</span>
+            <a href="/projects/music-growth-pipeline" class="card-link mono accent">
+              View project <Icon name="tabler:arrow-right" class="link-icon" />
+            </a>
+          </div>
+        </div>
 
         <!-- KitchenSync -->
         <div class="card">
@@ -187,48 +232,25 @@ const quintileMedianMax = Math.max(...sizeQuintiles.map((q) => q.median_pct_grow
           </div>
         </div>
 
-        <!-- Music Growth Pipeline -->
-        <div class="card">
+        <!-- PharmaWatch — pending -->
+        <div class="card card--pending">
           <div class="card-header">
             <div>
-              <div class="card-title">Music Growth Pipeline</div>
-              <div class="card-subtitle mono muted">data engineering · live</div>
+              <div class="card-title">PharmaWatch</div>
+              <div class="card-subtitle mono muted">data engineering</div>
             </div>
-            <span class="live-badge mono">● live</span>
+            <span class="dev-badge mono">◌ in development</span>
           </div>
 
-          <div class="card-body">
-            {musicData ? (
-              <>
-                <div class="card-metric">
-                  <span class="metric-value accent">{artistCount}</span>
-                  <span class="metric-label mono muted">artists tracked · {weeksTracked} weeks</span>
-                </div>
-                {sizeQuintiles.length > 0 && (
-                  <div class="tier-bars">
-                    <div class="tier-caption mono muted">median growth by listener size</div>
-                    {sizeQuintiles.map((q) => (
-                      <div class="tier-row">
-                        <span class="tier-label mono muted">{q.label}</span>
-                        <div class="tier-bar-track">
-                          <div class="tier-bar tier-bar--accent" style={`width: ${(q.median_pct_growth / quintileMedianMax) * 100}%`}></div>
-                        </div>
-                        <span class="tier-val mono accent">{q.median_pct_growth.toFixed(2)}%</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </>
-            ) : (
-              <div class="card-omitted mono muted">live data unavailable at build time</div>
-            )}
+          <div class="card-body card-body--pending">
+            <div class="pending-label mono muted">phase 1 in progress</div>
+            <p class="pending-desc muted">
+              Drug safety signal platform over FDA adverse event data (FAERS/openFDA). Cleaning and deduplicating two decades of shifting schemas, landing on Parquet + DuckDB, with a RAG layer over drug labels planned on top.
+            </p>
           </div>
 
           <div class="card-footer">
-            <span class="card-tagline muted">Median listener growth falls steadily as artists get larger</span>
-            <a href="/projects/music-growth-pipeline" class="card-link mono accent">
-              View project <Icon name="tabler:arrow-right" class="link-icon" />
-            </a>
+            <span class="card-tagline muted">Cleaned, deduplicated FAERS data cross-referenced with drug labels, queryable in plain English</span>
           </div>
         </div>
 
@@ -335,11 +357,10 @@ const quintileMedianMax = Math.max(...sizeQuintiles.map((q) => q.median_pct_grow
       <div class="about-inner">
         <div class="about-text">
           <p>
-            CS graduate (WGU, May 2026) based in the Milwaukee area. Looking for roles where the work involves getting data from raw to useful. Engineering the pipeline, modeling the warehouse, or doing the analysis downstream.
+            CS graduate (WGU, May 2026) based in the Milwaukee area. I enjoy solving problems that involve cleaning and transforming difficult data, and displaying those insights in the form of live, queryable sites, beyond what any warehouse table or Power BI report could display.
           </p>
           <p>
-            My projects run the full stack on purpose: ingestion, transformation, warehousing, ML forecasting,
-            and dashboarding. Understanding why a pipeline breaks is easier when you've written the transformation layer yourself.
+            Each project runs the full stack: ingestion, transformation, warehousing, and (where it earns its cost) ML forecasting, so when something breaks I already know where to look.
           </p>
           <div class="about-links mono">
             <a href="mailto:dakuhn1138@gmail.com">
@@ -556,7 +577,7 @@ const quintileMedianMax = Math.max(...sizeQuintiles.map((q) => q.median_pct_grow
 
   .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    grid-template-columns: 1fr;
     gap: 1rem;
   }
 

@@ -1,0 +1,453 @@
+---
+import { fetchKitchenSync, fetchWeatherImpact } from '../../lib/fetchProjectData';
+import KitchenSyncChart from '../charts/KitchenSyncChart';
+import WeatherImpactChart from '../charts/WeatherImpactChart';
+import DashboardCallout from '../DashboardCallout.astro';
+import DiagramFrame from './DiagramFrame.astro';
+
+const STREAMLIT_URL = 'https://kitchensync.streamlit.app/';
+
+const kitchenResult = await fetchKitchenSync();
+const weatherResult = await fetchWeatherImpact();
+
+const abData = kitchenResult.state === 'ok' ? kitchenResult.data : null;
+const weatherData = weatherResult.state === 'ok' ? weatherResult.data : null;
+
+const weatherExtremeAvgGap = weatherData
+  ? (weatherData.extreme_heat.service_level_gap_pp + weatherData.extreme_cold.service_level_gap_pp) / 2
+  : null;
+const weatherGapMultiplier = weatherData && weatherData.neutral.service_level_gap_pp > 0
+  ? weatherExtremeAvgGap! / weatherData.neutral.service_level_gap_pp
+  : null;
+const weatherChartData = weatherData ? {
+  labels: ['neutral', 'extreme heat', 'extreme cold', 'precip'],
+  mlSvc: [
+    weatherData.neutral.ml_service_level,
+    weatherData.extreme_heat.ml_service_level,
+    weatherData.extreme_cold.ml_service_level,
+    weatherData.precip.ml_service_level,
+  ],
+  baseSvc: [
+    weatherData.neutral.baseline_service_level,
+    weatherData.extreme_heat.baseline_service_level,
+    weatherData.extreme_cold.baseline_service_level,
+    weatherData.precip.baseline_service_level,
+  ],
+} : null;
+const weatherStoreDaysTotal = weatherData
+  ? weatherData.extreme_heat.store_days + weatherData.extreme_cold.store_days
+    + weatherData.precip.store_days + weatherData.neutral.store_days
+  : null;
+
+let wasteDeltaPp: number | null = null;
+let latestDay: {
+  date: string;
+  ml: { waste_pct: number; service_level: number };
+  baseline: { waste_pct: number; service_level: number };
+} | null = null;
+
+const chartData = abData ? {
+  dates: abData.daily.map((d) => d.date),
+  mlSvc: abData.daily.map((d) => (d.ml.units_sold / (d.ml.units_sold + d.ml.stockouts)) * 100),
+  baseSvc: abData.daily.map((d) => (d.baseline.units_sold / (d.baseline.units_sold + d.baseline.stockouts)) * 100),
+  mlWaste: abData.daily.map((d) => (d.ml.waste_cost / d.ml.sales_revenue) * 100),
+  baseWaste: abData.daily.map((d) => (d.baseline.waste_cost / d.baseline.sales_revenue) * 100),
+} : null;
+
+if (abData) {
+  wasteDeltaPp = abData.cumulative.ml_avg_waste_pct - abData.cumulative.baseline_avg_waste_pct;
+  const d = abData.daily[abData.daily.length - 1];
+  if (d) {
+    latestDay = {
+      date: d.date,
+      ml: {
+        waste_pct: (d.ml.waste_cost / d.ml.sales_revenue) * 100,
+        service_level: (d.ml.units_sold / (d.ml.units_sold + d.ml.stockouts)) * 100,
+      },
+      baseline: {
+        waste_pct: (d.baseline.waste_cost / d.baseline.sales_revenue) * 100,
+        service_level: (d.baseline.units_sold / (d.baseline.units_sold + d.baseline.stockouts)) * 100,
+      },
+    };
+  }
+}
+---
+
+{STREAMLIT_URL && (
+  <DashboardCallout
+    href={STREAMLIT_URL}
+    label="live streamlit dashboard"
+    note="This is what kitchen staff cook from all shift — live Kitchen and Chicken production queues plus running waste and sales metrics, refreshed every 5 minutes."
+  />
+)}
+
+{abData && (
+  <div class="ab-section">
+    <div class="ab-header">
+      <span class="section-label mono muted">live results</span>
+      <span class="ab-days mono muted">day {abData.cumulative.days_run} of a/b test</span>
+    </div>
+    {chartData && (
+      <div class="live-results-chart">
+        <div class="live-results-summary mono muted">
+          {chartData.dates[0]} through {chartData.dates.at(-1)}
+        </div>
+        <KitchenSyncChart
+          dates={chartData.dates}
+          mlSvc={chartData.mlSvc}
+          baseSvc={chartData.baseSvc}
+          mlWaste={chartData.mlWaste}
+          baseWaste={chartData.baseWaste}
+          client:visible
+        />
+      </div>
+    )}
+    <div class="ab-daily-label mono muted">cumulative averages</div>
+    <div class="ab-grid">
+      <div class="ab-card">
+        <div class="ab-card-label mono">ml model</div>
+        <div class="ab-metric">
+          <span class="ab-value accent">{abData.cumulative.ml_avg_waste_pct.toFixed(1)}%</span>
+          <span class="ab-key mono muted">avg waste</span>
+        </div>
+        <div class="ab-metric">
+          <span class="ab-value">{abData.cumulative.ml_avg_service_level.toFixed(1)}%</span>
+          <span class="ab-key mono muted">service level</span>
+        </div>
+      </div>
+      <div class="ab-card">
+        <div class="ab-card-label mono muted">baseline</div>
+        <div class="ab-metric">
+          <span class="ab-value">{abData.cumulative.baseline_avg_waste_pct.toFixed(1)}%</span>
+          <span class="ab-key mono muted">avg waste</span>
+        </div>
+        <div class="ab-metric">
+          <span class="ab-value">{abData.cumulative.base_avg_service_level.toFixed(1)}%</span>
+          <span class="ab-key mono muted">service level</span>
+        </div>
+      </div>
+    </div>
+    {latestDay && (
+      <div class="ab-daily">
+        <div class="ab-daily-label mono muted">latest run · {latestDay.date}</div>
+        <div class="ab-grid">
+          <div class="ab-card">
+            <div class="ab-card-label mono">ml model</div>
+            <div class="ab-metric">
+              <span class="ab-value accent">{latestDay.ml.waste_pct.toFixed(1)}%</span>
+              <span class="ab-key mono muted">
+                waste
+                <span class:list={['delta', latestDay.ml.waste_pct < abData!.cumulative.ml_avg_waste_pct ? 'delta--better' : 'delta--worse']}>
+                  {(latestDay.ml.waste_pct - abData!.cumulative.ml_avg_waste_pct) >= 0 ? '+' : ''}{(latestDay.ml.waste_pct - abData!.cumulative.ml_avg_waste_pct).toFixed(1)}pp vs avg
+                </span>
+              </span>
+            </div>
+            <div class="ab-metric">
+              <span class="ab-value">{latestDay.ml.service_level.toFixed(1)}%</span>
+              <span class="ab-key mono muted">
+                service level
+                <span class:list={['delta', latestDay.ml.service_level > abData!.cumulative.ml_avg_service_level ? 'delta--better' : 'delta--worse']}>
+                  {(latestDay.ml.service_level - abData!.cumulative.ml_avg_service_level) >= 0 ? '+' : ''}{(latestDay.ml.service_level - abData!.cumulative.ml_avg_service_level).toFixed(1)}pp vs avg
+                </span>
+              </span>
+            </div>
+          </div>
+          <div class="ab-card">
+            <div class="ab-card-label mono muted">baseline</div>
+            <div class="ab-metric">
+              <span class="ab-value">{latestDay.baseline.waste_pct.toFixed(1)}%</span>
+              <span class="ab-key mono muted">
+                waste
+                <span class:list={['delta', latestDay.baseline.waste_pct < abData!.cumulative.baseline_avg_waste_pct ? 'delta--better' : 'delta--worse']}>
+                  {(latestDay.baseline.waste_pct - abData!.cumulative.baseline_avg_waste_pct) >= 0 ? '+' : ''}{(latestDay.baseline.waste_pct - abData!.cumulative.baseline_avg_waste_pct).toFixed(1)}pp vs avg
+                </span>
+              </span>
+            </div>
+            <div class="ab-metric">
+              <span class="ab-value">{latestDay.baseline.service_level.toFixed(1)}%</span>
+              <span class="ab-key mono muted">
+                service level
+                <span class:list={['delta', latestDay.baseline.service_level > abData!.cumulative.base_avg_service_level ? 'delta--better' : 'delta--worse']}>
+                  {(latestDay.baseline.service_level - abData!.cumulative.base_avg_service_level) >= 0 ? '+' : ''}{(latestDay.baseline.service_level - abData!.cumulative.base_avg_service_level).toFixed(1)}pp vs avg
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <div class="ab-callout mono">
+      {`ML lifts service level +${(abData.cumulative.ml_avg_service_level - abData.cumulative.base_avg_service_level).toFixed(1)}pp but adds +${wasteDeltaPp!.toFixed(1)}pp waste — the trade-off is the point.`}
+    </div>
+  </div>
+)}
+
+{weatherData && weatherChartData && (
+  <div class="ab-section">
+    <div class="ab-header">
+      <span class="section-label mono muted">weather impact</span>
+      <span class="ab-days mono muted">{weatherStoreDaysTotal!.toLocaleString()} simulated store-days</span>
+    </div>
+
+    <div class="weather-cards">
+      <div class="weather-card">
+        <span class="weather-value accent">+{weatherData.extreme_heat.service_level_gap_pp.toFixed(1)}pp</span>
+        <span class="weather-key mono muted">extreme heat · service level</span>
+      </div>
+      <div class="weather-card">
+        <span class="weather-value accent">+{weatherData.extreme_cold.service_level_gap_pp.toFixed(1)}pp</span>
+        <span class="weather-key mono muted">extreme cold · service level</span>
+      </div>
+      {weatherGapMultiplier && (
+        <div class="weather-card">
+          <span class="weather-value accent">{weatherGapMultiplier.toFixed(1)}x</span>
+          <span class="weather-key mono muted">bigger than the neutral-day gap</span>
+        </div>
+      )}
+    </div>
+
+    <WeatherImpactChart
+      labels={weatherChartData.labels}
+      mlSvc={weatherChartData.mlSvc}
+      baseSvc={weatherChartData.baseSvc}
+      client:visible
+    />
+
+    <div class="ab-callout mono">
+      {`On precipitation days ML's service level runs marginally below baseline (${weatherData.precip.service_level_gap_pp.toFixed(1)}pp) — but waste drops to roughly half (${weatherData.precip.ml_waste_pct.toFixed(1)}% vs ${weatherData.precip.baseline_waste_pct.toFixed(1)}%), a trade-off a flat historical average can't make.`}
+    </div>
+  </div>
+)}
+
+<DiagramFrame>
+  <svg width="100%" viewBox="0 0 560 745" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    {/* POS Simulator */}
+    <rect x="170" y="10" width="220" height="38" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+    <text x="280" y="29" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">POS Simulator — EC2</text>
+    <line x1="280" y1="48" x2="280" y2="80" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="276,80 280,87 284,80" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <text x="288" y="64" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">5-min batch flush · short-lived psycopg2 conn</text>
+    {/* Neon Postgres */}
+    <rect x="70" y="87" width="420" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+    <text x="280" y="106" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Neon Postgres — 12 store schemas</text>
+    <text x="280" y="124" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">+ public.predictions / baseline_profile / weather_daily</text>
+    <line x1="280" y1="142" x2="280" y2="175" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="276,175 280,182 284,175" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <text x="288" y="158" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">2am UTC · build_baseline_profile.py</text>
+    {/* Split: Streamlit / A/B */}
+    <line x1="130" y1="182" x2="430" y2="182" stroke="#7a7f87" stroke-width="1.5"/>
+    <line x1="130" y1="182" x2="130" y2="214" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="126,214 130,221 134,214" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <line x1="430" y1="182" x2="430" y2="214" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="426,214 430,221 434,214" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    {/* Streamlit (left) */}
+    <rect x="20" y="221" width="220" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+    <text x="130" y="241" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Streamlit Dashboard</text>
+    <text x="130" y="260" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">Kitchen + Chicken · 5min refresh</text>
+    {/* A/B Comparison (right) */}
+    <rect x="320" y="221" width="220" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+    <text x="430" y="238" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">A/B Comparison</text>
+    <text x="430" y="256" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="9.5" font-family="IBM Plex Mono, monospace">LightGBM + real weather vs baseline</text>
+    <line x1="430" y1="276" x2="430" y2="310" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="426,310 430,317 434,310" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <text x="438" y="294" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">git commit + push</text>
+    {/* ab_results_v2.json */}
+    <rect x="310" y="317" width="240" height="35" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
+    <text x="430" y="335" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">data/ab_results_v2.json</text>
+    <line x1="430" y1="352" x2="430" y2="385" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="426,385 430,392 434,385" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    <text x="420" y="369" text-anchor="end" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">nightly rebuild</text>
+    {/* Astro Portfolio */}
+    <rect x="305" y="392" width="250" height="35" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
+    <text x="430" y="410" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Astro Portfolio — deanslist.dev</text>
+
+    {/* Manual retrain branch */}
+    <rect x="30" y="463" width="500" height="237" rx="2" fill="none" stroke="#2a2d32" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="50" y="485" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace" letter-spacing="0.05em">MANUAL RETRAIN — NEON ONLY, NO SNOWFLAKE</text>
+    <line x1="280" y1="497" x2="280" y2="511" stroke="#2a2d32" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <polyline points="276,511 280,518 284,511" fill="none" stroke="#2a2d32" stroke-width="1.5"/>
+    {/* Refresh baseline */}
+    <rect x="170" y="518" width="220" height="38" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
+    <text x="280" y="537" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">build_baseline_profile.py</text>
+    <line x1="280" y1="556" x2="280" y2="570" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="276,570 280,577 284,570" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    {/* ml.train */}
+    <rect x="130" y="577" width="300" height="45" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
+    <text x="280" y="595" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">ml.train — LightGBM</text>
+    <text x="280" y="611" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="9" font-family="IBM Plex Mono, monospace">in-memory features · build_training_features.py</text>
+    <line x1="280" y1="622" x2="280" y2="636" stroke="#7a7f87" stroke-width="1.5"/>
+    <polyline points="276,636 280,643 284,636" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
+    {/* ml.predict */}
+    <rect x="130" y="643" width="300" height="38" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
+    <text x="280" y="662" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">ml.predict → public.predictions</text>
+
+    {/* dbt portfolio-only note */}
+    <text x="280" y="722" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="9" font-family="IBM Plex Mono, monospace">dbt (staging → marts) kept in-repo as a portfolio-only artifact — not run against live data</text>
+  </svg>
+</DiagramFrame>
+
+<style>
+  .section-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.625rem;
+    opacity: 0.85;
+  }
+
+  .ab-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .ab-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+
+  .ab-days {
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    opacity: 0.5;
+  }
+
+  .ab-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .ab-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .ab-card-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+
+  .ab-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .ab-value {
+    font-family: var(--font-mono);
+    font-size: 1.375rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .ab-value.accent {
+    color: var(--accent);
+  }
+
+  .ab-key {
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .ab-daily {
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .ab-daily-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    opacity: 0.85;
+  }
+
+  .delta {
+    display: block;
+    font-size: 0.625rem;
+    letter-spacing: 0.04em;
+    margin-top: 0.125rem;
+    opacity: 0.7;
+  }
+
+  .delta--better { color: #4ade80; }
+  .delta--worse  { color: var(--muted); }
+
+  .ab-callout {
+    font-size: 0.8125rem;
+    color: var(--muted);
+    border-left: 2px solid var(--accent);
+    padding: 0.5rem 0.875rem;
+    line-height: 1.6;
+  }
+
+  .live-results-chart {
+    margin-bottom: 1.5rem;
+  }
+
+  .live-results-summary {
+    font-size: 0.8rem;
+    margin-bottom: 1.25rem;
+    letter-spacing: 0.02em;
+  }
+
+  .weather-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .weather-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .weather-value {
+    font-family: var(--font-mono);
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .weather-value.accent {
+    color: var(--accent);
+  }
+
+  .weather-key {
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 480px) {
+    .ab-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 640px) {
+    .weather-cards { grid-template-columns: 1fr; }
+  }
+</style>

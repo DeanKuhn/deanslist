@@ -1,10 +1,11 @@
 ---
 import ProjectLayout from '../../layouts/Project.astro';
 import { projects } from '../../data/projects';
-import { fetchKitchenSync, fetchWeatherImpact, fetchMusicPipeline, fetchWgups, listenerBandLabel, formatListeners } from '../../lib/fetchProjectData';
-import KitchenSyncChart from '../../components/charts/KitchenSyncChart';
-import WeatherImpactChart from '../../components/charts/WeatherImpactChart';
-import WgupsConvergenceChart from '../../components/charts/WgupsConvergenceChart';
+import DashboardCallout from '../../components/DashboardCallout.astro';
+import KitchenSyncPanel from '../../components/projects/KitchenSyncPanel.astro';
+import MusicPipelinePanel from '../../components/projects/MusicPipelinePanel.astro';
+import WgupsPanel from '../../components/projects/WgupsPanel.astro';
+import MarketCynicPanel from '../../components/projects/MarketCynicPanel.astro';
 import type { GetStaticPaths } from 'astro';
 export const getStaticPaths: GetStaticPaths = () => {
   return projects.map((p) => ({
@@ -15,78 +16,7 @@ export const getStaticPaths: GetStaticPaths = () => {
 
 const { project } = Astro.props;
 
-const kitchenResult = project.slug === 'kitchensync' ? await fetchKitchenSync() : { state: 'omitted' as const };
-const weatherResult = project.slug === 'kitchensync' ? await fetchWeatherImpact() : { state: 'omitted' as const };
-const musicResult = project.slug === 'music-growth-pipeline' ? await fetchMusicPipeline() : { state: 'omitted' as const };
-const wgupsResult = project.slug === 'package-router' ? await fetchWgups() : { state: 'omitted' as const };
-
-const abData = kitchenResult.state === 'ok' ? kitchenResult.data : null;
-const weatherData = weatherResult.state === 'ok' ? weatherResult.data : null;
-
-const weatherExtremeAvgGap = weatherData
-  ? (weatherData.extreme_heat.service_level_gap_pp + weatherData.extreme_cold.service_level_gap_pp) / 2
-  : null;
-const weatherGapMultiplier = weatherData && weatherData.neutral.service_level_gap_pp > 0
-  ? weatherExtremeAvgGap! / weatherData.neutral.service_level_gap_pp
-  : null;
-const weatherChartData = weatherData ? {
-  labels: ['neutral', 'extreme heat', 'extreme cold', 'precip'],
-  mlSvc: [
-    weatherData.neutral.ml_service_level,
-    weatherData.extreme_heat.ml_service_level,
-    weatherData.extreme_cold.ml_service_level,
-    weatherData.precip.ml_service_level,
-  ],
-  baseSvc: [
-    weatherData.neutral.baseline_service_level,
-    weatherData.extreme_heat.baseline_service_level,
-    weatherData.extreme_cold.baseline_service_level,
-    weatherData.precip.baseline_service_level,
-  ],
-} : null;
-const weatherStoreDaysTotal = weatherData
-  ? weatherData.extreme_heat.store_days + weatherData.extreme_cold.store_days
-    + weatherData.precip.store_days + weatherData.neutral.store_days
-  : null;
-const pipelineStats = musicResult.state === 'ok' ? musicResult.data : null;
-const wgupsData = wgupsResult.state === 'ok' ? wgupsResult.data : null;
-
-// Growth by starting-listener quintile, smallest band first
-const rawQuintiles = [...(pipelineStats?.growth_by_size_quintile ?? [])]
-  .sort((a, b) => a.quintile - b.quintile);
-const sizeQuintiles = rawQuintiles.map((q) => ({
-  ...q,
-  label: listenerBandLabel(q, rawQuintiles.length),
-}));
-const quintileMedianMax = Math.max(...sizeQuintiles.map((q) => q.median_pct_growth), 0.0001);
-
-const smallestQ = sizeQuintiles[0];
-const largestQ = sizeQuintiles[sizeQuintiles.length - 1];
-const quintileCallout = smallestQ && largestQ
-  ? `Median growth falls with artist size: ${smallestQ.median_pct_growth.toFixed(2)}% for the smallest fifth (${smallestQ.label} listeners) down to ${largestQ.median_pct_growth.toFixed(2)}% for the largest (${largestQ.label}). Averages run far higher (${smallestQ.avg_pct_growth.toFixed(2)}% in the smallest band) — a thin tail of viral outliers pulls them up, which is why the median is the honest number. ${pipelineStats!.summary.artist_count.toLocaleString()} artists tracked.`
-  : '';
-
-const convergenceData = wgupsData ? {
-  generations: wgupsData.convergence.map((c) => c.generation),
-  scores: wgupsData.convergence.map((c) => c.score),
-} : null;
-
-let wasteDeltaPp: number | null = null;
-let latestDay: {
-  date: string;
-  ml: { waste_pct: number; service_level: number };
-  baseline: { waste_pct: number; service_level: number };
-} | null = null;
-
-const chartData = abData ? {
-  dates: abData.daily.map((d) => d.date),
-  mlSvc: abData.daily.map((d) => (d.ml.units_sold / (d.ml.units_sold + d.ml.stockouts)) * 100),
-  baseSvc: abData.daily.map((d) => (d.baseline.units_sold / (d.baseline.units_sold + d.baseline.stockouts)) * 100),
-  mlWaste: abData.daily.map((d) => (d.ml.waste_cost / d.ml.sales_revenue) * 100),
-  baseWaste: abData.daily.map((d) => (d.baseline.waste_cost / d.baseline.sales_revenue) * 100),
-} : null;
-
-const STREAMLIT_URL: string | null = 'https://kitchensync.streamlit.app/';
+const STREAMLIT_URL = 'https://kitchensync.streamlit.app/';
 
 const POWERBI_URLS: Record<string, string> = {
   kitchensync: 'https://app.powerbi.com/groups/me/reports/1a4846f5-fc83-4766-ab0a-7db7a0b00da0/d24e24d7b21f280c17ba?experience=power-bi',
@@ -96,24 +26,6 @@ const powerbiUrl: string | null = POWERBI_URLS[project.slug] ?? null;
 const powerbiNote = project.slug === 'kitchensync'
   ? 'Stores ranked by waste % level, drill-through to individual store stats — sales/waste trends and highest-stockout items — plus an item performance page sliced by category or store.'
   : 'Listener growth by tier and genre, a listener count vs. growth rate plot with per-artist drill-through, and an Artist Spotlight page showing listener growth over time and week-over-week change.';
-
-if (abData) {
-  wasteDeltaPp = abData.cumulative.ml_avg_waste_pct - abData.cumulative.baseline_avg_waste_pct;
-  const d = abData.daily[abData.daily.length - 1];
-  if (d) {
-    latestDay = {
-      date: d.date,
-      ml: {
-        waste_pct: (d.ml.waste_cost / d.ml.sales_revenue) * 100,
-        service_level: (d.ml.units_sold / (d.ml.units_sold + d.ml.stockouts)) * 100,
-      },
-      baseline: {
-        waste_pct: (d.baseline.waste_cost / d.baseline.sales_revenue) * 100,
-        service_level: (d.baseline.units_sold / (d.baseline.units_sold + d.baseline.stockouts)) * 100,
-      },
-    };
-  }
-}
 ---
 
 <ProjectLayout title={project.title} description={project.tagline}>
@@ -155,431 +67,29 @@ if (abData) {
     </header>
 
     <!-- Live dashboard callout (kitchensync only) -->
-    {project.slug === 'kitchensync' && STREAMLIT_URL && (
-      <a href={STREAMLIT_URL} target="_blank" rel="noopener" class="dashboard-callout">
-        <div class="dashboard-callout-header">
-          <span class="section-label mono accent">live streamlit dashboard</span>
-          <span class="dashboard-callout-cta mono">open dashboard ↗</span>
-        </div>
-        <p class="dashboard-callout-note mono muted">
-          This is what kitchen staff cook from all shift — live Kitchen and Chicken production queues plus running waste and sales metrics, refreshed every 5 minutes.
-        </p>
-      </a>
+    {project.slug === 'kitchensync' && (
+      <DashboardCallout
+        href={STREAMLIT_URL}
+        label="live streamlit dashboard"
+        note="This is what kitchen staff cook from all shift — live Kitchen and Chicken production queues plus running waste and sales metrics, refreshed every 5 minutes."
+      />
     )}
 
-    <!-- Live Power BI dashboard callout (kitchensync + music-growth-pipeline) -->
-    {powerbiUrl && (
-      <a href={powerbiUrl} target="_blank" rel="noopener" class="dashboard-callout">
-        <div class="dashboard-callout-header">
-          <span class="section-label mono accent">live power bi dashboard</span>
-          <span class="dashboard-callout-cta mono">open dashboard ↗</span>
-        </div>
-        <p class="dashboard-callout-note mono muted">
-          {powerbiNote}
-        </p>
-      </a>
+    <!-- Screenshot (any project with one set) -->
+    {project.screenshotUrl && (
+      <img
+        class="project-screenshot"
+        src={project.screenshotUrl}
+        alt={`${project.title} screenshot`}
+        loading="lazy"
+      />
     )}
 
-    <!-- Live results chart (package-router only) -->
-    {project.slug === 'package-router' && convergenceData && (
-      <div class="live-results-section">
-        <div class="live-results-header">
-          <span class="section-label mono muted">live results</span>
-          <span class="mono muted live-results-days">run {wgupsData!.run_timestamp.slice(0, 10)}</span>
-        </div>
-        <div class="live-results-summary mono muted">
-          final fitness score {wgupsData!.final_score.toFixed(1)} · {wgupsData!.parameters.packages} packages · {wgupsData!.parameters.trucks} trucks · converged at generation {convergenceData.generations.at(-1)}
-        </div>
-        <WgupsConvergenceChart
-          generations={convergenceData.generations}
-          scores={convergenceData.scores}
-          client:visible
-        />
-      </div>
-    )}
-
-    <!-- Live results chart (kitchensync only) -->
-    {project.slug === 'kitchensync' && chartData && (
-      <div class="live-results-section">
-        <div class="live-results-header">
-          <span class="section-label mono muted">live results</span>
-          <span class="mono muted live-results-days">day {abData!.cumulative.days_run} of a/b test</span>
-        </div>
-        <div class="live-results-summary mono muted">
-          {chartData.dates[0]} through {chartData.dates.at(-1)}
-        </div>
-        <KitchenSyncChart
-          dates={chartData.dates}
-          mlSvc={chartData.mlSvc}
-          baseSvc={chartData.baseSvc}
-          mlWaste={chartData.mlWaste}
-          baseWaste={chartData.baseWaste}
-          client:visible
-        />
-      </div>
-    )}
-
-    <!-- A/B Results (kitchensync only) -->
-    {project.slug === 'kitchensync' && abData && (
-      <div class="ab-section">
-        <div class="ab-header">
-          <span class="section-label mono muted">cumulative stats</span>
-          <span class="ab-days mono muted">day {abData.cumulative.days_run}</span>
-        </div>
-        <div class="ab-grid">
-          <div class="ab-card">
-            <div class="ab-card-label mono">ml model</div>
-            <div class="ab-metric">
-              <span class="ab-value accent">{abData.cumulative.ml_avg_waste_pct.toFixed(1)}%</span>
-              <span class="ab-key mono muted">avg waste</span>
-            </div>
-            <div class="ab-metric">
-              <span class="ab-value">{abData.cumulative.ml_avg_service_level.toFixed(1)}%</span>
-              <span class="ab-key mono muted">service level</span>
-            </div>
-          </div>
-          <div class="ab-card">
-            <div class="ab-card-label mono muted">baseline</div>
-            <div class="ab-metric">
-              <span class="ab-value">{abData.cumulative.baseline_avg_waste_pct.toFixed(1)}%</span>
-              <span class="ab-key mono muted">avg waste</span>
-            </div>
-            <div class="ab-metric">
-              <span class="ab-value">{abData.cumulative.base_avg_service_level.toFixed(1)}%</span>
-              <span class="ab-key mono muted">service level</span>
-            </div>
-          </div>
-        </div>
-        {latestDay && (
-          <div class="ab-daily">
-            <div class="ab-daily-label mono muted">latest run · {latestDay.date}</div>
-            <div class="ab-grid">
-              <div class="ab-card">
-                <div class="ab-card-label mono">ml model</div>
-                <div class="ab-metric">
-                  <span class="ab-value accent">{latestDay.ml.waste_pct.toFixed(1)}%</span>
-                  <span class="ab-key mono muted">
-                    waste
-                    <span class:list={['delta', latestDay.ml.waste_pct < abData!.cumulative.ml_avg_waste_pct ? 'delta--better' : 'delta--worse']}>
-                      {(latestDay.ml.waste_pct - abData!.cumulative.ml_avg_waste_pct) >= 0 ? '+' : ''}{(latestDay.ml.waste_pct - abData!.cumulative.ml_avg_waste_pct).toFixed(1)}pp vs avg
-                    </span>
-                  </span>
-                </div>
-                <div class="ab-metric">
-                  <span class="ab-value">{latestDay.ml.service_level.toFixed(1)}%</span>
-                  <span class="ab-key mono muted">
-                    service level
-                    <span class:list={['delta', latestDay.ml.service_level > abData!.cumulative.ml_avg_service_level ? 'delta--better' : 'delta--worse']}>
-                      {(latestDay.ml.service_level - abData!.cumulative.ml_avg_service_level) >= 0 ? '+' : ''}{(latestDay.ml.service_level - abData!.cumulative.ml_avg_service_level).toFixed(1)}pp vs avg
-                    </span>
-                  </span>
-                </div>
-              </div>
-              <div class="ab-card">
-                <div class="ab-card-label mono muted">baseline</div>
-                <div class="ab-metric">
-                  <span class="ab-value">{latestDay.baseline.waste_pct.toFixed(1)}%</span>
-                  <span class="ab-key mono muted">
-                    waste
-                    <span class:list={['delta', latestDay.baseline.waste_pct < abData!.cumulative.baseline_avg_waste_pct ? 'delta--better' : 'delta--worse']}>
-                      {(latestDay.baseline.waste_pct - abData!.cumulative.baseline_avg_waste_pct) >= 0 ? '+' : ''}{(latestDay.baseline.waste_pct - abData!.cumulative.baseline_avg_waste_pct).toFixed(1)}pp vs avg
-                    </span>
-                  </span>
-                </div>
-                <div class="ab-metric">
-                  <span class="ab-value">{latestDay.baseline.service_level.toFixed(1)}%</span>
-                  <span class="ab-key mono muted">
-                    service level
-                    <span class:list={['delta', latestDay.baseline.service_level > abData!.cumulative.base_avg_service_level ? 'delta--better' : 'delta--worse']}>
-                      {(latestDay.baseline.service_level - abData!.cumulative.base_avg_service_level) >= 0 ? '+' : ''}{(latestDay.baseline.service_level - abData!.cumulative.base_avg_service_level).toFixed(1)}pp vs avg
-                    </span>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div class="ab-callout mono">
-          {`ML lifts service level +${(abData.cumulative.ml_avg_service_level - abData.cumulative.base_avg_service_level).toFixed(1)}pp but adds +${wasteDeltaPp!.toFixed(1)}pp waste — the trade-off is the point.`}
-        </div>
-      </div>
-    )}
-
-    <!-- Weather Impact (kitchensync only) -->
-    {project.slug === 'kitchensync' && weatherData && weatherChartData && (
-      <div class="ab-section">
-        <div class="ab-header">
-          <span class="section-label mono muted">weather impact</span>
-          <span class="ab-days mono muted">{weatherStoreDaysTotal!.toLocaleString()} simulated store-days</span>
-        </div>
-
-        <div class="weather-cards">
-          <div class="weather-card">
-            <span class="weather-value accent">+{weatherData.extreme_heat.service_level_gap_pp.toFixed(1)}pp</span>
-            <span class="weather-key mono muted">extreme heat · service level</span>
-          </div>
-          <div class="weather-card">
-            <span class="weather-value accent">+{weatherData.extreme_cold.service_level_gap_pp.toFixed(1)}pp</span>
-            <span class="weather-key mono muted">extreme cold · service level</span>
-          </div>
-          {weatherGapMultiplier && (
-            <div class="weather-card">
-              <span class="weather-value accent">{weatherGapMultiplier.toFixed(1)}x</span>
-              <span class="weather-key mono muted">bigger than the neutral-day gap</span>
-            </div>
-          )}
-        </div>
-
-        <WeatherImpactChart
-          labels={weatherChartData.labels}
-          mlSvc={weatherChartData.mlSvc}
-          baseSvc={weatherChartData.baseSvc}
-          client:visible
-        />
-
-        <div class="ab-callout mono">
-          {`On precipitation days ML's service level runs marginally below baseline (${weatherData.precip.service_level_gap_pp.toFixed(1)}pp) — but waste drops to roughly half (${weatherData.precip.ml_waste_pct.toFixed(1)}% vs ${weatherData.precip.baseline_waste_pct.toFixed(1)}%), a trade-off a flat historical average can't make.`}
-        </div>
-      </div>
-    )}
-
-    <!-- Pipeline Stats (music-growth-pipeline only) -->
-    {project.slug === 'music-growth-pipeline' && pipelineStats && (
-      <div class="ab-section">
-        <div class="ab-header">
-          <span class="section-label mono muted">live pipeline data</span>
-          <span class="ab-days mono muted">{pipelineStats.summary.weeks_tracked} weeks of data · updated {pipelineStats.summary.latest_snapshot}</span>
-        </div>
-
-        {sizeQuintiles.length > 0 && (
-        <div class="quintile-block">
-          <div class="ab-daily-label mono muted">median {pipelineStats.summary.weeks_tracked}-week growth by starting listener size</div>
-          <div class="quintile-list">
-            {sizeQuintiles.map(q => (
-              <div class="quintile-row">
-                <span class="quintile-band mono">{q.label}</span>
-                <div class="quintile-track">
-                  <div class="quintile-bar" style={`width: ${(q.median_pct_growth / quintileMedianMax) * 100}%`}></div>
-                </div>
-                <span class="quintile-median mono accent">{q.median_pct_growth.toFixed(2)}%</span>
-                <span class="quintile-meta mono muted">
-                  avg {q.avg_pct_growth.toFixed(2)}% · p90 {q.p90_pct_growth.toFixed(2)}% · n={q.artist_count.toLocaleString()}
-                </span>
-              </div>
-            ))}
-          </div>
-          <div class="quintile-axis mono muted">
-            rows run smallest to largest · quintiles cut on listener count at the start of the window
-          </div>
-        </div>
-        )}
-
-        <div class="ab-daily">
-          <div class="ab-daily-label mono muted">fastest-growing indie artists · {pipelineStats.summary.latest_snapshot}</div>
-          <div class="list-scope mono muted">indie tier only (chart pages 51–2000), 5,000+ starting listeners — not the full tracked catalogue</div>
-          <div class="growth-list">
-            {pipelineStats.top_growing_artists.slice(0, 5).map(a => (
-              <div class="growth-row">
-                <span class="growth-name mono">{a.artist_name}</span>
-                <span class="growth-meta mono muted">{formatListeners(a.starting_count)} → {formatListeners(a.ending_count)}</span>
-                <span class="growth-value mono accent">+{a.total_pct_growth.toFixed(1)}%</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {quintileCallout && (
-          <div class="ab-callout mono">
-            {quintileCallout}
-          </div>
-        )}
-      </div>
-    )}
-
-    <div class="diagram-frame">
-      <div class="diagram-label mono muted">how it's built</div>
-
-      {project.slug === 'kitchensync' && (
-        <svg width="100%" viewBox="0 0 560 800" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          {/* POS Simulator */}
-          <rect x="170" y="10" width="220" height="38" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="280" y="29" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">POS Simulator — EC2</text>
-          <line x1="280" y1="48" x2="280" y2="80" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="276,80 280,87 284,80" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="288" y="64" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">POST /sales, /waste, /stockout</text>
-          {/* FastAPI */}
-          <rect x="150" y="87" width="260" height="38" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="280" y="106" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">FastAPI Ingest API — EC2</text>
-          <line x1="280" y1="125" x2="280" y2="157" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="276,157 280,164 284,157" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          {/* Neon Postgres */}
-          <rect x="80" y="164" width="400" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="280" y="183" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Neon Postgres — 12 store schemas</text>
-          <text x="280" y="201" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">+ public.predictions + public.baseline_profile</text>
-          <line x1="280" y1="219" x2="280" y2="252" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="276,252 280,259 284,252" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="288" y="235" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">2am UTC · build_baseline_profile.py</text>
-          {/* Split: Streamlit / A/B */}
-          <line x1="130" y1="259" x2="430" y2="259" stroke="#7a7f87" stroke-width="1.5"/>
-          <line x1="130" y1="259" x2="130" y2="291" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="126,291 130,298 134,291" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <line x1="430" y1="259" x2="430" y2="291" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="426,291 430,298 434,291" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          {/* Streamlit (left) */}
-          <rect x="20" y="298" width="220" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="130" y="318" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Streamlit Dashboard</text>
-          <text x="130" y="337" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">Kitchen + Chicken · 5min refresh</text>
-          {/* A/B Comparison (right) */}
-          <rect x="320" y="298" width="220" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="430" y="318" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">A/B Comparison</text>
-          <text x="430" y="337" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">ML vs baseline · seeded demand</text>
-          <line x1="430" y1="353" x2="430" y2="387" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="426,387 430,394 434,387" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="438" y="371" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">git commit + push</text>
-          {/* ab_results.json */}
-          <rect x="320" y="394" width="220" height="35" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
-          <text x="430" y="411" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">data/ab_results.json</text>
-          <line x1="430" y1="429" x2="430" y2="462" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="426,462 430,469 434,462" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="420" y="446" text-anchor="end" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">nightly rebuild · 3:30am UTC</text>
-          {/* Astro Portfolio */}
-          <rect x="305" y="469" width="250" height="35" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="430" y="486" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Astro Portfolio — deanslist.dev</text>
-
-          {/* Manual retrain branch */}
-          <rect x="30" y="540" width="500" height="235" rx="2" fill="none" stroke="#2a2d32" stroke-width="1" stroke-dasharray="4 3"/>
-          <text x="50" y="562" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace" letter-spacing="0.05em">MANUAL RETRAIN — ON DEMAND ONLY</text>
-          <line x1="280" y1="574" x2="280" y2="588" stroke="#2a2d32" stroke-width="1.5" stroke-dasharray="4 3"/>
-          <polyline points="276,588 280,595 284,588" fill="none" stroke="#2a2d32" stroke-width="1.5"/>
-          {/* Snowflake */}
-          <rect x="170" y="595" width="220" height="38" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
-          <text x="280" y="614" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Snowflake — resumed on demand</text>
-          <line x1="280" y1="633" x2="280" y2="656" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="276,656 280,663 284,656" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          {/* dbt pipeline */}
-          <rect x="50" y="663" width="460" height="45" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
-          <text x="280" y="681" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">dbt: Staging → Intermediate → Marts</text>
-          <text x="280" y="698" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">rebuilds MART_ML_TRAINING_FEATURES</text>
-          <line x1="280" y1="708" x2="280" y2="731" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="276,731 280,738 284,731" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          {/* LightGBM + export */}
-          <rect x="50" y="738" width="460" height="38" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
-          <text x="280" y="753" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">LightGBM train/predict</text>
-          <text x="280" y="768" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="9" font-family="IBM Plex Mono, monospace">export_predictions_to_neon.py → public.predictions</text>
-        </svg>
-      )}
-
-      {project.slug === 'music-growth-pipeline' && (
-        <svg width="100%" viewBox="0 0 480 560" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          {/* Last.fm API */}
-          <rect x="60" y="10" width="360" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="30" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">Last.fm API — chart.getTopArtists</text>
-          <line x1="240" y1="50" x2="240" y2="93" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,93 240,100 244,93" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="248" y="73" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">seed_artists.py · snapshot_artists.py</text>
-          {/* Neon Postgres */}
-          <rect x="80" y="100" width="320" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="120" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">Neon Postgres</text>
-          <text x="240" y="139" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">artists · weekly_charts · snapshots · genres</text>
-          <line x1="240" y1="155" x2="240" y2="208" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,208 240,215 244,208" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="248" y="184" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">dbt-postgres · Sunday 9am UTC</text>
-          {/* dbt marts */}
-          <rect x="40" y="215" width="400" height="55" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
-          <text x="240" y="235" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Staging → Marts</text>
-          <text x="240" y="253" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">listener_growth · artist_growth_summary · genre_growth</text>
-          <line x1="240" y1="270" x2="240" y2="323" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,323 240,330 244,323" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="248" y="299" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">generate_stats.py</text>
-          {/* pipeline_stats.json */}
-          <rect x="100" y="330" width="280" height="35" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
-          <text x="240" y="347" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">data/pipeline_stats.json</text>
-          <line x1="240" y1="365" x2="240" y2="398" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,398 240,405 244,398" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="248" y="384" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">git commit + push</text>
-          {/* GitHub Actions */}
-          <rect x="80" y="405" width="320" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="425" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">GitHub Actions (Sunday 9am UTC)</text>
-          <line x1="240" y1="445" x2="240" y2="478" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,478 240,485 244,478" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="248" y="464" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">nightly rebuild · 3:30am UTC</text>
-          {/* Astro Portfolio */}
-          <rect x="80" y="485" width="320" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="505" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Astro Portfolio — deanslist.dev</text>
-        </svg>
-      )}
-
-      {project.slug === 'market-cynic-pipeline' && (
-        <svg width="100%" viewBox="0 0 560 500" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect x="30" y="10" width="220" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="140" y="30" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Yahoo Finance (Playwright)</text>
-          <rect x="310" y="10" width="220" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="420" y="30" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Reddit — 4 subreddits</text>
-          <line x1="140" y1="50" x2="140" y2="83" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="136,83 140,90 144,83" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <line x1="420" y1="50" x2="420" y2="83" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="416,83 420,90 424,83" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <rect x="30" y="90" width="220" height="50" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
-          <text x="140" y="108" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Bronze layer</text>
-          <text x="140" y="126" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">raw_stocks.json</text>
-          <rect x="310" y="90" width="220" height="50" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
-          <text x="420" y="108" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="11" font-family="IBM Plex Mono, monospace">Bronze layer</text>
-          <text x="420" y="126" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">Reddit posts + VADER</text>
-          <polyline points="140,140 140,185 280,185" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="420,140 420,185 280,185" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <line x1="280" y1="185" x2="280" y2="203" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="276,203 280,210 284,203" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <rect x="80" y="210" width="400" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="280" y="230" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Silver — Pydantic validation</text>
-          <line x1="280" y1="250" x2="280" y2="283" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="276,283 280,290 284,283" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <rect x="60" y="290" width="440" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="280" y="310" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Gold — divergence detection</text>
-          <text x="280" y="328" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">sentiment_momentum &gt; 0 AND price_momentum &lt; 0</text>
-          <line x1="280" y1="345" x2="280" y2="368" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="276,368 280,375 284,368" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <rect x="100" y="375" width="360" height="40" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
-          <text x="280" y="395" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">market_history.parquet (append-only)</text>
-          <line x1="280" y1="415" x2="280" y2="448" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="276,448 280,455 284,448" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <rect x="120" y="455" width="320" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="280" y="475" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Streamlit Dashboard</text>
-        </svg>
-      )}
-
-      {project.slug === 'package-router' && (
-        <svg width="100%" viewBox="0 0 480 545" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect x="90" y="10" width="300" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="30" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">Random package generation</text>
-          <line x1="240" y1="50" x2="240" y2="83" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,83 240,90 244,83" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <rect x="50" y="90" width="380" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="110" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Population init — capacity-aware seeding</text>
-          <line x1="240" y1="130" x2="240" y2="173" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,173 240,180 244,173" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <rect x="60" y="180" width="360" height="55" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="200" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">Fitness function</text>
-          <text x="240" y="219" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">distance_score + deadline_penalty + capacity</text>
-          <line x1="240" y1="235" x2="240" y2="298" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,298 240,305 244,298" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <text x="248" y="261" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">repeat until convergence</text>
-          <text x="248" y="276" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">or 500 stagnant generations</text>
-          <rect x="50" y="305" width="380" height="55" rx="2" fill="#0e0f11" stroke="#2a2d32" stroke-width="1.5"/>
-          <text x="240" y="325" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Selection → Crossover (OX) → Mutation</text>
-          <text x="240" y="343" text-anchor="middle" dominant-baseline="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono, monospace">swap | scramble | inversion + adaptive rate</text>
-          <line x1="240" y1="360" x2="240" y2="413" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,413 240,420 244,413" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <rect x="50" y="420" width="380" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="440" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="12" font-family="IBM Plex Mono, monospace">Best chromosome → delivery routes per truck</text>
-          <line x1="240" y1="460" x2="240" y2="493" stroke="#7a7f87" stroke-width="1.5"/>
-          <polyline points="236,493 240,500 244,493" fill="none" stroke="#7a7f87" stroke-width="1.5"/>
-          <rect x="100" y="500" width="280" height="40" rx="2" fill="#0e0f11" stroke="#f06a00" stroke-width="1.5"/>
-          <text x="240" y="520" text-anchor="middle" dominant-baseline="middle" fill="#e8e9ea" font-size="13" font-family="IBM Plex Mono, monospace">CLI — status lookup by ID</text>
-        </svg>
-      )}
-
-    </div>
+    <!-- Per-project live results + "how it's built" diagram -->
+    {project.slug === 'kitchensync' && <KitchenSyncPanel />}
+    {project.slug === 'music-growth-pipeline' && <MusicPipelinePanel />}
+    {project.slug === 'package-router' && <WgupsPanel />}
+    {project.slug === 'market-cynic-pipeline' && <MarketCynicPanel />}
 
     <!-- Body -->
     <div class="project-body">
@@ -595,7 +105,7 @@ if (abData) {
       </div>
 
       <div class="section">
-        <div class="section-label mono muted">highlights</div>
+        <div class="section-label mono muted">{project.highlightsLabel ?? 'highlights'}</div>
         <ul class="highlights">
           {project.highlights.map((h) => (
             <li>
@@ -625,6 +135,16 @@ if (abData) {
       </div>
 
     </div>
+
+    <!-- Live Power BI dashboard callout (kitchensync + music-growth-pipeline) -->
+    {powerbiUrl && (
+      <DashboardCallout
+        href={powerbiUrl}
+        label="live power bi dashboard"
+        note={powerbiNote}
+        footer
+      />
+    )}
 
     <!-- Footer -->
     <div class="page-footer">
@@ -730,23 +250,6 @@ if (abData) {
     text-decoration: none;
   }
 
-  /* Diagram frame */
-  .diagram-frame {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    margin-bottom: 3rem;
-  }
-
-  .diagram-label {
-    font-size: 0.6875rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-    opacity: 0.85;
-  }
-
   /* Body sections */
   .project-body {
     display: flex;
@@ -822,259 +325,6 @@ if (abData) {
     letter-spacing: 0.04em;
   }
 
-  /* A/B Results + Pipeline Stats shared styles */
-  .ab-section {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    margin-bottom: 3rem;
-  }
-
-  .ab-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 1.25rem;
-  }
-
-  .ab-days {
-    font-size: 0.6875rem;
-    letter-spacing: 0.08em;
-    opacity: 0.5;
-  }
-
-  .ab-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .ab-card {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1rem 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.625rem;
-  }
-
-  .ab-card-label {
-    font-size: 0.6875rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 0.25rem;
-  }
-
-  .ab-metric {
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
-  }
-
-  .ab-value {
-    font-family: var(--font-mono);
-    font-size: 1.375rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: var(--text);
-  }
-
-  .ab-value.accent {
-    color: var(--accent);
-  }
-
-  .ab-key {
-    font-size: 0.6875rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .ab-daily {
-    border-top: 1px solid var(--border);
-    padding-top: 1.25rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .ab-daily-label {
-    font-size: 0.6875rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-    opacity: 0.85;
-  }
-
-  .delta {
-    display: block;
-    font-size: 0.625rem;
-    letter-spacing: 0.04em;
-    margin-top: 0.125rem;
-    opacity: 0.7;
-  }
-
-  .delta--better { color: #4ade80; }
-  .delta--worse  { color: var(--muted); }
-
-  .ab-callout {
-    font-size: 0.8125rem;
-    color: var(--muted);
-    border-left: 2px solid var(--accent);
-    padding: 0.5rem 0.875rem;
-    line-height: 1.6;
-  }
-
-  /* Size-quintile bars (music pipeline) */
-  .quintile-block {
-    margin-bottom: 1.25rem;
-  }
-
-  .quintile-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.625rem;
-  }
-
-  .quintile-row {
-    display: grid;
-    grid-template-columns: 96px 1fr 62px;
-    grid-template-areas:
-      'band track median'
-      'band meta  meta';
-    align-items: center;
-    gap: 0.25rem 0.875rem;
-  }
-
-  .quintile-band {
-    grid-area: band;
-    font-size: 0.6875rem;
-    letter-spacing: 0.04em;
-    color: var(--text);
-  }
-
-  .quintile-track {
-    grid-area: track;
-    height: 6px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .quintile-bar {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 2px;
-  }
-
-  .quintile-median {
-    grid-area: median;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    text-align: right;
-  }
-
-  .quintile-meta {
-    grid-area: meta;
-    font-size: 0.625rem;
-    opacity: 0.65;
-  }
-
-  .quintile-axis {
-    font-size: 0.625rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    opacity: 0.6;
-    margin-top: 0.75rem;
-    padding-left: calc(96px + 0.875rem);
-  }
-
-  /* Growth list (music pipeline) */
-  .list-scope {
-    font-size: 0.625rem;
-    letter-spacing: 0.04em;
-    opacity: 0.6;
-    margin: -0.5rem 0 0.875rem;
-  }
-
-  .growth-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .growth-row {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    gap: 1rem;
-    align-items: baseline;
-    font-size: 0.8125rem;
-    padding: 0.375rem 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .growth-row:last-child {
-    border-bottom: none;
-  }
-
-  .growth-name {
-    color: var(--text);
-  }
-
-  .growth-meta {
-    font-size: 0.6875rem;
-    opacity: 0.5;
-  }
-
-  .growth-value {
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-
-  @media (max-width: 480px) {
-    .ab-grid { grid-template-columns: 1fr; }
-  }
-
-  /* Weather impact stat cards */
-  .weather-cards {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .weather-card {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1rem 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
-  }
-
-  .weather-value {
-    font-family: var(--font-mono);
-    font-size: 1.75rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: var(--text);
-  }
-
-  .weather-value.accent {
-    color: var(--accent);
-  }
-
-  .weather-key {
-    font-size: 0.6875rem;
-    letter-spacing: 0.04em;
-    line-height: 1.4;
-  }
-
-  @media (max-width: 640px) {
-    .weather-cards { grid-template-columns: 1fr; }
-  }
-
   /* Page footer */
   .page-footer {
     margin-top: 4rem;
@@ -1089,68 +339,15 @@ if (abData) {
     font-size: 0.8125rem;
   }
 
-  /* Live results chart section */
-  .live-results-section {
-    background: var(--bg-card);
+  /* Screenshot */
+  .project-screenshot {
+    display: block;
+    max-width: 100%;
+    max-height: 280px;
+    width: auto;
+    margin: 0 auto 3rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 1.5rem;
-    margin-bottom: 3rem;
-  }
-
-  .live-results-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-  }
-
-  .live-results-days {
-    font-size: 0.6875rem;
-    letter-spacing: 0.08em;
-    opacity: 0.5;
-  }
-
-  .live-results-summary {
-    font-size: 0.8rem;
-    margin-bottom: 1.25rem;
-    letter-spacing: 0.02em;
-  }
-
-  /* Live dashboard callout */
-  .dashboard-callout {
-    display: block;
     background: var(--bg-card);
-    border: 1px solid var(--accent);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    margin-bottom: 3rem;
-    text-decoration: none;
-    transition: box-shadow 0.15s;
-  }
-
-  .dashboard-callout:hover {
-    box-shadow: 0 0 0 1px var(--accent);
-    text-decoration: none;
-  }
-
-  .dashboard-callout-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .dashboard-callout-cta {
-    font-size: 0.8125rem;
-    color: var(--accent);
-    white-space: nowrap;
-  }
-
-  .dashboard-callout-note {
-    font-size: 0.8125rem;
-    line-height: 1.6;
-    margin-top: 0.75rem;
   }
 </style>

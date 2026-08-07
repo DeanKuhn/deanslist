@@ -12,7 +12,9 @@ export interface Project {
   what: string;
   techStack: string[];
   highlights: string[];
+  highlightsLabel?: string; // defaults to 'highlights'; e.g. 'challenges'
   challenges?: string;
+  screenshotUrl?: string;    // e.g. '/images/kitchensync-dashboard.png' (place file in deanslist/public/images/)
   githubUrl: string;
 }
 
@@ -23,39 +25,31 @@ export const projects: Project[] = [
     year: '2026',
     status: 'live',
     category: 'data engineering',
-    tagline: 'Live kitchen production system. ML cuts stockouts 40% and lifts service level +1.6pp, but adds +3.3pp waste. The pipeline quantifies the trade-off nightly.',
+    tagline: 'Live kitchen production system. ML pulls furthest ahead of a naive baseline exactly when weather diverges from the seasonal norm — and reports honestly the one condition where it doesn\'t.',
     problem:
-      'Retail kitchens waste food when production outpaces demand and miss revenue when they run short. When you\'re forecasting the right quantity per item per store at a 15-minute grain and refreshing metrics continuously, a real pipeline is required, not a spreadsheet. But the harder question is honest evaluation: does ML actually earn its complexity cost, and if so, at what trade-off? Modeled after the Kitchen Production System (KPS) at Kwik Trip.',
+      'Retail kitchens waste food when production outpaces demand and miss revenue when they run short. Forecasting the right quantity per item per store at a 15-minute grain, refreshed continuously, needs a real pipeline, not a spreadsheet — and the harder question is honest evaluation: does ML actually earn its complexity cost, and where does it not? Modeled after the Kitchen Production System (KPS) at Kwik Trip.',
     what:
-      'End-to-end simulation of a Kwik Trip-style Kitchen Production System running live on AWS EC2. An async FastAPI ingest API receives simulated POS events from 12 stores using Poisson arrivals, FIFO batch inventory, and slot-boundary production logic. A nightly cron at 2am UTC rebuilds the demand baseline directly against Neon Postgres and runs the A/B comparison — no Snowflake step required for this hot path. Predictions across 12 stores × 45 active items × 672 weekly slots at 15-minute grain come from LightGBM, refreshed only on a manual retrain: Snowflake is resumed on demand, a three-layer dbt pipeline rebuilds the training features, the model retrains, and fresh predictions export back to Neon before Snowflake suspends again. A Streamlit dashboard surfaces split Kitchen and Chicken production queues with 5-minute auto-refresh, reading live from Neon. A parallel A/B script puts ML against a naive hourly-average baseline under identical seeded demand. Results write to ab_results.json, commit to GitHub, and trigger this portfolio site to rebuild nightly at 3:30am UTC.',
+      'End-to-end simulation of a Kwik Trip-style Kitchen Production System running live on AWS EC2. The POS simulator generates events for 12 stores via Poisson arrivals, FIFO batch inventory, and slot-boundary production logic, buffering sales/waste/stockout in memory and flushing straight to Neon Postgres every 5 minutes — no ingest API in front of it. A nightly cron rebuilds the demand baseline and runs an A/B comparison entirely against Neon: LightGBM (fed real per-date, per-region weather as a "perfect forecast") against a naive hourly-average baseline that structurally can\'t use a weather axis, over 12 stores × 45 items × 672 weekly slots. A Streamlit dashboard surfaces split Kitchen and Chicken production queues with 5-minute auto-refresh, reading live from Neon. Results write to ab_results_v2.json, commit to GitHub, and trigger this portfolio site to rebuild. Retraining is manual and Neon-native end to end — no Snowflake step; a dbt project remains in the repo as a portfolio-only artifact, not run against live data.',
     techStack: [
       'Python',
-      'FastAPI',
       'PostgreSQL (Neon)',
-      'Snowflake',
-      'dbt Core',
       'LightGBM',
       'Streamlit',
-      'asyncio / httpx',
+      'asyncio / psycopg2',
+      'dbt Core (portfolio-only)',
       'Docker',
       'AWS EC2',
       'systemd',
-      'GitHub Actions',
       'uv',
     ],
+    highlightsLabel: 'challenges',
     highlights: [
-      'Discovered and fixed a conditional mean bias bug: the demand profile was computing E[X|X>0] by averaging only days with sales, inflating predictions 3–4x at low-traffic stores — fixed by dividing sum(quantity) by total days including zero-sale days',
-      'Tracked down a silent training failure: a day_of_week convention mismatch (Snowflake EXTRACT returns Sunday=0; ISO weekday is Monday=0) caused 2.37M training rows to have slot_quantity=0 — the model learned a constant near zero until the join condition was corrected',
-      'Honest A/B finding: ML cuts stockouts ~40% and lifts service level +1.6pp, but adds +3.3pp waste — 4× more production checks create 4× more minimum-batch cook opportunities; a production system would need a cost function to tune the trade-off',
-      'Per-store schema isolation in Neon for transactional writes; single consolidated Snowflake table for cross-store analytics and model training — same data, two structures, two different jobs',
-      'Predictions span 12 stores × 45 active items × 672 weekly slots at 15-minute grain, filtered to each item\'s time-of-day availability window; cold-start fallback for new items with fewer than 4 data points; simulator resumes from Snowflake watermark on restart',
-      'Slot-boundary production logic: cook decisions fire once per 15-minute slot, look-ahead = hold_time × 4 slots; batch sizes scale with RUSH_CURVE to prevent over-production at 3am and under-production at noon',
-      'API and simulator deployed as systemd services on EC2 with auto-restart; nightly cron chains build baseline profile → A/B → git push; GitHub Actions rebuilds this site each morning',
-      'Migrated the nightly hot path off Snowflake entirely (cost-driven): a Neon-native port of the dbt baseline-profile logic now rebuilds nightly directly against Postgres, while Snowflake stays suspended and is resumed only for on-demand model retraining — cut nightly compute cost without losing the analytics layer',
-      "Once the cold-start and demand-profile bugs were fixed, the ML-vs-baseline gap nearly vanished day to day: by late July, daily waste-rate and stockout differences shrank to roughly 0.03–0.3pp and under 5%, down from 3+pp and ~30–40% in June — both systems now draw from the same corrected, low-variance demand profile, leaving little room for the model to differentiate on any given day. The 35-day cumulative headline (+2.98pp waste, +0.76pp service level) is mostly dragged upward by the earlier, pre-fix days rather than reflecting current system behavior — a reminder that a rolling average can mask the fact that a system has already converged.",
+      'Weather signal too weak to show up: the baseline\'s own historical average already bakes in an *average* weather effect, so a synthetic signal has to be deliberately stronger than reality to produce a visible A/B gap at all — narrowed the neutral band, raised precip probability, and halved unrelated day-to-day noise, growing the extreme-temperature service-level gap from +0.31pp to +2.0pp',
+      'Diagnosed a silent cost leak: an always-open ingest-API connection pool kept Neon\'s compute endpoint permanently awake, burning a week\'s free-tier compute-hours regardless of actual traffic — deleted the API entirely and rewrote the simulator to buffer events in memory and flush via short-lived batched connections every 5 minutes',
+      'Traced a 1.89x overproduction at a low-traffic store to a fleet-wide cold-start average masking per-store scale — fixed with a data-driven per-store traffic ratio and a three-tier warm/zero/cold fallback, flattening predicted-vs-actual to a 1.02–1.03x band across stores',
+      'Caught a conditional-mean trap: a demand profile averaging only sale-days instead of all days inflated low-traffic predictions 3–4x — a generalizable lesson now called out for any future profile-building script, not just a one-off fix',
     ],
-    challenges:
-      "The hardest bugs were silent ones. The model trained for weeks on 2.37M rows where slot_quantity was 0 for every row. A day_of_week convention mismatch between Snowflake's EXTRACT(DAYOFWEEK) (Sunday=0) and ISO weekday (Monday=0) meant the training join never matched. The model learned a constant near zero and I had no idea until I queried the training data directly.\n\nA separate bug inflated predictions 3–4x at low-traffic stores: the demand profile was computing a conditional mean E[X|X>0] by averaging only days with sales, rather than the true expected demand E[X] across all days.\n\nA third bug hid in the cold-start fallback: the category-level average was computed across all 12 stores combined, so a low-traffic store falling back to it inherited demand sized for the fleet's high-traffic stores — store_128 ran at 1.89x actual demand, with level-1/2 stores flattening to a near-identical ~2,950 predicted units/day regardless of real volume. The fix added a data-driven per-store traffic ratio (that store's average daily units over the fleet average) and split cold-start into three cases — warm (LightGBM, ≥14 days observed), zero (established item whose slot never sold, predict near-zero instead of falling back), and cold (new item, category average × traffic ratio) — which flattened the pred/actual ratio to a tight 1.02–1.03x band across most stores. It also surfaced an honest trade-off rather than a clean win: store_061 still undershoots by about 7%, and the resulting stockout spike at the two lowest-traffic stores is the signal to add a small floor rather than predicting a hard zero for never-sold slots.\n\nAll three fixes required understanding the data at a level that unit tests would never catch.",
+    screenshotUrl: '', // e.g. '/images/kitchensync-dashboard.png' — drop the file in deanslist/public/images/ and set the path here
     githubUrl: 'https://github.com/DeanKuhn/kitchensync',
   },
   {

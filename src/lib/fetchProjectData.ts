@@ -57,7 +57,7 @@ export function listenerBandLabel(
 export async function fetchKitchenSync(): Promise<FetchResult<KitchenSyncData>> {
   try {
     const res = await fetch(
-      'https://raw.githubusercontent.com/DeanKuhn/kitchensync/master/data/ab_results.json'
+      'https://raw.githubusercontent.com/DeanKuhn/kitchensync/master/data/ab_results_v2.json'
     );
     if (res.ok) return { state: 'ok', data: await res.json() };
     return { state: 'omitted' };
