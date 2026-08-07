@@ -66,6 +66,34 @@ export async function fetchKitchenSync(): Promise<FetchResult<KitchenSyncData>> 
   }
 }
 
+export type WeatherBucket = {
+  store_days: number;
+  ml_service_level: number;
+  baseline_service_level: number;
+  service_level_gap_pp: number;
+  ml_waste_pct: number;
+  baseline_waste_pct: number;
+};
+
+export type WeatherImpactData = {
+  extreme_heat: WeatherBucket;
+  extreme_cold: WeatherBucket;
+  precip: WeatherBucket;
+  neutral: WeatherBucket;
+};
+
+export async function fetchWeatherImpact(): Promise<FetchResult<WeatherImpactData>> {
+  try {
+    const res = await fetch(
+      'https://raw.githubusercontent.com/DeanKuhn/kitchensync/master/data/weather_impact_results.json'
+    );
+    if (res.ok) return { state: 'ok', data: await res.json() };
+    return { state: 'omitted' };
+  } catch {
+    return { state: 'omitted' };
+  }
+}
+
 export async function fetchMusicPipeline(): Promise<FetchResult<MusicPipelineData>> {
   try {
     const res = await fetch(

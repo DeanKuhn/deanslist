@@ -1,8 +1,9 @@
 ---
 import ProjectLayout from '../../layouts/Project.astro';
 import { projects } from '../../data/projects';
-import { fetchKitchenSync, fetchMusicPipeline, fetchWgups, listenerBandLabel, formatListeners } from '../../lib/fetchProjectData';
+import { fetchKitchenSync, fetchWeatherImpact, fetchMusicPipeline, fetchWgups, listenerBandLabel, formatListeners } from '../../lib/fetchProjectData';
 import KitchenSyncChart from '../../components/charts/KitchenSyncChart';
+import WeatherImpactChart from '../../components/charts/WeatherImpactChart';
 import WgupsConvergenceChart from '../../components/charts/WgupsConvergenceChart';
 import type { GetStaticPaths } from 'astro';
 export const getStaticPaths: GetStaticPaths = () => {
@@ -15,10 +16,38 @@ export const getStaticPaths: GetStaticPaths = () => {
 const { project } = Astro.props;
 
 const kitchenResult = project.slug === 'kitchensync' ? await fetchKitchenSync() : { state: 'omitted' as const };
+const weatherResult = project.slug === 'kitchensync' ? await fetchWeatherImpact() : { state: 'omitted' as const };
 const musicResult = project.slug === 'music-growth-pipeline' ? await fetchMusicPipeline() : { state: 'omitted' as const };
 const wgupsResult = project.slug === 'package-router' ? await fetchWgups() : { state: 'omitted' as const };
 
 const abData = kitchenResult.state === 'ok' ? kitchenResult.data : null;
+const weatherData = weatherResult.state === 'ok' ? weatherResult.data : null;
+
+const weatherExtremeAvgGap = weatherData
+  ? (weatherData.extreme_heat.service_level_gap_pp + weatherData.extreme_cold.service_level_gap_pp) / 2
+  : null;
+const weatherGapMultiplier = weatherData && weatherData.neutral.service_level_gap_pp > 0
+  ? weatherExtremeAvgGap! / weatherData.neutral.service_level_gap_pp
+  : null;
+const weatherChartData = weatherData ? {
+  labels: ['neutral', 'extreme heat', 'extreme cold', 'precip'],
+  mlSvc: [
+    weatherData.neutral.ml_service_level,
+    weatherData.extreme_heat.ml_service_level,
+    weatherData.extreme_cold.ml_service_level,
+    weatherData.precip.ml_service_level,
+  ],
+  baseSvc: [
+    weatherData.neutral.baseline_service_level,
+    weatherData.extreme_heat.baseline_service_level,
+    weatherData.extreme_cold.baseline_service_level,
+    weatherData.precip.baseline_service_level,
+  ],
+} : null;
+const weatherStoreDaysTotal = weatherData
+  ? weatherData.extreme_heat.store_days + weatherData.extreme_cold.store_days
+    + weatherData.precip.store_days + weatherData.neutral.store_days
+  : null;
 const pipelineStats = musicResult.state === 'ok' ? musicResult.data : null;
 const wgupsData = wgupsResult.state === 'ok' ? wgupsResult.data : null;
 
@@ -273,6 +302,44 @@ if (abData) {
 
         <div class="ab-callout mono">
           {`ML lifts service level +${(abData.cumulative.ml_avg_service_level - abData.cumulative.base_avg_service_level).toFixed(1)}pp but adds +${wasteDeltaPp!.toFixed(1)}pp waste — the trade-off is the point.`}
+        </div>
+      </div>
+    )}
+
+    <!-- Weather Impact (kitchensync only) -->
+    {project.slug === 'kitchensync' && weatherData && weatherChartData && (
+      <div class="ab-section">
+        <div class="ab-header">
+          <span class="section-label mono muted">weather impact</span>
+          <span class="ab-days mono muted">{weatherStoreDaysTotal!.toLocaleString()} simulated store-days</span>
+        </div>
+
+        <div class="weather-cards">
+          <div class="weather-card">
+            <span class="weather-value accent">+{weatherData.extreme_heat.service_level_gap_pp.toFixed(1)}pp</span>
+            <span class="weather-key mono muted">extreme heat · service level</span>
+          </div>
+          <div class="weather-card">
+            <span class="weather-value accent">+{weatherData.extreme_cold.service_level_gap_pp.toFixed(1)}pp</span>
+            <span class="weather-key mono muted">extreme cold · service level</span>
+          </div>
+          {weatherGapMultiplier && (
+            <div class="weather-card">
+              <span class="weather-value accent">{weatherGapMultiplier.toFixed(1)}x</span>
+              <span class="weather-key mono muted">bigger than the neutral-day gap</span>
+            </div>
+          )}
+        </div>
+
+        <WeatherImpactChart
+          labels={weatherChartData.labels}
+          mlSvc={weatherChartData.mlSvc}
+          baseSvc={weatherChartData.baseSvc}
+          client:visible
+        />
+
+        <div class="ab-callout mono">
+          {`On precipitation days ML's service level runs marginally below baseline (${weatherData.precip.service_level_gap_pp.toFixed(1)}pp) — but waste drops to roughly half (${weatherData.precip.ml_waste_pct.toFixed(1)}% vs ${weatherData.precip.baseline_waste_pct.toFixed(1)}%), a trade-off a flat historical average can't make.`}
         </div>
       </div>
     )}
@@ -966,6 +1033,46 @@ if (abData) {
 
   @media (max-width: 480px) {
     .ab-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Weather impact stat cards */
+  .weather-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .weather-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .weather-value {
+    font-family: var(--font-mono);
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .weather-value.accent {
+    color: var(--accent);
+  }
+
+  .weather-key {
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 640px) {
+    .weather-cards { grid-template-columns: 1fr; }
   }
 
   /* Page footer */
