@@ -40,6 +40,7 @@ const weatherStoreDaysTotal = weatherData
   : null;
 
 let wasteDeltaPp: number | null = null;
+let serviceDeltaPp: number | null = null;
 let latestDay: {
   date: string;
   ml: { waste_pct: number; service_level: number };
@@ -54,8 +55,11 @@ const chartData = abData ? {
   baseWaste: abData.daily.map((d) => (d.baseline.waste_cost / d.baseline.sales_revenue) * 100),
 } : null;
 
+let calloutText: string | null = null;
+
 if (abData) {
   wasteDeltaPp = abData.cumulative.ml_avg_waste_pct - abData.cumulative.baseline_avg_waste_pct;
+  serviceDeltaPp = abData.cumulative.ml_avg_service_level - abData.cumulative.base_avg_service_level;
   const d = abData.daily[abData.daily.length - 1];
   if (d) {
     latestDay = {
@@ -70,6 +74,11 @@ if (abData) {
       },
     };
   }
+
+  const serviceVerb = serviceDeltaPp >= 0 ? 'lifts' : 'lowers';
+  const wasteVerb = wasteDeltaPp >= 0 ? 'adds' : 'lowers';
+  const noTradeoff = serviceDeltaPp >= 0 && wasteDeltaPp <= 0;
+  calloutText = `ML ${serviceVerb} service level ${serviceDeltaPp >= 0 ? '+' : ''}${serviceDeltaPp.toFixed(1)}pp and ${wasteVerb} waste ${Math.abs(wasteDeltaPp).toFixed(1)}pp${noTradeoff ? ' — no trade-off, ML wins on both.' : ' — the trade-off is the point.'}`;
 }
 ---
 
@@ -178,7 +187,7 @@ if (abData) {
     )}
 
     <div class="ab-callout mono">
-      {`ML lifts service level +${(abData.cumulative.ml_avg_service_level - abData.cumulative.base_avg_service_level).toFixed(1)}pp but adds +${wasteDeltaPp!.toFixed(1)}pp waste — the trade-off is the point.`}
+      {calloutText}
     </div>
   </div>
 )}

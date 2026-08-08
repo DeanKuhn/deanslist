@@ -16,8 +16,6 @@ export const getStaticPaths: GetStaticPaths = () => {
 
 const { project } = Astro.props;
 
-const STREAMLIT_URL = 'https://kitchensync.streamlit.app/';
-
 const POWERBI_URLS: Record<string, string> = {
   kitchensync: 'https://app.powerbi.com/groups/me/reports/1a4846f5-fc83-4766-ab0a-7db7a0b00da0/d24e24d7b21f280c17ba?experience=power-bi',
   'music-growth-pipeline': 'https://app.powerbi.com/groups/me/reports/a0d9fc1f-0ae9-4896-afc1-8e43ea054d72/730616348ba9d9dea087?experience=power-bi',
@@ -65,15 +63,6 @@ const powerbiNote = project.slug === 'kitchensync'
         view on github ↗
       </a>
     </header>
-
-    <!-- Live dashboard callout (kitchensync only) -->
-    {project.slug === 'kitchensync' && (
-      <DashboardCallout
-        href={STREAMLIT_URL}
-        label="live streamlit dashboard"
-        note="This is what kitchen staff cook from all shift — live Kitchen and Chicken production queues plus running waste and sales metrics, refreshed every 5 minutes."
-      />
-    )}
 
     <!-- Live web app callout (any project with a deployed liveUrl) -->
     {project.liveUrl && (
