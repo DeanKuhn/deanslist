@@ -92,7 +92,7 @@ export const projects: Project[] = [
     year: '2026',
     status: 'paused',
     statusNote:
-      'Automated runs paused — Reddit shut down the public .json endpoints used for ingestion and blocked GitHub Actions IPs. v2 planned with proper OAuth, Airflow orchestration, and Spark processing.',
+      'Retired — Reddit shut down the public .json endpoints this pipeline\'s ingestion relied on and blocked GitHub Actions IPs. Not maintained; kept here as an archived project.',
     category: 'data engineering',
     tagline: 'Bronze→Silver→Gold Delta Lake pipeline detecting S&P 500 breakout signals from price and volume data',
     problem:

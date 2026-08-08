@@ -32,7 +32,7 @@ timestamps.sort((a, b) => (b > a ? 1 : -1));
 const lastRun = timestamps[0] ?? null;
 
 const liveProjects = projects.filter((p) => p.status === 'live').length + 1; // + WGUPS (live route data; project itself is complete)
-const devProjects = 2; // PharmaWatch + Market Cynic
+const devProjects = 1; // PharmaWatch
 
 // KitchenSync card metrics
 const mlServiceLevel = kitchenData
@@ -327,25 +327,25 @@ const quintileMedianMax = Math.max(...sizeQuintiles.map((q) => q.median_pct_grow
           </div>
         </div>
 
-        <!-- Market Cynic — pending -->
+        <!-- Market Cynic — retired -->
         <div class="card card--pending">
           <div class="card-header">
             <div>
               <div class="card-title">Market Cynic Pipeline</div>
               <div class="card-subtitle mono muted">data engineering</div>
             </div>
-            <span class="dev-badge mono">◌ in development</span>
+            <span class="dev-badge mono">◌ retired</span>
           </div>
 
           <div class="card-body card-body--pending">
-            <div class="pending-label mono muted">v2 in development</div>
+            <div class="pending-label mono muted">archived · no longer running</div>
             <p class="pending-desc muted">
-              Rebuilding on Databricks, Azure Data Lake Storage Gen2, Delta Lake, PySpark, and Apache Airflow. Shifting from Reddit sentiment to S&P 500 breakout signal detection. v1's automated runs are paused after Reddit shut down the public .json endpoints.
+              Bronze→Silver→Gold Delta Lake pipeline that correlated Reddit sentiment against Yahoo Finance price and volume data to flag S&P 500 divergence signals, surfaced in a Streamlit dashboard. Broken since Reddit shut down the public .json endpoints its ingestion relied on — kept here as a relic, not an active project.
             </p>
           </div>
 
           <div class="card-footer">
-            <span class="card-tagline muted">Bronze→Silver→Gold Delta Lake pipeline detecting S&P 500 breakout signals from price and volume data</span>
+            <span class="card-tagline muted">Bronze→Silver→Gold Delta Lake pipeline that once detected S&P 500 breakout signals from price and sentiment data</span>
             <a href="/projects/market-cynic-pipeline" class="card-link mono muted">
               See architecture <Icon name="tabler:arrow-right" class="link-icon" />
             </a>

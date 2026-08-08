@@ -24,8 +24,8 @@ const POWERBI_URLS: Record<string, string> = {
 };
 const powerbiUrl: string | null = POWERBI_URLS[project.slug] ?? null;
 const powerbiNote = project.slug === 'kitchensync'
-  ? 'Stores ranked by waste % level, drill-through to individual store stats — sales/waste trends and highest-stockout items — plus an item performance page sliced by category or store.'
-  : 'Listener growth by tier and genre, a listener count vs. growth rate plot with per-artist drill-through, and an Artist Spotlight page showing listener growth over time and week-over-week change.';
+  ? 'An earlier Power BI report built to explore the same data — kept as an archived artifact, not maintained or refreshed anymore. Stores ranked by waste % level, drill-through to individual store stats, and an item performance page sliced by category or store.'
+  : 'An earlier Power BI report built to explore the same listener-growth data — kept as an archived artifact, not maintained or refreshed anymore. Listener growth by tier and genre, a listener count vs. growth rate plot with per-artist drill-through, and an Artist Spotlight page.';
 ---
 
 <ProjectLayout title={project.title} description={project.tagline}>
@@ -146,13 +146,15 @@ const powerbiNote = project.slug === 'kitchensync'
 
     </div>
 
-    <!-- Live Power BI dashboard callout (kitchensync + music-growth-pipeline) -->
+    <!-- Archived Power BI report callout (kitchensync + music-growth-pipeline) -->
     {powerbiUrl && (
       <DashboardCallout
         href={powerbiUrl}
-        label="live power bi dashboard"
+        label="power bi report (archived)"
         note={powerbiNote}
+        cta="view archived report ↗"
         footer
+        muted
       />
     )}
 

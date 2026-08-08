@@ -4,14 +4,15 @@ interface Props {
   label: string;
   note: string;
   footer?: boolean;
+  muted?: boolean;
   cta?: string;
 }
-const { href, label, note, footer = false, cta = 'open dashboard ↗' } = Astro.props;
+const { href, label, note, footer = false, muted = false, cta = 'open dashboard ↗' } = Astro.props;
 ---
 
-<a href={href} target="_blank" rel="noopener" class:list={['dashboard-callout', footer && 'dashboard-callout--footer']}>
+<a href={href} target="_blank" rel="noopener" class:list={['dashboard-callout', footer && 'dashboard-callout--footer', muted && 'dashboard-callout--muted']}>
   <div class="dashboard-callout-header">
-    <span class="section-label mono accent">{label}</span>
+    <span class:list={['section-label', 'mono', muted ? 'muted' : 'accent']}>{label}</span>
     <span class="dashboard-callout-cta mono">{cta}</span>
   </div>
   <p class="dashboard-callout-note mono muted">
@@ -34,6 +35,22 @@ const { href, label, note, footer = false, cta = 'open dashboard ↗' } = Astro.
   .dashboard-callout:hover {
     box-shadow: 0 0 0 1px var(--accent);
     text-decoration: none;
+  }
+
+  .dashboard-callout--footer {
+    margin-top: 3rem;
+  }
+
+  .dashboard-callout--muted {
+    border-color: var(--border);
+  }
+
+  .dashboard-callout--muted:hover {
+    box-shadow: 0 0 0 1px var(--border);
+  }
+
+  .dashboard-callout--muted .dashboard-callout-cta {
+    color: var(--muted);
   }
 
   .dashboard-callout-header {
