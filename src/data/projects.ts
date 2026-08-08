@@ -50,7 +50,7 @@ export const projects: Project[] = [
       'Traced a 1.89x overproduction at a low-traffic store to a fleet-wide cold-start average masking per-store scale — fixed with a data-driven per-store traffic ratio and a three-tier warm/zero/cold fallback, flattening predicted-vs-actual to a 1.02–1.03x band across stores',
       'Caught a conditional-mean trap: a demand profile averaging only sale-days instead of all days inflated low-traffic predictions 3–4x — a generalizable lesson now called out for any future profile-building script, not just a one-off fix',
     ],
-    screenshotUrl: '', // e.g. '/images/kitchensync-dashboard.png' — drop the file in deanslist/public/images/ and set the path here
+    screenshotUrl: '/images/kitchensync-dashboard.png',
     githubUrl: 'https://github.com/DeanKuhn/kitchensync',
   },
   {
