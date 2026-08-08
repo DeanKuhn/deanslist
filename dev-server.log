@@ -1,0 +1,1896 @@
+11:18:01 [types] Generated 4ms
+11:18:01 [vite] Port 4321 is in use, trying another one...
+
+ astro  v4.16.19 ready in 2273 ms
+
+┃ Local    http://localhost:4322/
+┃ Network  http://172.27.96.1:4322/
+           http://192.168.1.216:4322/
+
+11:18:01 watching for file changes...
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/@astrojs/preact/dist/server.js:28:10:
+      28 │     const { html } = await renderToStaticMarkup.call(this, Compone...
+         ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/@astrojs/preact/dist/server.js:42:54:
+      42 │ ...StaticMarkup(Component, props, { default: children, ...slotted ...
+         ╵                                   ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/@astrojs/preact/dist/server.js:45:13:
+      45 │   for (const [key, value] of Object.entries(slotted)) {
+         ╵              ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/@astrojs/preact/dist/client.js:19:59:
+      19 │ ...t) => async (Component, props, { default: children, ...slotted ...
+         ╵                                   ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/@astrojs/preact/dist/client.js:19:94:
+      19 │ ...ponent, props, { default: children, ...slotted }, { client }) => {
+         ╵                                                      ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/@astrojs/preact/dist/client.js:21:13:
+      21 │   for (const [key, value] of Object.entries(slotted)) {
+         ╵              ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/@astrojs/preact/dist/client.js:26:10:
+      26 │     const { signal } = await import("@preact/signals");
+         ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/@astrojs/preact/dist/client.js:30:15:
+      30 │     for (const [propName, signalId] of Object.entries(signals)) {
+         ╵                ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/@astrojs/preact/dist/client.js:32:26:
+      32 │         signalId.forEach(([id, indexOrKeyInProps]) => {
+         ╵                           ^
+
+X [ERROR] Could not resolve "astro:preact:opts"
+
+    node_modules/@astrojs/preact/dist/server.js:1:17:
+      1 │ import opts from "astro:preact:opts";
+        ╵                  ~~~~~~~~~~~~~~~~~~~
+
+  You can mark the path "astro:preact:opts" as external to exclude it from the bundle, which will remove this error and leave the unresolved path in the bundle.
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/@astrojs/preact/dist/static-html.js:2:20:
+      2 │ const StaticHtml = ({ value, name, hydrate = true }) => {
+        ╵                     ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/@astrojs/preact/dist/signals.js:13:13:
+      13 │   for (const [key, signal] of propMap) {
+         ╵              ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/@astrojs/preact/dist/signals.js:20:13:
+      20 │   for (const [key, value] of Object.entries(props)) {
+         ╵              ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/picomatch/lib/utils.js:4:6:
+      4 │ const {
+        ╵       ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/picomatch/lib/utils.js:63:26:
+      63 │ exports.basename = (path, { windows } = {}) => {
+         ╵                           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/picomatch/lib/picomatch.js:66:10:
+      66 │     const { isMatch, match, output } = picomatch.test(input, regex...
+         ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/picomatch/lib/picomatch.js:116:41:
+      116 │ picomatch.test = (input, regex, options, { glob, posix } = {}) => {
+          ╵                                          ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/picomatch/lib/scan.js:4:6:
+      4 │ const {
+        ╵       ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/picomatch/lib/parse.js:10:6:
+      10 │ const {
+         ╵       ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/picomatch/lib/parse.js:350:8:
+      350 │   const {
+          ╵         ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/picomatch/lib/parse.js:1311:8:
+      1311 │   const {
+           ╵         ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:461:10:
+      461 │     const { iScale , vScale  } = meta;
+          ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:484:10:
+      484 │     const { min , max , minDefined , maxDefined  } = scale.getUse...
+          ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:504:10:
+      504 │     const { chart , _cachedMeta: meta  } = controller;
+          ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:506:10:
+      506 │     const { iScale , vScale , index: datasetIndex  } = meta;
+          ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:514:14:
+      514 │         const { [iAxis]: index , [vAxis]: value  } = item;
+          ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:713:14:
+      713 │         const { _cachedMeta: meta , _data: data  } = this;
+          ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:714:14:
+      714 │         const { iScale , _stacked  } = meta;
+          ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:748:14:
+      748 │         const { iScale , vScale  } = meta;
+          ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:765:14:
+      765 │         const { xScale , yScale  } = meta;
+          ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:779:14:
+      779 │         const { xScale , yScale  } = meta;
+          ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:780:14:
+      780 │         const { xAxisKey ='x' , yAxisKey ='y'  } = this._parsing;
+          ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:833:14:
+      833 │         const { min: otherMin , max: otherMax  } = getUserBounds(...
+          ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1059:19:
+      1059 │         for (const [method, arg1, arg2] of this._syncList){
+           ╵                    ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1113:18:
+      1113 │             const [method, arg1, arg2] = args;
+           ╵                   ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1336:10:
+      1336 │     const { start , end , reverse , top , bottom  } = borderProp...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1366:38:
+      1366 │ function setInflateAmount(properties, { inflateAmount  }, ratio) {
+           ╵                                       ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1412:14:
+      1412 │         const { iScale , vScale  } = meta;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1413:14:
+      1413 │         const { xAxisKey ='x' , yAxisKey ='y'  } = this._parsing;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1439:14:
+      1439 │         const { iScale , vScale  } = meta;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1460:14:
+      1460 │         const { index , _cachedMeta: { vScale  }  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1460:37:
+      1460 │         const { index , _cachedMeta: { vScale  }  } = this;
+           ╵                                      ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1464:14:
+      1464 │         const { sharedOptions , includeOptions  } = this._getSha...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1492:14:
+      1492 │         const { iScale  } = this._cachedMeta;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1568:14:
+      1568 │         const { _cachedMeta: { vScale , _stacked , index: datase...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1568:29:
+      1568 │         const { _cachedMeta: { vScale , _stacked , index: datase...
+           ╵                              ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1568:85:
+      1568 │ ...x: datasetIndex  } , options: { base: baseValue , minBarLengt...
+           ╵                                  ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1729:14:
+      1729 │         const { xScale , yScale  } = meta;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1745:14:
+      1745 │         const { iScale , vScale  } = this._cachedMeta;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1746:14:
+      1746 │         const { sharedOptions , includeOptions  } = this._getSha...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1856:30:
+      1856 │                         const { labels: { pointStyle , textAlign...
+           ╵                               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1856:40:
+      1856 │ ...              const { labels: { pointStyle , textAlign , colo...
+           ╵                                  ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1905:22:
+      1905 │                 const { key ='value'  } = this._parsing;
+           ╵                       ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1939:14:
+      1939 │         const { chartArea  } = chart;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1946:14:
+      1946 │         const { circumference , rotation  } = this._getRotationE...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1947:14:
+      1947 │         const { ratioX , ratioY , offsetX , offsetY  } = getRati...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:1981:14:
+      1981 │         const { sharedOptions , includeOptions  } = this._getSha...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2111:14:
+      2111 │         const { dataset: line , data: points = [] , _dataset  } ...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2113:12:
+      2113 │         let { start , count  } = _getStartAndCountOfVisiblePoint...
+           ╵             ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2137:14:
+      2137 │         const { iScale , vScale , _stacked , _dataset  } = this....
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2138:14:
+      2138 │         const { sharedOptions , includeOptions  } = this._getSha...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2141:14:
+      2141 │         const { spanGaps , segment  } = this.options;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2224:34:
+      2224 │ ...                        const { labels: { pointStyle , color ...
+           ╵                                  ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2224:44:
+      2224 │ ...              const { labels: { pointStyle , color  }  } = ch...
+           ╵                                  ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2482:14:
+      2482 │         const { xScale , yScale  } = meta;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2493:14:
+      2493 │         const { data: points = []  } = meta;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2495:12:
+      2495 │         let { start , count  } = _getStartAndCountOfVisiblePoint...
+           ╵             ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2506:18:
+      2506 │             const { dataset: line , _dataset  } = meta;
+           ╵                   ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2524:14:
+      2524 │         const { showLine  } = this.options;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2532:14:
+      2532 │         const { iScale , vScale , _stacked , _dataset  } = this....
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2538:14:
+      2538 │         const { spanGaps , segment  } = this.options;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2656:10:
+      2656 │     const { controller , data , _sorted  } = metaset;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2664:22:
+      2664 │                 const { vScale  } = controller._cachedMeta;
+           ╵                       ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2665:22:
+      2665 │                 const { _parsed  } = metaset;
+           ╵                       ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2694:14:
+      2694 │         const { index , data  } = metasets[i];
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2695:14:
+      2695 │         const { lo , hi  } = binarySearch(metasets[i], axis, val...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2736:14:
+      2736 │         const { startAngle , endAngle  } = element.getProps([
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2740:14:
+      2740 │         const { angle  } = getAngleFromPoint(element, {
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2906:9:
+      2906 │         ({ position: pos , options: { stack , stackWeight =1  } ...
+           ╵          ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2906:36:
+      2906 │ ...  ({ position: pos , options: { stack , stackWeight =1  }  } ...
+           ╵                                  ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2922:14:
+      2922 │         const { stack , pos , stackWeight  } = wrap;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2939:10:
+      2939 │     const { vBoxMaxWidth , hBoxMaxHeight  } = params;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2943:14:
+      2943 │         const { fullSize  } = layout.box;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:2984:10:
+      2984 │     const { pos , box  } = layout;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:3056:14:
+      3056 │         const { same , other  } = updateDims(chartArea, params, ...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:3075:8:
+      3075 │     let { x , y  } = chartArea;
+           ╵         ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:3311:10:
+      3311 │     const { x , y  } = getRelativePosition(event, chart);
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:3521:14:
+      3521 │         const { x , y  } = this.getProps([
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:3738:10:
+      3738 │     const { top , left , bottom , right , chart  } = scale;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:3739:10:
+      3739 │     const { chartArea , scales  } = chart;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:3839:12:
+      3839 │         let { _userMin , _userMax , _suggestedMin , _suggestedMa...
+           ╵             ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:3852:12:
+      3852 │         let { min , max , minDefined , maxDefined  } = this.getU...
+           ╵             ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:3906:14:
+      3906 │         const { beginAtZero , grace , ticks: tickOpts  } = this....
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4092:14:
+      4092 │         const { chart , options: { ticks: tickOpts , title: titl...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4092:33:
+      4092 │         const { chart , options: { ticks: tickOpts , title: titl...
+           ╵                                  ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4105:22:
+      4105 │                 const { first , last , widest , highest  } = thi...
+           ╵                       ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4130:14:
+      4130 │         const { ticks: { align , padding  } , position  } = this...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4130:23:
+      4130 │         const { ticks: { align , padding  } , position  } = this...
+           ╵                        ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4184:14:
+      4184 │         const { axis , position  } = this.options;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4216:14:
+      4216 │         const { ctx , _longestTextCache: caches  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4295:14:
+      4295 │         const { min , max  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4328:14:
+      4328 │         const { grid , position , border  } = options;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4442:14:
+      4442 │         const { position , ticks: optionTicks  } = options;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4445:14:
+      4445 │         const { align , crossAlign , padding , mirror  } = optio...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4605:14:
+      4605 │         const { position , ticks  } = this.options;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4621:14:
+      4621 │         const { position , ticks: { crossAlign , mirror , paddin...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4621:34:
+      4621 │ ...    const { position , ticks: { crossAlign , mirror , padding...
+           ╵                                  ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4707:14:
+      4707 │         const { ctx , options: { backgroundColor  } , left , top...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4707:31:
+      4707 │         const { ctx , options: { backgroundColor  } , left , top...
+           ╵                                ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4778:14:
+      4778 │         const { chart , ctx , options: { border , grid  }  } = t...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4778:39:
+      4778 │ ...    const { chart , ctx , options: { border , grid  }  } = this;
+           ╵                                       ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4828:14:
+      4828 │         const { ctx , options: { position , title , reverse  }  ...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4828:31:
+      4828 │         const { ctx , options: { position , title , reverse  }  ...
+           ╵                                ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:4844:14:
+      4844 │         const { titleX , titleY , maxWidth , rotation  } = title...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:5197:34:
+      5197 │ ...tion createDescriptors(chart, { plugins , localIds  }, option...
+           ╵                                  ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:5216:28:
+      5216 │ function pluginOpts(config, { plugin , local  }, opts, context) {
+           ╵                             ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:5466:14:
+      5466 │         const { options , type  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:5493:14:
+      5493 │         const { options , type  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:5511:14:
+      5511 │         const { resolver , subPrefixes  } = getResolver(this._re...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:5527:14:
+      5527 │         const { resolver  } = getResolver(this._resolverCache, s...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:5551:10:
+      5551 │     const { isScriptable , isIndexable  } = _descriptors(proxy);
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:5702:14:
+      5702 │         const { options: { aspectRatio , maintainAspectRatio  } ...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:5702:25:
+      5702 │         const { options: { aspectRatio , maintainAspectRatio  } ...
+           ╵                          ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:5858:14:
+      5858 │         const { _metasets: metasets , data: { datasets  }  } = t...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:5858:44:
+      5858 │ ...    const { _metasets: metasets , data: { datasets  }  } = this;
+           ╵                                            ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:5892:22:
+      5892 │                 const { datasetElementType , dataElementType  } ...
+           ╵                       ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:5932:18:
+      5932 │             const { controller  } = this.getDatasetMeta(i);
+           ╵                   ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:5949:14:
+      5949 │         const { _active , _lastEvent  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:5974:14:
+      5974 │         const { _hiddenIndices  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:5976:19:
+      5976 │         for (const { method , start , count  } of changes){
+           ╵                    ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6079:18:
+      6079 │             const { width , height  } = this._resizeBeforeDraw;
+           ╵                   ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6248:14:
+      6248 │         const { canvas , ctx  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6358:43:
+      6358 │ ...const active = activeElements.map(({ datasetIndex , index  })=>{
+           ╵                                       ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6414:14:
+      6414 │         const { _active: lastActive = [] , options  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6458:10:
+      6458 │     const { startAngle , x , y , outerRadius , innerRadius , opt...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6459:10:
+      6459 │     const { borderWidth , borderJoinStyle  } = options;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6486:10:
+      6486 │     const { startAngle , pixelMargin , x , y , outerRadius , inn...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6555:10:
+      6555 │     const { x , y , startAngle: start , pixelMargin , innerRadiu...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6574:10:
+      6574 │     const { outerStart , outerEnd , innerStart , innerEnd  } = p...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6631:10:
+      6631 │     const { fullCircles , startAngle , circumference  } = element;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6647:10:
+      6647 │     const { fullCircles , startAngle , circumference , options  ...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6648:10:
+      6648 │     const { borderWidth , borderJoinStyle , borderDash , borderD...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6732:14:
+      6732 │         const { angle , distance  } = getAngleFromPoint(point, {
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6736:14:
+      6736 │         const { startAngle , endAngle , innerRadius , outerRadiu...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6751:14:
+      6751 │         const { x , y , startAngle , endAngle , innerRadius , ou...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6759:14:
+      6759 │         const { offset , spacing  } = this.options;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6771:14:
+      6771 │         const { options , circumference  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6815:10:
+      6815 │     const { start: paramsStart = 0 , end: paramsEnd = count - 1 ...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6816:10:
+      6816 │     const { start: segmentStart , end: segmentEnd  } = segment;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6828:10:
+      6828 │     const { points , options  } = line;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6829:10:
+      6829 │     const { count , start , loop , ilen  } = pathVars(points, se...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6831:8:
+      6831 │     let { move =true , reverse  } = params || {};
+           ╵         ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6853:10:
+      6853 │     const { count , start , ilen  } = pathVars(points, segment, ...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6854:10:
+      6854 │     const { move =true , reverse  } = params || {};
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:6923:10:
+      6923 │     const { segments , options  } = line;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7032:18:
+      7032 │             const { start , end  } = segments[i];
+           ╵                   ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7081:10:
+      7081 │     const { [axis]: value  } = el.getProps([
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7120:14:
+      7120 │         const { x , y  } = this.getProps([
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7133:14:
+      7133 │         const { x , y  } = this.getProps([
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7167:10:
+      7167 │     const { x , y , base , width , height  } =  bar.getProps([
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7210:10:
+      7210 │     const { enableBorderRadius  } = bar.getProps([
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7305:14:
+      7305 │         const { inflateAmount , options: { borderColor , backgro...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7305:41:
+      7305 │ ...st { inflateAmount , options: { borderColor , backgroundColor...
+           ╵                                  ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7306:14:
+      7306 │         const { inner , outer  } = boundingRects(this);
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7333:14:
+      7333 │         const { x , y , base , horizontal  } =  this.getProps([
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7425:14:
+      7425 │         const { data: { datasets  } , options: chartOptions  } =...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7425:22:
+      7425 │         const { data: { datasets  } , options: chartOptions  } =...
+           ╵                       ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7426:14:
+      7426 │         const { elements  } = chartOptions;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7463:14:
+      7463 │         const { x: pointAx , y: pointAy  } = data[a];
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7554:10:
+      7554 │     const { iScale  } = meta;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7555:10:
+      7555 │     const { min , max , minDefined , maxDefined  } = iScale.getU...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7582:18:
+      7582 │             const { _data , indexAxis  } = dataset;
+           ╵                   ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7601:16:
+      7601 │             let { start , count  } = getStartAndCountOfVisiblePo...
+           ╵                 ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7646:12:
+      7646 │         let { start , end  } = segment;
+           ╵             ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7695:10:
+      7695 │     const { x =null , y =null  } = boundary || {};
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7698:27:
+      7698 │     line.segments.forEach(({ start , end  })=>{
+           ╵                            ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7857:10:
+      7857 │     const { scale , index , line  } = source;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7895:14:
+      7895 │         const { first , last , point  } = findPoint(line, source...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7944:14:
+      7944 │         const { x , y , radius  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7953:14:
+      7953 │         const { x , y , radius  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7964:10:
+      7964 │     const { chart , fill , line  } = source;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:7993:10:
+      7993 │     const { scale ={} , fill  } = source;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8005:10:
+      8005 │     const { scale , fill  } = source;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8027:10:
+      8027 │     const { chart , index , line , scale , axis  } = source;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8031:10:
+      8031 │     const { above =color , below =color  } = fillOption || {};
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8050:10:
+      8050 │     const { line , target , above , below , area , scale , clip ...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8095:10:
+      8095 │     const { segments , points  } = target;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8100:14:
+      8100 │         const { start , end  } = segment;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8124:10:
+      8124 │     const { segments , points  } = target;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8129:14:
+      8129 │         const { start , end  } = segment;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8153:10:
+      8153 │     const { line , target , property , color , scale , clip  } =...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8155:15:
+      8155 │     for (const { source: src , target: tgt , start , end  } of s...
+           ╵                ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8156:14:
+      8156 │         const { style: { backgroundColor =color  } = {}  } = src;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8156:23:
+      8156 │         const { style: { backgroundColor =color  } = {}  } = src;
+           ╵                        ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8186:10:
+      8186 │     const { property , start , end  } = bounds || {};
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8291:8:
+      8291 │     let { boxHeight =fontSize , boxWidth =fontSize  } = labelOpts;
+           ╵         ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8365:14:
+      8365 │         const { options , ctx  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8374:14:
+      8374 │         const { boxWidth , itemHeight  } = getBoxSize(labelOpts,...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8388:14:
+      8388 │         const { ctx , maxWidth , options: { labels: { padding  }...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8388:42:
+      8388 │ ...t { ctx , maxWidth , options: { labels: { padding  }  }  } = ...
+           ╵                                  ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8388:52:
+      8388 │ ...{ ctx , maxWidth , options: { labels: { padding  }  }  } = this;
+           ╵                                          ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8419:14:
+      8419 │         const { ctx , maxHeight , options: { labels: { padding  ...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8419:43:
+      8419 │ ... { ctx , maxHeight , options: { labels: { padding  }  }  } = ...
+           ╵                                  ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8419:53:
+      8419 │ ... ctx , maxHeight , options: { labels: { padding  }  }  } = this;
+           ╵                                          ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8429:18:
+      8429 │             const { itemWidth , itemHeight  } = calculateItemSiz...
+           ╵                   ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8462:14:
+      8462 │         const { legendHitBoxes: hitboxes , options: { align , la...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8462:52:
+      8462 │ ...HitBoxes: hitboxes , options: { align , labels: { padding  } ...
+           ╵                                  ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8462:70:
+      8462 │ ...es , options: { align , labels: { padding  } , rtl  }  } = this;
+           ╵                                    ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8503:14:
+      8503 │         const { options: opts , columnSizes , lineWidths , ctx  ...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8504:14:
+      8504 │         const { align , labels: labelOpts  } = opts;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8508:14:
+      8508 │         const { padding  } = labelOpts;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8517:14:
+      8517 │         const { boxWidth , boxHeight , itemHeight  } = getBoxSiz...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8798:22:
+      8798 │                 const { labels: { usePointStyle , pointStyle , t...
+           ╵                       ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8798:32:
+      8798 │                 const { labels: { usePointStyle , pointStyle , t...
+           ╵                                 ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8882:14:
+      8882 │         const { top , left , bottom , right , options  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:8918:14:
+      8918 │         const { titleX , titleY , maxWidth , rotation  } = this....
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9098:10:
+      9098 │     const { element , datasetIndex , index  } = item;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9100:10:
+      9100 │     const { label , value  } = controller.getLabelAndValue(index);
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9115:10:
+      9115 │     const { body , footer , title  } = tooltip;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9116:10:
+      9116 │     const { boxWidth , boxHeight  } = options;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9164:10:
+      9164 │     const { y , height  } = size;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9173:10:
+      9173 │     const { x , width  } = size;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9183:10:
+      9183 │     const { x , width  } = size;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9184:10:
+      9184 │     const { width: chartWidth , chartArea: { left , right  }  } ...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9184:43:
+      9184 │ ...t { width: chartWidth , chartArea: { left , right  }  } = chart;
+           ╵                                       ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9206:8:
+      9206 │     let { x , width  } = size;
+           ╵         ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9215:8:
+      9215 │     let { y , height  } = size;
+           ╵         ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9226:10:
+      9226 │     const { caretSize , caretPadding , cornerRadius  } = options;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9227:10:
+      9227 │     const { xAlign , yAlign  } = alignment;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9229:10:
+      9229 │     const { topLeft , topRight , bottomLeft , bottomRight  } = t...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9391:14:
+      9391 │         const { callbacks  } = options;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9405:14:
+      9405 │         const { callbacks  } = options;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9425:14:
+      9425 │         const { callbacks  } = options;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9519:14:
+      9519 │         const { xAlign , yAlign  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9520:14:
+      9520 │         const { caretSize , cornerRadius  } = options;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9521:14:
+      9521 │         const { topLeft , topRight , bottomLeft , bottomRight  }...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9522:14:
+      9522 │         const { x: ptX , y: ptY  } = tooltipPoint;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9523:14:
+      9523 │         const { width , height  } = size;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9594:14:
+      9594 │         const { boxHeight , boxWidth  } = options;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9656:14:
+      9656 │         const { body  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9657:14:
+      9657 │         const { bodySpacing , bodyAlign , displayColors , boxHei...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9716:14:
+      9716 │         const { xAlign , yAlign  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9717:14:
+      9717 │         const { x , y  } = pt;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9718:14:
+      9718 │         const { width , height  } = tooltipSize;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9719:14:
+      9719 │         const { topLeft , topRight , bottomLeft , bottomRight  }...
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9815:43:
+      9815 │ ...const active = activeElements.map(({ datasetIndex , index  })=>{
+           ╵                                       ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:9872:14:
+      9872 │         const { caretX , caretY , options  } = this;
+           ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10060:23:
+      10060 │             for (const { index , label  } of added){
+            ╵                        ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10078:14:
+      10078 │         const { minDefined , maxDefined  } = this.getUserBounds();
+            ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10079:12:
+      10079 │         let { min , max  } = this.getMinMax(true);
+            ╵             ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10140:10:
+      10140 │     const { bounds , step , min , max , precision , count , max...
+            ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10143:10:
+      10143 │     const { min: rmin , max: rmax  } = dataRange;
+            ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10237:46:
+      10237 │ ...veLabelSize(value, minSpacing, { horizontal , minRotation  }) {
+            ╵                                   ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10262:14:
+      10262 │         const { beginAtZero  } = this.options;
+            ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10263:14:
+      10263 │         const { minDefined , maxDefined  } = this.getUserBounds();
+            ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10264:12:
+      10264 │         let { min , max  } = this;
+            ╵             ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10288:12:
+      10288 │         let { maxTicksLimit , stepSize  } = tickOpts;
+            ╵             ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10368:14:
+      10368 │         const { min , max  } = this.getMinMax(true);
+            ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10412:43:
+      10412 │  function generateTicks(generationOptions, { min , max  }) {
+            ╵                                            ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10479:14:
+      10479 │         const { min , max  } = this.getMinMax(true);
+            ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10491:14:
+      10491 │         const { minDefined , maxDefined  } = this.getUserBounds();
+            ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10643:10:
+      10643 │     const { extra , additionalAngle , padding , size  } = itemO...
+            ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10664:10:
+      10664 │     const { left , top , right , bottom  } = item;
+            ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10684:10:
+      10684 │     const { centerPointLabels , display  } = opts.pointLabels;
+            ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10729:10:
+      10729 │     const { left , top , right , bottom  } = item;
+            ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10730:10:
+      10730 │     const { backdropColor  } = opts;
+            ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10755:10:
+      10755 │     const { ctx , options: { pointLabels  }  } = scale;
+            ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10755:27:
+      10755 │     const { ctx , options: { pointLabels  }  } = scale;
+            ╵                            ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10764:14:
+      10764 │         const { x , y , textAlign  } = item;
+            ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10773:10:
+      10773 │     const { ctx  } = scale;
+            ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10788:10:
+      10788 │     const { color , lineWidth  } = gridLineOpts;
+            ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10871:14:
+      10871 │         const { min , max  } = this.getMinMax(false);
+            ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10946:14:
+      10946 │         const { left , top , right , bottom  } = this._pointLab...
+            ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10955:14:
+      10955 │         const { backgroundColor , grid: { circular  }  } = this...
+            ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10955:40:
+      10955 │ ...onst { backgroundColor , grid: { circular  }  } = this.options;
+            ╵                                   ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10970:14:
+      10970 │         const { angleLines , grid , border  } = opts;
+            ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:10991:22:
+      10991 │                 const { color , lineWidth  } = optsAtIndex;
+            ╵                       ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:11104:10:
+      11104 │     const { parser , round , isoWeekday  } = scale._parseOpts;
+            ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:11151:14:
+      11151 │         const { lo , hi  } = _lookup(timestamps, time);
+            ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:11249:12:
+      11249 │         let { min , max , minDefined , maxDefined  } = this.get...
+            ╵             ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:11478:13:
+      11478 │             ({ lo , hi  } = _lookupByKey(table, 'pos', val));
+            ╵              ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:11480:9:
+      11480 │         ({ pos: prevSource , time: prevTarget  } = table[lo]);
+            ╵          ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:11481:9:
+      11481 │         ({ pos: nextSource , time: nextTarget  } = table[hi]);
+            ╵          ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:11484:13:
+      11484 │             ({ lo , hi  } = _lookupByKey(table, 'time', val));
+            ╵              ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:11486:9:
+      11486 │         ({ time: prevSource , pos: prevTarget  } = table[lo]);
+            ╵          ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:11487:9:
+      11487 │         ({ time: nextSource , pos: nextTarget  } = table[hi]);
+            ╵          ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chart.js:11509:14:
+      11509 │         const { min , max  } = this;
+            ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:630:14:
+      630 │         const { iScale , vScale , _parsed  } = meta;
+          ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:633:14:
+      633 │         const { min , max , minDefined , maxDefined  } = iScale.g...
+          ╵               ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:668:10:
+      668 │     const { xScale , yScale , _scaleRanges  } = meta;
+          ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:1477:10:
+      1477 │     const { x , y , w , h , radius  } = rect;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:1645:10:
+      1645 │     const { min , max  } = minmax;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:1800:10:
+      1800 │     const { _scriptable =defaults.scriptable , _indexable =defau...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:1821:10:
+      1821 │     const { _proxy , _context , _subProxy , _descriptors: descri...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:1837:10:
+      1837 │     const { _proxy , _context , _subProxy , _stack  } = target;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:1851:10:
+      1851 │     const { _proxy , _context , _subProxy , _descriptors: descri...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:1967:10:
+      1967 │     const { iScale  } = meta;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:1968:10:
+      1968 │     const { key ='r'  } = this._parsing;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:2204:10:
+      2204 │     const { offsetX , offsetY  } = source;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:2231:10:
+      2231 │     const { canvas , currentDevicePixelRatio  } = chart;
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:2236:10:
+      2236 │     const { x , y , box  } = getCanvasPosition(event, canvas);
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:2239:8:
+      2239 │     let { width , height  } = chart;
+           ╵         ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:2282:8:
+      2282 │     let { width , height  } = containerSize;
+           ╵         ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:2482:26:
+      2482 │ function normalizeSegment({ start , end , count , loop , style  ...
+           ╵                           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:2491:10:
+      2491 │     const { property , start: startBound , end: endBound  } = bo...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:2492:10:
+      2492 │     const { between , normalize  } = propertyFn(property);
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:2494:8:
+      2494 │     let { start , end , loop  } = segment;
+           ╵         ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:2525:10:
+      2525 │     const { property , start: startBound , end: endBound  } = bo...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:2527:10:
+      2527 │     const { compare , between , normalize  } = propertyFn(proper...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:2528:10:
+      2528 │     const { start , end , loop , style  } = getSegment(segment, ...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:2652:10:
+      2652 │     const { start , end  } = findStartAndEnd(points, count, loop...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:2675:10:
+      2675 │     const { _datasetIndex: datasetIndex , options: { spanGaps  }...
+           ╵           ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:2675:51:
+      2675 │ ... _datasetIndex: datasetIndex , options: { spanGaps  }  } = line;
+           ╵                                            ^
+
+X [ERROR] Transforming destructuring to the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides) is not supported yet
+
+    node_modules/chart.js/dist/chunks/helpers.dataset.js:2762:10:
+      2762 │     const { xScale , yScale  } = meta;
+           ╵           ^
+

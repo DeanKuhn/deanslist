@@ -1,0 +1,35 @@
+12:45:27 [types] Generated 386ms
+12:45:27 [build] output: "static"
+12:45:27 [build] directory: C:\Users\bibba\Code\deanslist\dist\
+12:45:27 [build] Collecting build info...
+12:45:27 [build] ✓ Completed in 566ms.
+12:45:27 [build] Building static entrypoints...
+12:45:34 [vite] [32m✓ built in 6.38s[39m
+12:45:34 [build] ✓ Completed in 6.55s.
+
+ building client (vite) 
+12:45:34 [vite] transforming...
+12:45:36 [vite] [32m✓[39m 15 modules transformed.
+12:45:36 [vite] rendering chunks...
+12:45:37 [vite] computing gzip size...
+12:45:37 [vite] [2mdist/[22m[36m_astro/hooks.module.Bo1bPWzZ.js           [39m[1m[2m  1.85 kB[22m[1m[22m[2m │ gzip:  0.84 kB[22m
+12:45:37 [vite] [2mdist/[22m[36m_astro/WgupsConvergenceChart.D9-c8wZ3.js  [39m[1m[2m  1.88 kB[22m[1m[22m[2m │ gzip:  0.94 kB[22m
+12:45:37 [vite] [2mdist/[22m[36m_astro/client.Lvjw2e0o.js                 [39m[1m[2m  2.40 kB[22m[1m[22m[2m │ gzip:  1.30 kB[22m
+12:45:37 [vite] [2mdist/[22m[36m_astro/KitchenSyncChart.BXSqeVqD.js       [39m[1m[2m  3.77 kB[22m[1m[22m[2m │ gzip:  1.38 kB[22m
+12:45:37 [vite] [2mdist/[22m[36m_astro/signals.module.DgAme4-_.js         [39m[1m[2m  7.78 kB[22m[1m[22m[2m │ gzip:  3.01 kB[22m
+12:45:37 [vite] [2mdist/[22m[36m_astro/preact.module.Db_fsUxV.js          [39m[1m[2m 10.61 kB[22m[1m[22m[2m │ gzip:  4.51 kB[22m
+12:45:37 [vite] [2mdist/[22m[36m_astro/jsxRuntime.module.BAx_Oa97.js      [39m[1m[2m161.90 kB[22m[1m[22m[2m │ gzip: 56.78 kB[22m
+12:45:37 [vite] [32m✓ built in 3.01s[39m
+
+ generating static routes 
+12:45:37 ▶ src/pages/index.astro
+12:45:37   └─ /index.html (+270ms)
+12:45:37 ▶ src/pages/projects/[slug].astro
+12:45:37   ├─ /projects/kitchensync/index.html (+75ms)
+12:45:37   ├─ /projects/music-growth-pipeline/index.html (+43ms)
+12:45:37   ├─ /projects/market-cynic-pipeline/index.html (+9ms)
+12:45:37   └─ /projects/package-router/index.html (+47ms)
+12:45:37 ✓ Completed in 746ms.
+
+12:45:38 [build] 5 page(s) built in 10.98s
+12:45:38 [build] Complete!
