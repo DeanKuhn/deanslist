@@ -16,6 +16,7 @@ export interface Project {
   challenges?: string;
   screenshotUrl?: string;    // e.g. '/images/kitchensync-dashboard.png' (place file in deanslist/public/images/)
   githubUrl: string;
+  liveUrl?: string;          // public deployed app, e.g. 'https://music.deanslist.dev'
 }
 
 export const projects: Project[] = [
@@ -62,24 +63,28 @@ export const projects: Project[] = [
     problem:
       "The Last.fm API returns only cumulative all-time stats — there is no native time series. To study whether an artist's audience size correlates with listener growth over time, you have to build the longitudinal dataset yourself by snapshotting repeatedly.",
     what:
-      'Weekly ingestion pipeline snapshots listener data for artists from the Last.fm global chart into Postgres on Neon. Artists are bucketed into size quintiles by their listener count at the start of the measurement window, so growth is compared across audience size rather than chart position. A dbt transformation layer (6 staging + 7 mart models) powers both cross-sectional and longitudinal analysis. After each weekly snapshot, dbt rebuilds the mart views, a stats script queries them and writes pipeline_stats.json to GitHub, and this portfolio page picks up the fresh data in its nightly rebuild.',
+      'Weekly ingestion pipeline snapshots listener data for artists from the Last.fm global chart into Postgres on Neon. Artists are bucketed into size quintiles by their listener count at the start of the measurement window, so growth is compared across audience size rather than chart position. A dbt transformation layer (staging + marts + a dedicated api/ serving layer, pre-joined and pre-indexed so the app never queries the marts directly) powers both cross-sectional and longitudinal analysis. That serving layer feeds a public Next.js 15 (App Router) web app, deployed on Vercel at music.deanslist.dev — search, artist pages with growth charts and genre/size-band/similar-artist comparisons, leaderboards, and genre breakdowns, all reading live from Postgres through a rate-limited, read-only (app_readonly) API layer. After each weekly snapshot, dbt rebuilds the marts, a stats script writes pipeline_stats.json to GitHub, and both this portfolio card and the live site pick up the fresh data.',
     techStack: [
       'Python',
       'PostgreSQL (Neon)',
       'dbt Core (dbt-postgres)',
+      'Next.js (App Router, TS)',
+      'Vercel',
+      'Upstash Redis',
       'Last.fm API',
       'GitHub Actions',
       'SQL',
     ],
     highlights: [
-      'Artists tracked across weekly snapshots and split into five equal-sized bands by listener count at the start of the window (live counts on the project page)',
       'Core finding: median listener growth declines monotonically with artist size — the smallest band grows roughly 1.5× the median rate of the largest',
-      'dbt mart layer: listener_growth (LAG window function), artist_growth_summary, weekly_growth_by_tier, genre_growth — marts build on marts via ref()',
       'Averages sit well above medians in every band — a thin tail of viral breakouts skews the mean, so the median carries the finding',
       'Genre signal: EDM shows highest median growth rate; classical and metal are slowest — genre appears secondary to artist size as a growth predictor',
       'Standout cases: several small artists grew 100–400% over the window — growth patterns split between viral spikes and steady week-over-week acceleration',
+      'Caught a real security incident before shipping: a pasted read-only connection string was actually owner-authenticated, so the "read-only" app could write — closed by hardening a role-identity check that fails closed (500) if the connected DB role isn\'t app_readonly',
+      'Getting the Vercel deploy live surfaced bugs the local build never could: pages that self-fetch their own API routes 500\'d in production because Vercel\'s Deployment Protection blocks the default *.vercel.app hostname, and an unencoded "+" in the 1M+ size band silently decoded to a space and broke that leaderboard slice — both required testing against a real separate deployment, not just next build + next start',
     ],
     githubUrl: 'https://github.com/DeanKuhn/music-growth-pipeline',
+    liveUrl: 'https://music.deanslist.dev',
   },
   {
     slug: 'market-cynic-pipeline',

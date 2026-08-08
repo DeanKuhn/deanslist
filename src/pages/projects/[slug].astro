@@ -75,6 +75,16 @@ const powerbiNote = project.slug === 'kitchensync'
       />
     )}
 
+    <!-- Live web app callout (any project with a deployed liveUrl) -->
+    {project.liveUrl && (
+      <DashboardCallout
+        href={project.liveUrl}
+        label="live web app"
+        note="This is the actual product, not a demo — search, artist pages, leaderboards, and genre breakdowns, reading live from Postgres through a rate-limited, read-only API layer."
+        cta="visit site ↗"
+      />
+    )}
+
     <!-- Screenshot (any project with one set) -->
     {project.screenshotUrl && (
       <img
@@ -149,9 +159,16 @@ const powerbiNote = project.slug === 'kitchensync'
     <!-- Footer -->
     <div class="page-footer">
       <a href="/" class="mono muted">← all projects</a>
-      <a href={project.githubUrl} target="_blank" rel="noopener" class="mono accent">
-        github ↗
-      </a>
+      <div class="page-footer-links">
+        {project.liveUrl && (
+          <a href={project.liveUrl} target="_blank" rel="noopener" class="mono accent">
+            live site ↗
+          </a>
+        )}
+        <a href={project.githubUrl} target="_blank" rel="noopener" class="mono accent">
+          github ↗
+        </a>
+      </div>
     </div>
 
   </main>
@@ -337,6 +354,12 @@ const powerbiNote = project.slug === 'kitchensync'
 
   .page-footer a {
     font-size: 0.8125rem;
+  }
+
+  .page-footer-links {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
   }
 
   /* Screenshot */

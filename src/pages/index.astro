@@ -173,9 +173,14 @@ const quintileMedianMax = Math.max(...sizeQuintiles.map((q) => q.median_pct_grow
 
           <div class="card-footer">
             <span class="card-tagline muted">Median listener growth falls steadily as artists get larger</span>
-            <a href="/projects/music-growth-pipeline" class="card-link mono accent">
-              View project <Icon name="tabler:arrow-right" class="link-icon" />
-            </a>
+            <div class="card-links">
+              <a href="/projects/music-growth-pipeline" class="card-link card-link--secondary mono muted">
+                details <Icon name="tabler:arrow-right" class="link-icon" />
+              </a>
+              <a href="https://music.deanslist.dev" target="_blank" rel="noopener" class="card-link mono accent">
+                Visit live app <Icon name="tabler:external-link" class="link-icon" />
+              </a>
+            </div>
           </div>
         </div>
 
@@ -882,6 +887,17 @@ const quintileMedianMax = Math.max(...sizeQuintiles.map((q) => q.median_pct_grow
   .card-link:hover {
     text-decoration: none;
     opacity: 0.75;
+  }
+
+  .card-links {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    flex-shrink: 0;
+  }
+
+  .card-link--secondary {
+    font-size: 0.6875rem;
   }
 
   .link-icon {

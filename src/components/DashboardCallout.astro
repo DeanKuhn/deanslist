@@ -4,14 +4,15 @@ interface Props {
   label: string;
   note: string;
   footer?: boolean;
+  cta?: string;
 }
-const { href, label, note, footer = false } = Astro.props;
+const { href, label, note, footer = false, cta = 'open dashboard ↗' } = Astro.props;
 ---
 
 <a href={href} target="_blank" rel="noopener" class:list={['dashboard-callout', footer && 'dashboard-callout--footer']}>
   <div class="dashboard-callout-header">
     <span class="section-label mono accent">{label}</span>
-    <span class="dashboard-callout-cta mono">open dashboard ↗</span>
+    <span class="dashboard-callout-cta mono">{cta}</span>
   </div>
   <p class="dashboard-callout-note mono muted">
     {note}
