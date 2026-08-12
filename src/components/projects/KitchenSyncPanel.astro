@@ -78,7 +78,7 @@ if (abData) {
   const serviceVerb = serviceDeltaPp >= 0 ? 'lifts' : 'lowers';
   const wasteVerb = wasteDeltaPp >= 0 ? 'adds' : 'lowers';
   const noTradeoff = serviceDeltaPp >= 0 && wasteDeltaPp <= 0;
-  calloutText = `ML ${serviceVerb} service level ${serviceDeltaPp >= 0 ? '+' : ''}${serviceDeltaPp.toFixed(1)}pp and ${wasteVerb} waste ${Math.abs(wasteDeltaPp).toFixed(1)}pp${noTradeoff ? ' — no trade-off, ML wins on both.' : ' — the trade-off is the point.'}`;
+  calloutText = `ML ${serviceVerb} service level ${serviceDeltaPp >= 0 ? '+' : ''}${serviceDeltaPp.toFixed(1)}pp and ${wasteVerb} waste ${Math.abs(wasteDeltaPp).toFixed(1)}pp${noTradeoff ? ' — ML wins on both.' : ' — the trade-off is the point.'}`;
 }
 ---
 
