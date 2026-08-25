@@ -63,13 +63,14 @@ export const projects: Project[] = [
     problem:
       "The Last.fm API returns only cumulative all-time stats — there is no native time series. To study whether an artist's audience size correlates with listener growth over time, you have to build the longitudinal dataset yourself by snapshotting repeatedly.",
     what:
-      'Weekly ingestion pipeline snapshots listener data for artists from the Last.fm global chart into Postgres on Neon. Artists are bucketed into size quintiles by their listener count at the start of the measurement window, so growth is compared across audience size rather than chart position. A dbt transformation layer (staging + marts + a dedicated api/ serving layer, pre-joined and pre-indexed so the app never queries the marts directly) powers both cross-sectional and longitudinal analysis. That serving layer feeds a public Next.js 15 (App Router) web app, deployed on Vercel at music.deanslist.dev — search, artist pages with growth charts and genre/size-band/similar-artist comparisons, leaderboards, and genre breakdowns, all reading live from Postgres through a rate-limited, read-only (app_readonly) API layer. After each weekly snapshot, dbt rebuilds the marts, a stats script writes pipeline_stats.json to GitHub, and both this portfolio card and the live site pick up the fresh data.',
+      'Weekly ingestion pipeline snapshots listener data for artists from the Last.fm global chart into Postgres on Neon. Artists are bucketed into size quintiles by their listener count at the start of the measurement window, so growth is compared across audience size rather than chart position. A dbt transformation layer (staging + marts + a dedicated api/ serving layer, pre-joined and pre-indexed so the app never queries the marts directly) powers both cross-sectional and longitudinal analysis. That serving layer feeds a public Next.js 15 (App Router) web app, self-hosted on EC2 behind Caddy (auto-HTTPS) at music.deanslist.dev — search, artist pages with growth charts and genre/size-band/similar-artist comparisons, leaderboards, and genre breakdowns, all reading live from Postgres through a rate-limited, read-only (app_readonly) API layer. After each weekly snapshot, dbt rebuilds the marts, a stats script writes pipeline_stats.json to GitHub, and both this portfolio card and the live site pick up the fresh data.',
     techStack: [
       'Python',
       'PostgreSQL (Neon)',
       'dbt Core (dbt-postgres)',
       'Next.js (App Router, TS)',
-      'Vercel',
+      'AWS EC2',
+      'Caddy',
       'Upstash Redis',
       'Last.fm API',
       'GitHub Actions',
@@ -81,7 +82,7 @@ export const projects: Project[] = [
       'Genre signal: EDM shows highest median growth rate; classical and metal are slowest — genre appears secondary to artist size as a growth predictor',
       'Standout cases: several small artists grew 100–400% over the window — growth patterns split between viral spikes and steady week-over-week acceleration',
       'Caught a real security incident before shipping: a pasted read-only connection string was actually owner-authenticated, so the "read-only" app could write — closed by hardening a role-identity check that fails closed (500) if the connected DB role isn\'t app_readonly',
-      'Getting the Vercel deploy live surfaced bugs the local build never could: pages that self-fetch their own API routes 500\'d in production because Vercel\'s Deployment Protection blocks the default *.vercel.app hostname, and an unencoded "+" in the 1M+ size band silently decoded to a space and broke that leaderboard slice — both required testing against a real separate deployment, not just next build + next start',
+      'Migrated from Vercel to self-hosted EC2 behind Caddy: eliminated the self-fetch pattern where server components were fetching their own /api/* routes via HTTP (which needs a running server during build) — pages now query the DB directly via a shared queries module, and the API routes remain as thin wrappers for client-side consumers',
     ],
     githubUrl: 'https://github.com/DeanKuhn/music-growth-pipeline',
     liveUrl: 'https://music.deanslist.dev',
