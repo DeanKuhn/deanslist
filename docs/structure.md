@@ -13,8 +13,9 @@ Plain HTML/CSS/JS. No framework, no build step.
 ```
 index.html              — homepage (hero → project cards → about)
 projects/
-  kitchensync.html      — KitchenSync project page
+  pharmawatch.html      — PharmaWatch project page
   music-growth.html     — Music Growth Pipeline project page
+  kitchensync.html      — KitchenSync project page
   package-router.html   — VRP-TW / WGUPS project page
 public/
   images/               — static assets
@@ -34,12 +35,12 @@ Three projects fetch JSON client-side via `fetch()` and render with Chart.js or 
 
 All URLs are `https://raw.githubusercontent.com/` prefixed.
 
-## Projects
+## Projects (display order)
 
-1. **KitchenSync** — ML demand forecasting. Status: live.
+1. **PharmaWatch** — Drug safety signal detection over FDA adverse event data. Status: in development.
 2. **Music Growth Pipeline** — Spotify listener growth tracking. Status: live.
-3. **Package Router (VRP-TW)** — Genetic algorithm vehicle routing. Status: complete.
-4. **Market Cynic** — Sentiment-driven market analysis. Status: paused (homepage "in development" card only).
+3. **KitchenSync** — ML demand forecasting. Status: live.
+4. **Package Router (VRP-TW)** — Genetic algorithm vehicle routing. Status: complete.
 
 ## Deploy
 
