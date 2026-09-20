@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Growth — dean's list</title>
+  <meta name="description" content="Music Growth Pipeline — Last.fm listener growth tracking across 37k+ artists.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg: '#0e0f11',
+            'bg-card': '#15171a',
+            accent: '#f06a00',
+            text: '#e8e9ea',
+            muted: '#9ca3af',
+            border: '#2a2d32',
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'monospace'],
+          },
+        },
+      },
+    }
+  </script>
+</head>
+
+<body class="bg-bg text-text font-mono">
+
+  <!-- Nav -->
+  <nav class="sticky top-0 bg-bg border-b border-border z-50">
+    <div class="max-w-4xl mx-auto px-6 py-3 flex justify-between items-center">
+      <a href="/" class="font-display text-accent text-lg hover:text-accent">&larr; dean's list</a>
+      <div class="flex gap-6 text-sm text-muted">
+        <a href="https://github.com/DeanKuhn" class="hover:text-accent">github</a>
+        <a href="https://linkedin.com/in/deankuhn" class="hover:text-accent">linkedin</a>
+        <a href="../public/resume.pdf" class="hover:text-accent">resume</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Project content -->
+  <main class="max-w-4xl mx-auto px-6">
+
+    <!-- Project title -->
+    <div class="max-w-4xl mx-auto px-6 pt-24">
+      <div class="flex items-center gap-2 text-sm text-muted">
+        <span class="inline-block w-2 h-2 bg-green-500 rounded-full shadow-[0_0_6px_rgba(74,222,128,0.6)]">
+        </span>
+        <span>DEPLOYED AND LIVE &middot; DATA ENGINEERING &middot; 2026</span>
+      </div>
+      <h1 class="font-display text-6xl mt-6">Music Growth</h1>
+      <div class="flex items-center gap-2 text-sm text-muted mt-6">
+        <a href="https://github.com/deankuhn/music-growth-pipeline" class="text-muted bg-bg-card border border-border rounded px-2 py-1 hover:border-accent">github ➚</a>
+        <a href="https://music.deanslist.dev" class="text-muted bg-bg-card border border-accent rounded px-2 py-1 hover:border-accent">live site ♫</a>
+      </div>
+    </div>
+
+    <hr class="max-w-4xl mx-auto my-12 border-border">
+
+    <!-- Project about/problem -->
+    <div class="max-w-4xl mx-auto px-6">
+      <p class="text-xs text-muted uppercase tracking-widest mb-6">problem solved</p>
+      <p class="text-sm text-muted max-w-xl leading-relaxed">
+        Popular API last.fm only gives cumulative stats for artists. No growth rates, historical data, or way to compare against other artists. Music Growth solves this problem by snapshotting 37k+ artist's listener count weekly. It also captures an artist's genre, calculates their size band, and notes similar artists.
+        <br><br>
+        This tool is designed to help curious analysts or the artists themselves observe their own listener growth over time, as well as to compare themselves to other artists of similar size and genre. This is made possible through a Next.js frontend,
+        <a href="https://music.deanslist.dev" class="hover:text-accent">music.deanslist.dev</a>
+        , where you can query individual artist statistics as well as overall leaderboard and genre-related data without needing to know SQL.
+      </p>
+    </div>
+
+    <hr class="max-w-4xl mx-auto my-12 border-border">
+
+
+    <!-- Live pipeline data -->
+    <div id="live-data" class="hidden max-w-4xl mx-auto px-6">
+      <p class="text-xs text-muted uppercase tracking-widest mb-6">live pipeline data</p>
+
+      <div class="grid grid-cols-3 gap-4 mb-8">
+        <div class="bg-bg-card border border-border rounded-lg px-4 py-3">
+          <p class="text-xs text-muted uppercase tracking-widest">artists tracked</p>
+          <p id="stat-artists" class="text-lg text-text mt-1"></p>
+        </div>
+        <div class="bg-bg-card border border-border rounded-lg px-4 py-3">
+          <p class="text-xs text-muted uppercase tracking-widest">weeks tracked</p>
+          <p id="stat-weeks" class="text-lg text-text mt-1"></p>
+        </div>
+        <div class="bg-bg-card border border-border rounded-lg px-4 py-3">
+          <p class="text-xs text-muted uppercase tracking-widest">latest snapshot</p>
+          <p id="stat-snapshot" class="text-lg text-text mt-1"></p>
+        </div>
+      </div>
+
+      <p class="text-xs text-muted uppercase tracking-widest mb-4">growth by size quintile</p>
+      <div class="bg-bg-card border border-border rounded-lg overflow-x-auto">
+        <table class="w-full text-xs">
+          <thead>
+            <tr class="text-muted uppercase tracking-widest border-b border-border">
+              <th class="text-left px-4 py-3 font-normal">quintile</th>
+              <th class="text-left px-4 py-3 font-normal">listeners</th>
+              <th class="text-right px-4 py-3 font-normal">median growth</th>
+              <th class="text-right px-4 py-3 font-normal">p90 growth</th>
+            </tr>
+          </thead>
+          <tbody id="quintile-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr class="max-w-4xl mx-auto my-12 border-border">
+
+    <!-- Architecture -->
+    <div class="max-w-4xl mx-auto px-6">
+      <p class="text-xs text-muted uppercase tracking-widest mb-6">architecture</p>
+      <div class="space-y-3">
+
+        <div class="bg-bg-card border border-border rounded-lg px-4 py-3 text-sm text-text text-center">
+          Last.fm API <span class="text-muted text-xs ml-2">read-only, key auth</span>
+        </div>
+        <div class="text-center text-muted text-xs">&darr; <span class="text-xs">Python snapshots</span></div>
+
+        <div class="bg-bg-card border border-border rounded-lg px-4 py-3 text-sm text-text text-center">
+          Postgres <span class="text-muted text-xs ml-2">hosted on Neon</span>
+        </div>
+        <div class="text-center text-muted text-xs">&darr; <span class="text-xs">dbt staging + marts</span></div>
+
+        <div class="bg-bg-card border border-border rounded-lg px-4 py-3 text-sm text-text text-center">
+          Serving layer <span class="text-muted text-xs ml-2">pre-joined views</span>
+        </div>
+        <div class="text-center text-muted text-xs">&darr;</div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <a href="https://music.deanslist.dev" class="bg-bg-card border border-accent rounded-lg px-4 py-3 text-sm text-text text-center">
+            Next.js app <span class="text-xs text-green-500 ml-2">live</span>
+            <p class="text-xs text-muted mt-1">music.deanslist.dev</p>
+          </a>
+          <div class="bg-bg-card border border-dashed border-border rounded-lg px-4 py-3 text-sm text-muted text-center">
+            Power BI report
+            <p class="text-xs text-muted mt-1">archived</p>
+          </div>
+        </div>
+
+        <p class="text-xs text-muted mt-4">GitHub Actions triggers the full pipeline every Sunday at 9 AM UTC — snapshot, dbt rebuild, stats export.</p>
+
+      </div>
+    </div>
+
+    <hr class="max-w-4xl mx-auto my-12 border-border">
+
+    <!-- Stack -->
+    <div class="max-w-4xl mx-auto px-6">
+      <p class="text-xs text-muted uppercase tracking-widest mb-6">stack</p>
+      <div class="space-y-4">
+        <div>
+          <p class="text-xs text-muted uppercase tracking-widest mb-2">languages</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">python</span>
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">sql</span>
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">typescript</span>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs text-muted uppercase tracking-widest mb-2">ingestion & transformation</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">dbt</span>
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">dbt-postgres</span>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs text-muted uppercase tracking-widest mb-2">infra & storage</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">postgres</span>
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">neon</span>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs text-muted uppercase tracking-widest mb-2">automation</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">github actions</span>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs text-muted uppercase tracking-widest mb-2">frontend & hosting</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">next.js 15</span>
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">tailwind</span>
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">ec2</span>
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">caddy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="max-w-4xl mx-auto my-12 border-border">
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="max-w-4xl mx-auto px-6 pb-12">
+    <div class="flex justify-between items-center text-xs text-muted">
+      <span>&copy; 2026 deanslist.dev</span>
+      <span>Milwaukee, WI &middot; open to remote</span>
+    </div>
+  </footer>
+
+  <script>
+      (async function () {
+        try {
+          const res = await fetch('https://raw.githubusercontent.com/DeanKuhn/music-growth-pipeline/main/data/pipeline_stats.json');
+          if (!res.ok) return;
+          const data = await res.json();
+
+          document.getElementById('stat-artists').textContent = data.summary.artist_count.toLocaleString();
+          document.getElementById('stat-weeks').textContent = data.summary.weeks_tracked;
+          document.getElementById('stat-snapshot').textContent = data.summary.latest_snapshot;
+
+          const tbody = document.getElementById('quintile-body');
+          const labels = {1: 'Q1 (smallest)', 5: 'Q5 (largest)'};
+          const formatK = n => n >= 1_000_000 ? (n / 1_000_000).toFixed(1) + 'M' : n >= 1_000 ? Math.round(n / 1_000) + 'k' : n.toLocaleString();
+
+          data.growth_by_size_quintile.forEach(q => {
+            const tr = document.createElement('tr');
+            tr.className = 'border-b border-border last:border-0';
+            tr.innerHTML = `
+            <td class="px-4 py-3 text-text">${labels[q.quintile] || 'Q' + q.quintile}</td>
+            <td class="px-4 py-3 text-muted">${formatK(q.band_min)} – ${formatK(q.band_max)}</td>
+            <td class="px-4 py-3 text-right text-text">${q.median_pct_growth}%</td>
+            <td class="px-4 py-3 text-right text-muted">${q.p90_pct_growth}%</td>
+          `;
+            tbody.appendChild(tr);
+          });
+
+          document.getElementById('live-data').classList.remove('hidden');
+        } catch (e) { /* silently omit */}
+      })();
+  </script>
+
+</body>
+
+</html>
