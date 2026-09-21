@@ -6,6 +6,18 @@
 
 Portfolio site, featuring some data engineering, ml / forecasting, and optimization projects.
 
+## Rebuilt from astro
+
+Previously this portfolio site was mostly vibe-coded with astro (still exists on legacy branch). I decided to rebuilt from scratch with code I understood (html, tailwind, basic js).
+
+Improvements:
+
+| | Legacy (Astro) | Current (html, tailwind, js) |
+| --- | ---| --- |
+| Simplicity | Difficult to understand (templates, logic (.ts/.tsx)) | Easy to understand (plain html, inline script) |
+| File Count | 22 (.astro, .ts, .tsx, .json, .md, .mjs) | 10 (.html, .css, .json, .md) |
+| Line Count | 3,571 | 1,740 (51% reduction) |
+
 ## Stack
 
 Plain HTML, CSS (Tailwind), and vanilla JS. Chart.js for data visualizations.
