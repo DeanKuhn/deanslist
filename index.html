@@ -32,7 +32,7 @@
     <div class="flex items-center gap-2 text-sm text-muted">
       <span class="inline-block w-2 h-2 bg-green-500 rounded-full shadow-[0_0_6px_rgba(74,222,128,0.6)]">
       </span>
-      <span>DATA ENGINEERING & ANALYTICS &middot; MILWAUKEE, WI</span>
+      <span>data engineering & analytics &middot; Milwaukee, WI</span>
     </div>
     <h1 class="font-display text-7xl mt-6">Dean Kuhn</h1>
     <p class="text-muted mt-6 max-w-lg text-sm">
@@ -260,7 +260,7 @@
         el.innerHTML = `<span class="text-accent">${s.artist_count.toLocaleString()}</span> artists · ${s.weeks_tracked} weeks · +${d.growth_by_size_quintile[4].median_pct_growth}% median growth`;
         el.classList.remove('hidden');
       })
-      .catch(() => {});
+      .catch(() => { });
 
     // KitchenSync
     fetch(`${gh}/kitchensync/master/data/ab_results_v2.json`)
@@ -271,7 +271,7 @@
         el.innerHTML = `${c.days_run} days · <span class="text-accent">${c.ml_avg_service_level.toFixed(1)}%</span> service level · ${c.ml_avg_waste_pct.toFixed(1)}% waste`;
         el.classList.remove('hidden');
       })
-      .catch(() => {});
+      .catch(() => { });
 
     // Package Router
     fetch(`${gh}/ga-combined-routing-loading/main/data/ga_results.json`)
@@ -283,10 +283,10 @@
         el.innerHTML = `${p.packages} packages · ${p.trucks} trucks · ${s.total_fleet_mileage} mi · <span class="text-accent">${s.deadline_violations} late</span>`;
         el.classList.remove('hidden');
       })
-      .catch(() => {});
+      .catch(() => { });
 
     document.getElementById('last-run').textContent =
-      'Last pipeline run: ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      'Last pipeline run: ' + new Date().toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
   </script>
 
 </body>
