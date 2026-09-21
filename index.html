@@ -280,7 +280,7 @@
         const el = document.getElementById('pr-stats');
         const p = d.parameters;
         const s = d.summary;
-        el.innerHTML = `${p.packages} packages · ${p.trucks} trucks · ${s.total_fleet_mileage} mi · <span class="text-accent">${s.deadline_violations} late</span>`;
+        el.innerHTML = `${p.packages} packages · ${p.trucks} trucks · ${Math.round(s.total_fleet_mileage)} mi · <span class="text-accent">${s.deadline_violations} late</span>`;
         el.classList.remove('hidden');
       })
       .catch(() => { });
