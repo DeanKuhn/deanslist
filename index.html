@@ -86,10 +86,11 @@
         </div>
         <h3 class="font-display text-xl text-text">PharmaWatch</h3>
         <p class="text-sm text-muted mt-2">Drug safety signal detection over FDA adverse event data.</p>
+        <p class="text-xs text-muted mt-3"><span class="text-accent">61.3M</span> adverse events · 91 quarters · 5 age cohorts</p>
         <div class="flex flex-wrap gap-2 mt-4">
-          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-1">duckdb</span>
-          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-1">parquet</span>
-          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-1">rag</span>
+          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-2">duckdb</span>
+          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-2">parquet</span>
+          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-2">rag</span>
         </div>
       </a>
 
@@ -104,10 +105,11 @@
         </div>
         <h3 class="font-display text-xl text-text">Music Growth Pipeline</h3>
         <p class="text-sm text-muted mt-2">Spotify listener growth tracking across 600+ artists.</p>
+        <p id="music-stats" class="text-xs text-muted mt-3 hidden"></p>
         <div class="flex flex-wrap gap-2 mt-4">
-          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-1">postgres</span>
-          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-1">nextjs</span>
-          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-1">typescript</span>
+          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-2">postgres</span>
+          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-2">nextjs</span>
+          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-2">typescript</span>
         </div>
       </a>
 
@@ -123,10 +125,11 @@
         <h3 class="font-display text-xl text-text">KitchenSync</h3>
         <p class="text-sm text-muted mt-2">ML demand forecasting pipeline for grocery inventory optimization.
         </p>
+        <p id="ks-stats" class="text-xs text-muted mt-3 hidden"></p>
         <div class="flex flex-wrap gap-2 mt-4">
-          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-1">forecasting</span>
-          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-1">lightgbm</span>
-          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-1">streamlit</span>
+          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-2">forecasting</span>
+          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-2">lightgbm</span>
+          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-2">streamlit</span>
         </div>
       </a>
 
@@ -135,16 +138,17 @@
         <div class="flex justify-between items-center text-xs text-muted mb-3">
           <span class="uppercase tracking-widest">optimization</span>
           <span class="flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 bg-muted rounded-full"></span>
+            <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
             complete
           </span>
         </div>
         <h3 class="font-display text-xl text-text">Package Router</h3>
         <p class="text-sm text-muted mt-2">Genetic algorithm vehicle routing with time windows and constraints.</p>
+        <p id="pr-stats" class="text-xs text-muted mt-3 hidden"></p>
         <div class="flex flex-wrap gap-2 mt-4">
-          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-1">python</span>
-          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-1">genetic algorithms</span>
-          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-1">cli</span>
+          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-2">python</span>
+          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-2">genetic algorithms</span>
+          <span class="text-xs text-muted bg-bg border border-border rounded px-2 py-2">cli</span>
         </div>
       </a>
 
@@ -193,7 +197,7 @@
 
   <!-- Stack -->
   <div class="max-w-4xl mx-auto px-6">
-    <p class="text-xs text-muted uppercase tracking-widest mb-6">stack</p>
+    <p class="text-xs text-muted uppercase tracking-widest mb-6">♜ stack ♖</p>
     <div class="space-y-4">
 
       <div>
@@ -262,6 +266,44 @@
       <span>Milwaukee, WI · open to remote</span>
     </div>
   </footer>
+
+  <script>
+    const gh = 'https://raw.githubusercontent.com/DeanKuhn';
+
+    // Music Growth
+    fetch(`${gh}/music-growth-pipeline/main/data/pipeline_stats.json`)
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(d => {
+        const el = document.getElementById('music-stats');
+        const s = d.summary;
+        el.innerHTML = `<span class="text-accent">${s.artist_count.toLocaleString()}</span> artists · ${s.weeks_tracked} weeks · +${d.growth_by_size_quintile[4].median_pct_growth}% median growth`;
+        el.classList.remove('hidden');
+      })
+      .catch(() => {});
+
+    // KitchenSync
+    fetch(`${gh}/kitchensync/master/data/ab_results_v2.json`)
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(d => {
+        const el = document.getElementById('ks-stats');
+        const c = d.cumulative;
+        el.innerHTML = `${c.days_run} days · <span class="text-accent">${c.ml_avg_service_level.toFixed(1)}%</span> service level · ${c.ml_avg_waste_pct.toFixed(1)}% waste`;
+        el.classList.remove('hidden');
+      })
+      .catch(() => {});
+
+    // Package Router
+    fetch(`${gh}/ga-combined-routing-loading/main/data/ga_results.json`)
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(d => {
+        const el = document.getElementById('pr-stats');
+        const p = d.parameters;
+        const s = d.summary;
+        el.innerHTML = `${p.packages} packages · ${p.trucks} trucks · ${s.total_fleet_mileage} mi · <span class="text-accent">${s.deadline_violations} late</span>`;
+        el.classList.remove('hidden');
+      })
+      .catch(() => {});
+  </script>
 
 </body>
 
