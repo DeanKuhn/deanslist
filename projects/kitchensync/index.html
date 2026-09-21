@@ -35,7 +35,7 @@
       <div class="flex items-center gap-2 text-sm text-muted">
         <span class="inline-block w-2 h-2 bg-green-500 rounded-full shadow-[0_0_6px_rgba(74,222,128,0.6)]">
         </span>
-        <span>DEPLOYED AND LIVE &middot; ML / FORECASTING &middot; 2026</span>
+        <span>deployed & live &middot; ml / forecasting &middot; 2026</span>
       </div>
       <h1 class="font-display text-6xl mt-6">KitchenSync</h1>
       <div class="flex items-center gap-2 text-sm text-muted mt-6">
@@ -249,103 +249,103 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <script>
-      (async function () {
-        try {
-          const res = await fetch('https://raw.githubusercontent.com/DeanKuhn/kitchensync/master/data/ab_results_v2.json');
-          if (!res.ok) return;
-          const data = await res.json();
+    (async function () {
+      try {
+        const res = await fetch('https://raw.githubusercontent.com/DeanKuhn/kitchensync/master/data/ab_results_v2.json');
+        if (!res.ok) return;
+        const data = await res.json();
 
-          document.getElementById('stat-days').textContent = data.cumulative.days_run;
-          document.getElementById('stat-service').textContent = data.cumulative.ml_avg_service_level + '%';
-          document.getElementById('stat-waste').textContent = data.cumulative.ml_avg_waste_pct + '%';
+        document.getElementById('stat-days').textContent = data.cumulative.days_run;
+        document.getElementById('stat-service').textContent = data.cumulative.ml_avg_service_level + '%';
+        document.getElementById('stat-waste').textContent = data.cumulative.ml_avg_waste_pct + '%';
 
-          const labels = data.daily.map(d => {
-            const dt = new Date(d.date + 'T00:00:00');
-            return dt.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
-          });
+        const labels = data.daily.map(d => {
+          const dt = new Date(d.date + 'T00:00:00');
+          return dt.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+        });
 
-          const svc = d => d.units_sold / (d.units_sold + d.stockouts) * 100;
-          const waste = d => d.units_wasted / (d.units_sold + d.units_wasted) * 100;
+        const svc = d => d.units_sold / (d.units_sold + d.stockouts) * 100;
+        const waste = d => d.units_wasted / (d.units_sold + d.units_wasted) * 100;
 
-          const shared = {
-            tension: 0.3,
-            pointRadius: 0,
-            borderWidth: 2,
-          };
+        const shared = {
+          tension: 0.3,
+          pointRadius: 0,
+          borderWidth: 2,
+        };
 
-          const sharedOptions = {
-            responsive: true,
-            interaction: {mode: 'index', intersect: false},
-            plugins: {
-              legend: {
-                labels: {color: '#9ca3af', font: {family: "'IBM Plex Mono', monospace", size: 11}, boxWidth: 10, boxHeight: 10, padding: 16},
-              },
-              tooltip: {
-                backgroundColor: '#15171a',
-                borderColor: '#2a2d32',
-                borderWidth: 1,
-                titleColor: '#e8e9ea',
-                bodyColor: '#9ca3af',
-                titleFont: {family: "'IBM Plex Mono', monospace"},
-                bodyFont: {family: "'IBM Plex Mono', monospace"},
-                callbacks: {label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1) + '%'},
-              },
+        const sharedOptions = {
+          responsive: true,
+          interaction: {mode: 'index', intersect: false},
+          plugins: {
+            legend: {
+              labels: {color: '#9ca3af', font: {family: "'IBM Plex Mono', monospace", size: 11}, boxWidth: 10, boxHeight: 10, padding: 16},
             },
+            tooltip: {
+              backgroundColor: '#15171a',
+              borderColor: '#2a2d32',
+              borderWidth: 1,
+              titleColor: '#e8e9ea',
+              bodyColor: '#9ca3af',
+              titleFont: {family: "'IBM Plex Mono', monospace"},
+              bodyFont: {family: "'IBM Plex Mono', monospace"},
+              callbacks: {label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1) + '%'},
+            },
+          },
+          scales: {
+            x: {
+              ticks: {color: '#9ca3af', font: {family: "'IBM Plex Mono', monospace", size: 10}, maxTicksLimit: 8},
+              grid: {color: 'rgba(42,45,50,0.5)'},
+            },
+          },
+        };
+
+        new Chart(document.getElementById('chart-service'), {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [
+              {label: 'ML', data: data.daily.map(d => svc(d.ml)), borderColor: '#f06a00', ...shared},
+              {label: 'Baseline', data: data.daily.map(d => svc(d.baseline)), borderColor: '#9ca3af', ...shared},
+            ],
+          },
+          options: {
+            ...sharedOptions,
             scales: {
-              x: {
-                ticks: {color: '#9ca3af', font: {family: "'IBM Plex Mono', monospace", size: 10}, maxTicksLimit: 8},
+              ...sharedOptions.scales,
+              y: {
+                min: 90, max: 100,
+                ticks: {color: '#9ca3af', font: {family: "'IBM Plex Mono', monospace", size: 10}, callback: v => v + '%'},
                 grid: {color: 'rgba(42,45,50,0.5)'},
               },
             },
-          };
+          },
+        });
 
-          new Chart(document.getElementById('chart-service'), {
-            type: 'line',
-            data: {
-              labels,
-              datasets: [
-                {label: 'ML', data: data.daily.map(d => svc(d.ml)), borderColor: '#f06a00', ...shared},
-                {label: 'Baseline', data: data.daily.map(d => svc(d.baseline)), borderColor: '#9ca3af', ...shared},
-              ],
-            },
-            options: {
-              ...sharedOptions,
-              scales: {
-                ...sharedOptions.scales,
-                y: {
-                  min: 90, max: 100,
-                  ticks: {color: '#9ca3af', font: {family: "'IBM Plex Mono', monospace", size: 10}, callback: v => v + '%'},
-                  grid: {color: 'rgba(42,45,50,0.5)'},
-                },
+        new Chart(document.getElementById('chart-waste'), {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [
+              {label: 'ML', data: data.daily.map(d => waste(d.ml)), borderColor: '#f06a00', ...shared},
+              {label: 'Baseline', data: data.daily.map(d => waste(d.baseline)), borderColor: '#9ca3af', ...shared},
+            ],
+          },
+          options: {
+            ...sharedOptions,
+            scales: {
+              ...sharedOptions.scales,
+              y: {
+                min: 0, max: 35,
+                ticks: {color: '#9ca3af', font: {family: "'IBM Plex Mono', monospace", size: 10}, callback: v => v + '%'},
+                grid: {color: 'rgba(42,45,50,0.5)'},
               },
             },
-          });
+          },
+        });
 
-          new Chart(document.getElementById('chart-waste'), {
-            type: 'line',
-            data: {
-              labels,
-              datasets: [
-                {label: 'ML', data: data.daily.map(d => waste(d.ml)), borderColor: '#f06a00', ...shared},
-                {label: 'Baseline', data: data.daily.map(d => waste(d.baseline)), borderColor: '#9ca3af', ...shared},
-              ],
-            },
-            options: {
-              ...sharedOptions,
-              scales: {
-                ...sharedOptions.scales,
-                y: {
-                  min: 0, max: 35,
-                  ticks: {color: '#9ca3af', font: {family: "'IBM Plex Mono', monospace", size: 10}, callback: v => v + '%'},
-                  grid: {color: 'rgba(42,45,50,0.5)'},
-                },
-              },
-            },
-          });
-
-          document.getElementById('live-data').classList.remove('hidden');
-        } catch (e) { /* silently omit */}
-      })();
+        document.getElementById('live-data').classList.remove('hidden');
+      } catch (e) { /* silently omit */}
+    })();
   </script>
   <script>
     (async function () {

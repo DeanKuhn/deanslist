@@ -35,7 +35,7 @@
       <div class="flex items-center gap-2 text-sm text-muted">
         <span class="inline-block w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_6px_rgba(59,130,246,0.6)]">
         </span>
-        <span>COMPLETE &middot; OPTIMIZATION / ALGORITHMS &middot; 2026</span>
+        <span>complete &middot; optimization / algorithms &middot; 2026</span>
       </div>
       <h1 class="font-display text-6xl mt-6">Package Router</h1>
       <div class="flex items-center gap-2 text-sm text-muted mt-6">
@@ -283,68 +283,68 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <script>
-      (async function () {
-        try {
-          const res = await fetch('https://raw.githubusercontent.com/DeanKuhn/ga-combined-routing-loading/main/data/ga_results.json');
-          if (!res.ok) return;
-          const data = await res.json();
+    (async function () {
+      try {
+        const res = await fetch('https://raw.githubusercontent.com/DeanKuhn/ga-combined-routing-loading/main/data/ga_results.json');
+        if (!res.ok) return;
+        const data = await res.json();
 
-          document.getElementById('stat-packages').textContent = data.parameters.packages;
-          document.getElementById('stat-gen').textContent = data.convergence[data.convergence.length - 1].generation.toLocaleString();
-          document.getElementById('stat-mileage').textContent = data.summary.total_fleet_mileage.toFixed(1) + ' mi';
+        document.getElementById('stat-packages').textContent = data.parameters.packages;
+        document.getElementById('stat-gen').textContent = data.convergence[data.convergence.length - 1].generation.toLocaleString();
+        document.getElementById('stat-mileage').textContent = data.summary.total_fleet_mileage.toFixed(1) + ' mi';
 
-          const labels = data.convergence.map(d => d.generation);
-          const scores = data.convergence.map(d => d.score);
+        const labels = data.convergence.map(d => d.generation);
+        const scores = data.convergence.map(d => d.score);
 
-          new Chart(document.getElementById('chart-fitness'), {
-            type: 'line',
-            data: {
-              labels,
-              datasets: [{
-                label: 'Fitness score',
-                data: scores,
-                borderColor: '#f06a00',
-                tension: 0.3,
-                pointRadius: 0,
-                borderWidth: 2,
-              }],
-            },
-            options: {
-              responsive: true,
-              interaction: {mode: 'index', intersect: false},
-              plugins: {
-                legend: {display: false},
-                tooltip: {
-                  backgroundColor: '#15171a',
-                  borderColor: '#2a2d32',
-                  borderWidth: 1,
-                  titleColor: '#e8e9ea',
-                  bodyColor: '#9ca3af',
-                  titleFont: {family: "'IBM Plex Mono', monospace"},
-                  bodyFont: {family: "'IBM Plex Mono', monospace"},
-                  callbacks: {
-                    title: ctx => 'Gen ' + ctx[0].label,
-                    label: ctx => 'Score: ' + ctx.parsed.y.toLocaleString(undefined, {maximumFractionDigits: 1}),
-                  },
-                },
-              },
-              scales: {
-                x: {
-                  title: {display: true, text: 'generation', color: '#9ca3af', font: {family: "'IBM Plex Mono', monospace", size: 11}},
-                  ticks: {color: '#9ca3af', font: {family: "'IBM Plex Mono', monospace", size: 10}, maxTicksLimit: 8},
-                  grid: {color: 'rgba(42,45,50,0.5)'},
-                },
-                y: {
-                  ticks: {color: '#9ca3af', font: {family: "'IBM Plex Mono', monospace", size: 10}, callback: v => v.toLocaleString()},
-                  grid: {color: 'rgba(42,45,50,0.5)'},
+        new Chart(document.getElementById('chart-fitness'), {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Fitness score',
+              data: scores,
+              borderColor: '#f06a00',
+              tension: 0.3,
+              pointRadius: 0,
+              borderWidth: 2,
+            }],
+          },
+          options: {
+            responsive: true,
+            interaction: {mode: 'index', intersect: false},
+            plugins: {
+              legend: {display: false},
+              tooltip: {
+                backgroundColor: '#15171a',
+                borderColor: '#2a2d32',
+                borderWidth: 1,
+                titleColor: '#e8e9ea',
+                bodyColor: '#9ca3af',
+                titleFont: {family: "'IBM Plex Mono', monospace"},
+                bodyFont: {family: "'IBM Plex Mono', monospace"},
+                callbacks: {
+                  title: ctx => 'Gen ' + ctx[0].label,
+                  label: ctx => 'Score: ' + ctx.parsed.y.toLocaleString(undefined, {maximumFractionDigits: 1}),
                 },
               },
             },
-          });
+            scales: {
+              x: {
+                title: {display: true, text: 'generation', color: '#9ca3af', font: {family: "'IBM Plex Mono', monospace", size: 11}},
+                ticks: {color: '#9ca3af', font: {family: "'IBM Plex Mono', monospace", size: 10}, maxTicksLimit: 8},
+                grid: {color: 'rgba(42,45,50,0.5)'},
+              },
+              y: {
+                ticks: {color: '#9ca3af', font: {family: "'IBM Plex Mono', monospace", size: 10}, callback: v => v.toLocaleString()},
+                grid: {color: 'rgba(42,45,50,0.5)'},
+              },
+            },
+          },
+        });
 
-          document.getElementById('live-data').classList.remove('hidden');
-        } catch (e) { /* silently omit */}
-      })();
+        document.getElementById('live-data').classList.remove('hidden');
+      } catch (e) { /* silently omit */}
+    })();
   </script>
 
 </body>

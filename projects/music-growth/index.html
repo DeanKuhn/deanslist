@@ -35,7 +35,7 @@
       <div class="flex items-center gap-2 text-sm text-muted">
         <span class="inline-block w-2 h-2 bg-green-500 rounded-full shadow-[0_0_6px_rgba(74,222,128,0.6)]">
         </span>
-        <span>DEPLOYED AND LIVE &middot; DATA ENGINEERING &middot; 2026</span>
+        <span>deployed & live &middot; data engineering &middot; 2026</span>
       </div>
       <h1 class="font-display text-6xl mt-6">Music Growth</h1>
       <div class="flex items-center gap-2 text-sm text-muted mt-6">
@@ -192,35 +192,35 @@
   </footer>
 
   <script>
-      (async function () {
-        try {
-          const res = await fetch('https://raw.githubusercontent.com/DeanKuhn/music-growth-pipeline/main/data/pipeline_stats.json');
-          if (!res.ok) return;
-          const data = await res.json();
+    (async function () {
+      try {
+        const res = await fetch('https://raw.githubusercontent.com/DeanKuhn/music-growth-pipeline/main/data/pipeline_stats.json');
+        if (!res.ok) return;
+        const data = await res.json();
 
-          document.getElementById('stat-artists').textContent = data.summary.artist_count.toLocaleString();
-          document.getElementById('stat-weeks').textContent = data.summary.weeks_tracked;
-          document.getElementById('stat-snapshot').textContent = data.summary.latest_snapshot;
+        document.getElementById('stat-artists').textContent = data.summary.artist_count.toLocaleString();
+        document.getElementById('stat-weeks').textContent = data.summary.weeks_tracked;
+        document.getElementById('stat-snapshot').textContent = data.summary.latest_snapshot;
 
-          const tbody = document.getElementById('quintile-body');
-          const labels = {1: 'Q1 (smallest)', 5: 'Q5 (largest)'};
-          const formatK = n => n >= 1_000_000 ? (n / 1_000_000).toFixed(1) + 'M' : n >= 1_000 ? Math.round(n / 1_000) + 'k' : n.toLocaleString();
+        const tbody = document.getElementById('quintile-body');
+        const labels = {1: 'Q1 (smallest)', 5: 'Q5 (largest)'};
+        const formatK = n => n >= 1_000_000 ? (n / 1_000_000).toFixed(1) + 'M' : n >= 1_000 ? Math.round(n / 1_000) + 'k' : n.toLocaleString();
 
-          data.growth_by_size_quintile.forEach(q => {
-            const tr = document.createElement('tr');
-            tr.className = 'border-b border-border last:border-0';
-            tr.innerHTML = `
+        data.growth_by_size_quintile.forEach(q => {
+          const tr = document.createElement('tr');
+          tr.className = 'border-b border-border last:border-0';
+          tr.innerHTML = `
             <td class="px-4 py-3 text-text">${labels[q.quintile] || 'Q' + q.quintile}</td>
             <td class="px-4 py-3 text-muted">${formatK(q.band_min)} – ${formatK(q.band_max)}</td>
             <td class="px-4 py-3 text-right text-text">${q.median_pct_growth}%</td>
             <td class="px-4 py-3 text-right text-muted">${q.p90_pct_growth}%</td>
           `;
-            tbody.appendChild(tr);
-          });
+          tbody.appendChild(tr);
+        });
 
-          document.getElementById('live-data').classList.remove('hidden');
-        } catch (e) { /* silently omit */}
-      })();
+        document.getElementById('live-data').classList.remove('hidden');
+      } catch (e) { /* silently omit */}
+    })();
   </script>
 
 </body>
