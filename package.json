@@ -5,7 +5,7 @@
   "description": "Dark portfolio site for Dean Kuhn",
   "scripts": {
     "dev": "npx @tailwindcss/cli -i src/input.css -o style.css --watch",
-    "build": "mkdir -p dist/projects dist/public && npx @tailwindcss/cli -i src/input.css -o dist/style.css --minify && cp index.html dist/ && cp projects/*.html dist/projects/ && cp -r public/* dist/public/ && cp public/CNAME dist/"
+    "build": "rm -rf dist && mkdir -p dist/public && npx @tailwindcss/cli -i src/input.css -o dist/style.css --minify && cp index.html dist/ && cp -r projects dist/ && cp -r public/* dist/public/ && cp public/CNAME dist/"
   },
   "repository": {
     "type": "git",
