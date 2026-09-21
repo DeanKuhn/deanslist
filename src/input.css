@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0e0f11;
+  --color-bg-card: #15171a;
+  --color-accent: #f06a00;
+  --color-text: #e8e9ea;
+  --color-muted: #9ca3af;
+  --color-border: #2a2d32;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}

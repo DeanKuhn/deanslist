@@ -1,0 +1,19 @@
+{
+  "name": "deanslist",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dark portfolio site for Dean Kuhn",
+  "scripts": {
+    "dev": "npx @tailwindcss/cli -i src/input.css -o style.css --watch",
+    "build": "mkdir -p dist/projects dist/public && npx @tailwindcss/cli -i src/input.css -o dist/style.css --minify && cp index.html dist/ && cp projects/*.html dist/projects/ && cp -r public/* dist/public/ && cp public/CNAME dist/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DeanKuhn/deanslist.git"
+  },
+  "author": "Dean Kuhn",
+  "license": "ISC",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3"
+  }
+}
