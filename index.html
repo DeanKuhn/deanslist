@@ -283,6 +283,9 @@
         el.classList.remove('hidden');
       })
       .catch(() => {});
+
+    document.getElementById('last-run').textContent =
+      'Last pipeline run: ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   </script>
 
 </body>
