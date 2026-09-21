@@ -4,7 +4,7 @@
 
 Plain HTML/CSS/JS. No framework, no build step.
 
-- **Tailwind CSS** via CDN (`<script src="https://cdn.tailwindcss.com">`)
+- **Tailwind CSS** via CLI (`@tailwindcss/cli`, compiled at build time)
 - **Chart.js** via CDN (loaded only on pages that need charts)
 - **Google Fonts**: Space Grotesk 700, IBM Plex Mono
 
