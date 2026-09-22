@@ -19,7 +19,7 @@
   <nav class="sticky top-0 bg-bg border-b border-border z-50">
     <div class="max-w-4xl mx-auto px-6 py-3 flex justify-between items-center">
       <a href="/" class="font-display text-accent text-lg hover:text-accent">&larr; dean's list</a>
-      <div class="flex gap-6 text-sm text-muted">
+      <div class="flex gap-3 sm:gap-6 text-xs sm:text-sm text-muted">
         <a href="https://github.com/DeanKuhn" class="hover:text-accent">github</a>
         <a href="https://linkedin.com/in/deankuhn" class="hover:text-accent">linkedin</a>
         <a href="../../public/resume.pdf" class="hover:text-accent">resume</a>
@@ -31,13 +31,13 @@
   <main class="max-w-4xl mx-auto px-6">
 
     <!-- Project title -->
-    <div class="max-w-4xl mx-auto px-6 pt-24">
+    <div class="pt-24">
       <div class="flex items-center gap-2 text-sm text-muted">
         <span class="inline-block w-2 h-2 bg-green-500 rounded-full shadow-[0_0_6px_rgba(74,222,128,0.6)]">
         </span>
         <span>deployed & live &middot; ml / forecasting &middot; 2026</span>
       </div>
-      <h1 class="font-display text-6xl mt-6">KitchenSync</h1>
+      <h1 class="font-display text-3xl md:text-6xl mt-6">KitchenSync</h1>
       <div class="flex items-center gap-2 text-sm text-muted mt-6">
         <a href="https://github.com/deankuhn/kitchensync" class="text-muted bg-bg-card border border-border rounded px-2 py-2 hover:border-accent">github ➚</a>
         <a href="https://kitchensync.streamlit.app" class="text-muted bg-bg-card border border-accent rounded px-2 py-2 hover:border-accent">live streamlit app ♕</a>
@@ -47,7 +47,7 @@
     <hr class="max-w-4xl mx-auto my-12 border-border">
 
     <!-- Project about/problem -->
-    <div class="max-w-4xl mx-auto px-6">
+    <div>
       <p class="text-xs text-muted uppercase tracking-widest mb-6">problem solved</p>
       <p class="text-sm text-muted max-w-xl leading-relaxed">
         As a Kwik Trip coworker, I use Kwik Trip's Kitchen Production System (KPS) daily. KPS is a food forecasting system designed specifically for Kwik Trip use. While the system excels in a few ways, it is lacking in many others. KitchenSync is designed to directly address these current friction points.
@@ -65,10 +65,10 @@
     <hr class="max-w-4xl mx-auto my-12 border-border">
 
     <!-- Live A/B data -->
-    <div id="live-data" class="hidden max-w-4xl mx-auto px-6">
+    <div id="live-data" class="hidden">
       <p class="text-xs text-muted uppercase tracking-widest mb-6">live a/b results</p>
 
-      <div class="grid grid-cols-3 gap-4 mb-8">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div class="bg-bg-card border border-border rounded-lg px-4 py-3">
           <p class="text-xs text-muted uppercase tracking-widest">days tracked</p>
           <p id="stat-days" class="text-lg text-text mt-1"></p>
@@ -97,7 +97,7 @@
     <hr class="max-w-4xl mx-auto my-12 border-border">
 
     <!-- Architecture -->
-    <div class="max-w-4xl mx-auto px-6">
+    <div>
       <p class="text-xs text-muted uppercase tracking-widest mb-6">architecture</p>
       <div class="space-y-3">
 
@@ -116,7 +116,7 @@
         </div>
         <div class="text-center text-muted text-xs">&darr;</div>
 
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <a href="https://kitchensync.streamlit.app" class="block bg-bg-card border border-accent rounded-lg px-4 py-3 text-sm text-text text-center">
               Streamlit Dashboard <span class="text-xs text-green-500 ml-2">live</span>
@@ -150,7 +150,7 @@
     <hr class="max-w-4xl mx-auto my-12 border-border">
 
     <!-- Weather-bucketed results -->
-    <div id="weather-results" class="hidden max-w-4xl mx-auto px-6">
+    <div id="weather-results" class="hidden">
       <p class="text-xs text-muted uppercase tracking-widest mb-6">results by weather bucket</p>
       <p class="text-sm text-muted max-w-xl leading-relaxed mb-6">
         Bucketing simulated store-days by weather gives a cleaner read than daily A/B comparison. On extreme temperature days, ML beats the baseline by roughly 3x a neutral day gap, clear evidence that it's exploiting the weather signal the baseline can't access.
@@ -182,7 +182,7 @@
     <hr class="max-w-4xl mx-auto my-12 border-border">
 
     <!-- Stack -->
-    <div class="max-w-4xl mx-auto px-6">
+    <div>
       <p class="text-xs text-muted uppercase tracking-widest mb-6">♜ stack ♖</p>
       <div class="space-y-4">
         <div>
