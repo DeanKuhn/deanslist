@@ -52,7 +52,7 @@
       <p class="text-sm text-muted max-w-xl leading-relaxed">
         Popular API last.fm only gives cumulative stats for artists. No growth rates, historical data, or way to compare against other artists. Music Growth solves this problem by snapshotting 37k+ artist's listener count weekly. It also captures an artist's genre, calculates their size band, and notes similar artists.
         <br><br>
-        This tool is designed to help curious analysts or the artists themselves observe their own listener growth over time, as well as to compare themselves to other artists of similar size and genre. This is made possible through a Next.js frontend,
+        This tool is designed to help curious analysts or the artists themselves observe their own listener growth over time, as well as to compare themselves to other artists of similar size and genre. This is made possible through a static HTML/Tailwind/JS frontend,
         <a href="https://music.deanslist.dev" class="hover:text-accent">music.deanslist.dev</a>
         , where you can query individual artist statistics as well as overall leaderboard and genre-related data without needing to know SQL.
       </p>
@@ -94,6 +94,7 @@
           <tbody id="quintile-body"></tbody>
         </table>
       </div>
+      <p id="quintile-window" class="text-xs text-muted mt-4"></p>
     </div>
 
     <hr class="max-w-4xl mx-auto my-12 border-border">
@@ -109,7 +110,7 @@
         <div class="text-center text-muted text-xs">&darr; <span class="text-xs">Python snapshots</span></div>
 
         <div class="bg-bg-card border border-border rounded-lg px-4 py-3 text-sm text-text text-center">
-          Postgres <span class="text-muted text-xs ml-2">hosted on local postgres</span>
+          Postgres <span class="text-muted text-xs ml-2">self-hosted on Hetzner</span>
         </div>
         <div class="text-center text-muted text-xs">&darr; <span class="text-xs">dbt staging + marts</span></div>
 
@@ -120,12 +121,12 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <a href="https://music.deanslist.dev" class="block bg-bg-card border border-accent rounded-lg px-4 py-3 text-sm text-text text-center">
-            Next.js app <span class="text-xs text-green-500 ml-2">live</span>
+            Static web app <span class="text-xs text-green-500 ml-2">live</span>
             <p class="text-xs text-muted mt-1">music.deanslist.dev</p>
           </a>
           <div class="bg-bg-card border border-dashed border-border rounded-lg px-4 py-3 text-sm text-muted text-center">
             Power BI report
-            <p class="text-xs text-muted mt-1">archived</p>
+            <p class="text-xs text-muted mt-1">coming soon</p>
           </div>
         </div>
 
@@ -145,7 +146,7 @@
           <div class="flex flex-wrap gap-2">
             <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">python</span>
             <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">sql</span>
-            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">typescript</span>
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">javascript</span>
           </div>
         </div>
         <div>
@@ -170,7 +171,7 @@
         <div>
           <p class="text-xs text-muted uppercase tracking-widest mb-2">frontend & hosting</p>
           <div class="flex flex-wrap gap-2">
-            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">next.js 15</span>
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">html</span>
             <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">tailwind</span>
             <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">hetzner</span>
             <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">caddy</span>
@@ -217,6 +218,10 @@
           `;
           tbody.appendChild(tr);
         });
+
+        const q1 = data.growth_by_size_quintile[0];
+        document.getElementById('quintile-window').textContent =
+          `Growth measured ${q1.window_start} → ${q1.window_end}, the same weeks for every artist.`;
 
         document.getElementById('live-data').classList.remove('hidden');
       } catch (e) { /* silently omit */}
