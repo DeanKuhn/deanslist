@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Dark portfolio site for Dean Kuhn (`deanslist.dev`). Plain HTML/CSS/JS + Tailwind CDN + Chart.js CDN.
+Dark portfolio site for Dean Kuhn (`deanslist.dev`). Plain HTML/CSS/JS + Tailwind CLI (compiled at build time) + Chart.js CDN.
 
 See `docs/structure.md` for file layout, data sources, and deploy details.
 
