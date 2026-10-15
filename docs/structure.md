@@ -2,7 +2,7 @@
 
 ## Stack
 
-Plain HTML/CSS/JS. No framework, no build step.
+Plain HTML/CSS/JS. No framework; the only build step is compiling Tailwind.
 
 - **Tailwind CSS** via CLI (`@tailwindcss/cli`, compiled at build time)
 - **Chart.js** via CDN (loaded only on pages that need charts)
