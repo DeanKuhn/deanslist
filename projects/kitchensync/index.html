@@ -33,175 +33,175 @@
     <!-- Project title -->
     <div class="pt-24">
       <div class="flex items-center gap-2 text-sm text-muted">
-        <span class="inline-block w-2 h-2 bg-blue-50
+        <span class="inline-block w-2 h-2 bg-blue-500 rounded-full">
         </span>
         <span>completed &middot; ml / forecasting &middot; aug&ndash;sep 2026</span>
       </div>
-      <h1 class=" font-display text-3xl md:text-6xl mt-6">KitchenSync</h1>
-          <div class="flex flex-wrap items-center gap-2 text-sm text-muted mt-6">
-            <a href="https://github.com/deankuhn/kitchensync" class="text-muted bg-bg-card border border-border rounded px-2 py-2 hover:border-accent">github ➚</a>
-            <a href="https://kitchensync.streamlit.app" class="text-muted bg-bg-card border border-border rounded px-2 py-2 hover:border-accent">streamlit app (archived) ♕</a>
-          </div>
+      <h1 class="font-display text-3xl md:text-6xl mt-6">KitchenSync</h1>
+      <div class="flex flex-wrap items-center gap-2 text-sm text-muted mt-6">
+        <a href="https://github.com/deankuhn/kitchensync" class="text-muted bg-bg-card border border-border rounded px-2 py-2 hover:border-accent">github ➚</a>
+        <a href="https://kitchensync.streamlit.app" class="text-muted bg-bg-card border border-border rounded px-2 py-2 hover:border-accent">streamlit app (archived) ♕</a>
+      </div>
+    </div>
+
+    <hr class="max-w-4xl mx-auto my-12 border-border">
+
+    <!-- Project about/problem -->
+    <div>
+      <p class="text-xs text-muted uppercase tracking-widest mb-6">the experiment</p>
+      <p class="text-sm text-muted max-w-xl leading-relaxed">
+        As a Kwik Trip coworker, I use Kwik Trip's Kitchen Production System (KPS) daily. KPS forecasts how much food to make, but it doesn't account for the weather. Unusually high/low temperatures along with precipitation have a direct impact on customer turnout.
+        <br><br>
+        KitchenSync tested whether a weather-aware LightGBM forecast beats a KPS-style baseline. Both ran side by side on simulated stores for 34 days, compared on service level (customers who got food) and waste.
+      </p>
+    </div>
+
+    <hr class="max-w-4xl mx-auto my-12 border-border">
+
+    <!-- Findings -->
+    <div id="findings" class="hidden">
+      <p class="text-xs text-muted uppercase tracking-widest mb-6">findings</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-bg-card border border-border rounded-lg px-4 py-3">
+          <p class="text-xs text-muted uppercase tracking-widest">service level</p>
+          <p id="stat-service" class="text-lg text-text mt-1"></p>
+          <p id="stat-service-base" class="text-xs text-muted mt-1"></p>
+        </div>
+        <div class="bg-bg-card border border-border rounded-lg px-4 py-3">
+          <p class="text-xs text-muted uppercase tracking-widest">waste rate</p>
+          <p id="stat-waste" class="text-lg text-text mt-1"></p>
+          <p id="stat-waste-base" class="text-xs text-muted mt-1"></p>
+        </div>
+        <div class="bg-bg-card border border-border rounded-lg px-4 py-3">
+          <p class="text-xs text-muted uppercase tracking-widest">days run</p>
+          <p id="stat-days" class="text-lg text-text mt-1"></p>
+          <p class="text-xs text-muted mt-1">ML vs baseline, seeded by date</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="max-w-4xl mx-auto my-12 border-border">
+
+    <!-- Weather-bucketed results -->
+    <div id="weather-results" class="hidden">
+      <p class="text-xs text-muted uppercase tracking-widest mb-6">results by weather bucket</p>
+      <p class="text-sm text-muted max-w-xl leading-relaxed mb-6">
+        Bucketing simulated store-days by weather gives a cleaner read than daily A/B comparison. On extreme temperature days, ML beats the baseline by roughly 3x a neutral day gap, clear evidence that it's exploiting the weather signal the baseline can't access.
+      </p>
+      <p class="text-xs text-muted max-w-xl leading-relaxed mb-6">
+        It's important to note that during simulation, daily temperatures were randomized and do not accurately represent seasonal changes. For example, Monday could be a high of 32&deg; F (0&deg; C) and Tuesday could be a high of 100&deg; F (38&deg; C).
+      </p>
+      <div class="bg-bg-card border border-border rounded-lg overflow-x-auto">
+        <table class="w-full text-xs">
+          <thead>
+            <tr class="text-muted uppercase tracking-widest border-b border-border">
+              <th class="text-left px-4 py-3 font-normal">bucket</th>
+              <th class="text-right px-4 py-3 font-normal">store-days</th>
+              <th class="text-right px-4 py-3 font-normal">ml svc lvl</th>
+              <th class="text-right px-4 py-3 font-normal">baseline</th>
+              <th class="text-right px-4 py-3 font-normal">gap</th>
+              <th class="text-right px-4 py-3 font-normal">ml waste</th>
+              <th class="text-right px-4 py-3 font-normal">base waste</th>
+            </tr>
+          </thead>
+          <tbody id="weather-body"></tbody>
+        </table>
+      </div>
+      <p class="text-xs text-muted mt-4 max-w-xl leading-relaxed">
+        While it can be noted that on rainy/snowy days the ML model's service level is a bit lower than the baseline's, overall waste is nearly half that of the baseline. Clearly, the baseline model over-suggests on rainy days and pays for it with higher waste.
+        <br><br>
+        On neutral days the picture flips: ML wastes more than the baseline. The model's edge comes from weather days, and on ordinary days it slightly over-produces.
+      </p>
+    </div>
+
+    <hr class="max-w-4xl mx-auto my-12 border-border">
+
+    <!-- Daily A/B data -->
+    <div id="live-data" class="hidden">
+      <p class="text-xs text-muted uppercase tracking-widest mb-6">daily results</p>
+
+      <p class="text-xs text-muted uppercase tracking-widest mb-3">service level %</p>
+      <div class="bg-bg-card border border-border rounded-lg p-4 mb-6">
+        <canvas id="chart-service" height="200"></canvas>
       </div>
 
-      <hr class="max-w-4xl mx-auto my-12 border-border">
-
-      <!-- Project about/problem -->
-      <div>
-        <p class="text-xs text-muted uppercase tracking-widest mb-6">the experiment</p>
-        <p class="text-sm text-muted max-w-xl leading-relaxed">
-          As a Kwik Trip coworker, I use Kwik Trip's Kitchen Production System (KPS) daily. KPS forecasts how much food to make, but it doesn't account for the weather. Unusually high/low temperatures along with precipitation have a direct impact on customer turnout.
-          <br><br>
-          KitchenSync tested whether a weather-aware LightGBM forecast beats a KPS-style baseline. Both ran side by side on simulated stores for 34 days, compared on service level (customers who got food) and waste.
-        </p>
+      <p class="text-xs text-muted uppercase tracking-widest mb-3">waste rate %</p>
+      <div class="bg-bg-card border border-border rounded-lg p-4">
+        <canvas id="chart-waste" height="200"></canvas>
       </div>
+    </div>
 
-      <hr class="max-w-4xl mx-auto my-12 border-border">
+    <hr class="max-w-4xl mx-auto my-12 border-border">
 
-      <!-- Findings -->
-      <div id="findings" class="hidden">
-        <p class="text-xs text-muted uppercase tracking-widest mb-6">findings</p>
+    <!-- How it ran -->
+    <div>
+      <p class="text-xs text-muted uppercase tracking-widest mb-6">how it ran</p>
+      <p class="text-sm text-muted max-w-xl leading-relaxed">
+        A POS simulator generated weather-shaped demand (Poisson arrivals, FIFO batches) into Postgres every 5 minutes. A nightly cron on EC2 rebuilt features and compared ML against the baseline, committing the results as JSON, which is what this page reads. A
+        <a href="https://kitchensync.streamlit.app" class="hover:text-accent">Streamlit dashboard</a>
+        showed the kitchen queues while it ran.
+      </p>
+    </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="bg-bg-card border border-border rounded-lg px-4 py-3">
-            <p class="text-xs text-muted uppercase tracking-widest">service level</p>
-            <p id="stat-service" class="text-lg text-text mt-1"></p>
-            <p id="stat-service-base" class="text-xs text-muted mt-1"></p>
+    <hr class="max-w-4xl mx-auto my-12 border-border">
+
+    <!-- Stack -->
+    <div>
+      <p class="text-xs text-muted uppercase tracking-widest mb-6">♜ stack ♖</p>
+      <div class="space-y-4">
+        <div>
+          <p class="text-xs text-muted uppercase tracking-widest mb-2">languages</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">python</span>
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">sql</span>
           </div>
-          <div class="bg-bg-card border border-border rounded-lg px-4 py-3">
-            <p class="text-xs text-muted uppercase tracking-widest">waste rate</p>
-            <p id="stat-waste" class="text-lg text-text mt-1"></p>
-            <p id="stat-waste-base" class="text-xs text-muted mt-1"></p>
+        </div>
+        <div>
+          <p class="text-xs text-muted uppercase tracking-widest mb-2">ml</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">lightgbm</span>
           </div>
-          <div class="bg-bg-card border border-border rounded-lg px-4 py-3">
-            <p class="text-xs text-muted uppercase tracking-widest">days run</p>
-            <p id="stat-days" class="text-lg text-text mt-1"></p>
-            <p class="text-xs text-muted mt-1">ML vs baseline, seeded by date</p>
+        </div>
+        <div>
+          <p class="text-xs text-muted uppercase tracking-widest mb-2">simulation</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">asyncio</span>
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">poisson</span>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs text-muted uppercase tracking-widest mb-2">db & storage</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">postgres</span>
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">neon</span>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs text-muted uppercase tracking-widest mb-2">dashboard</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">streamlit</span>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs text-muted uppercase tracking-widest mb-2">infra</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">ec2</span>
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">systemd</span>
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">cron</span>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs text-muted uppercase tracking-widest mb-2">config & tooling</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">yaml</span>
+            <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">uv</span>
           </div>
         </div>
       </div>
+    </div>
 
-      <hr class="max-w-4xl mx-auto my-12 border-border">
-
-      <!-- Weather-bucketed results -->
-      <div id="weather-results" class="hidden">
-        <p class="text-xs text-muted uppercase tracking-widest mb-6">results by weather bucket</p>
-        <p class="text-sm text-muted max-w-xl leading-relaxed mb-6">
-          Bucketing simulated store-days by weather gives a cleaner read than daily A/B comparison. On extreme temperature days, ML beats the baseline by roughly 3x a neutral day gap, clear evidence that it's exploiting the weather signal the baseline can't access.
-        </p>
-        <p class="text-xs text-muted max-w-xl leading-relaxed mb-6">
-          It's important to note that during simulation, daily temperatures were randomized and do not accurately represent seasonal changes. For example, Monday could be a high of 32&deg; F (0&deg; C) and Tuesday could be a high of 100&deg; F (38&deg; C).
-        </p>
-        <div class="bg-bg-card border border-border rounded-lg overflow-x-auto">
-          <table class="w-full text-xs">
-            <thead>
-              <tr class="text-muted uppercase tracking-widest border-b border-border">
-                <th class="text-left px-4 py-3 font-normal">bucket</th>
-                <th class="text-right px-4 py-3 font-normal">store-days</th>
-                <th class="text-right px-4 py-3 font-normal">ml svc lvl</th>
-                <th class="text-right px-4 py-3 font-normal">baseline</th>
-                <th class="text-right px-4 py-3 font-normal">gap</th>
-                <th class="text-right px-4 py-3 font-normal">ml waste</th>
-                <th class="text-right px-4 py-3 font-normal">base waste</th>
-              </tr>
-            </thead>
-            <tbody id="weather-body"></tbody>
-          </table>
-        </div>
-        <p class="text-xs text-muted mt-4 max-w-xl leading-relaxed">
-          While it can be noted that on rainy/snowy days the ML model's service level is a bit lower than the baseline's, overall waste is nearly half that of the baseline. Clearly, the baseline model over-suggests on rainy days and pays for it with higher waste.
-          <br><br>
-          On neutral days the picture flips: ML wastes more than the baseline. The model's edge comes from weather days, and on ordinary days it slightly over-produces.
-        </p>
-      </div>
-
-      <hr class="max-w-4xl mx-auto my-12 border-border">
-
-      <!-- Daily A/B data -->
-      <div id="live-data" class="hidden">
-        <p class="text-xs text-muted uppercase tracking-widest mb-6">daily results</p>
-
-        <p class="text-xs text-muted uppercase tracking-widest mb-3">service level %</p>
-        <div class="bg-bg-card border border-border rounded-lg p-4 mb-6">
-          <canvas id="chart-service" height="200"></canvas>
-        </div>
-
-        <p class="text-xs text-muted uppercase tracking-widest mb-3">waste rate %</p>
-        <div class="bg-bg-card border border-border rounded-lg p-4">
-          <canvas id="chart-waste" height="200"></canvas>
-        </div>
-      </div>
-
-      <hr class="max-w-4xl mx-auto my-12 border-border">
-
-      <!-- How it ran -->
-      <div>
-        <p class="text-xs text-muted uppercase tracking-widest mb-6">how it ran</p>
-        <p class="text-sm text-muted max-w-xl leading-relaxed">
-          A POS simulator generated weather-shaped demand (Poisson arrivals, FIFO batches) into Postgres every 5 minutes. A nightly cron on EC2 rebuilt features and compared ML against the baseline, committing the results as JSON, which is what this page reads. A
-          <a href="https://kitchensync.streamlit.app" class="hover:text-accent">Streamlit dashboard</a>
-          showed the kitchen queues while it ran.
-        </p>
-      </div>
-
-      <hr class="max-w-4xl mx-auto my-12 border-border">
-
-      <!-- Stack -->
-      <div>
-        <p class="text-xs text-muted uppercase tracking-widest mb-6">♜ stack ♖</p>
-        <div class="space-y-4">
-          <div>
-            <p class="text-xs text-muted uppercase tracking-widest mb-2">languages</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">python</span>
-              <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">sql</span>
-            </div>
-          </div>
-          <div>
-            <p class="text-xs text-muted uppercase tracking-widest mb-2">ml</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">lightgbm</span>
-            </div>
-          </div>
-          <div>
-            <p class="text-xs text-muted uppercase tracking-widest mb-2">simulation</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">asyncio</span>
-              <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">poisson</span>
-            </div>
-          </div>
-          <div>
-            <p class="text-xs text-muted uppercase tracking-widest mb-2">db & storage</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">postgres</span>
-              <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">neon</span>
-            </div>
-          </div>
-          <div>
-            <p class="text-xs text-muted uppercase tracking-widest mb-2">dashboard</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">streamlit</span>
-            </div>
-          </div>
-          <div>
-            <p class="text-xs text-muted uppercase tracking-widest mb-2">infra</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">ec2</span>
-              <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">systemd</span>
-              <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">cron</span>
-            </div>
-          </div>
-          <div>
-            <p class="text-xs text-muted uppercase tracking-widest mb-2">config & tooling</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">yaml</span>
-              <span class="text-xs text-muted bg-bg-card border border-border rounded px-2 py-1">uv</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <hr class="max-w-4xl mx-auto my-12 border-border">
+    <hr class="max-w-4xl mx-auto my-12 border-border">
   </main>
 
   <!-- Footer -->
