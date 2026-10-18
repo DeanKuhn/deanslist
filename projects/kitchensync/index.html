@@ -33,14 +33,14 @@
     <!-- Project title -->
     <div class="pt-24">
       <div class="flex items-center gap-2 text-sm text-muted">
-        <span class="inline-block w-2 h-2 bg-green-500 rounded-full shadow-[0_0_6px_rgba(74,222,128,0.6)]">
+        <span class="inline-block w-2 h-2 bg-muted rounded-full">
         </span>
-        <span>deployed & live &middot; ml / forecasting &middot; 2026</span>
+        <span>completed &middot; ml / forecasting &middot; aug&ndash;sep 2026</span>
       </div>
       <h1 class="font-display text-3xl md:text-6xl mt-6">KitchenSync</h1>
-      <div class="flex items-center gap-2 text-sm text-muted mt-6">
+      <div class="flex flex-wrap items-center gap-2 text-sm text-muted mt-6">
         <a href="https://github.com/deankuhn/kitchensync" class="text-muted bg-bg-card border border-border rounded px-2 py-2 hover:border-accent">github ➚</a>
-        <a href="https://kitchensync.streamlit.app" class="text-muted bg-bg-card border border-accent rounded px-2 py-2 hover:border-accent">live streamlit app ♕</a>
+        <a href="https://kitchensync.streamlit.app" class="text-muted bg-bg-card border border-border rounded px-2 py-2 hover:border-accent">streamlit app (archived) ♕</a>
       </div>
     </div>
 
@@ -48,102 +48,36 @@
 
     <!-- Project about/problem -->
     <div>
-      <p class="text-xs text-muted uppercase tracking-widest mb-6">problem solved</p>
+      <p class="text-xs text-muted uppercase tracking-widest mb-6">the experiment</p>
       <p class="text-sm text-muted max-w-xl leading-relaxed">
-        As a Kwik Trip coworker, I use Kwik Trip's Kitchen Production System (KPS) daily. KPS is a food forecasting system designed specifically for Kwik Trip use. While the system excels in a few ways, it is lacking in many others. KitchenSync is designed to directly address these current friction points.
+        As a Kwik Trip coworker, I use Kwik Trip's Kitchen Production System (KPS) daily. KPS forecasts how much food to make, but it doesn't account for the weather. Unusually high/low temperatures along with precipitation have a direct impact on customer turnout.
         <br><br>
-        <strong>Weather - </strong>The current KPS system fails to account for the current weather. Unusually high/low temperatures along with precipitation have a direct impact on customer turnout. KitchenSync uses machine learning to better adjust for common weather patterns.
-        <br><br>
-        <strong>User Interface - </strong>KPS's current UI is not intuitive. While the current KitchenSync
-        <a href="https://kitchensync.streamlit.app" class="hover:text-accent">Streamlit dashboard</a>
-        mimics the current design, the plan is for an intuitive Next.js framework to replace it. This frontend will display the actual layout of the hot spot, allowing kitchen staff to see visually where food is and when it expires.
-        <br><br>
-        <strong>Transparency - </strong>The current KPS system spits out numbers without any explanation behind them. While experienced staff members may know when a number is incorrect, newer employees may be unaware and follow hallucinated suggestions. KitchenSync plans to solve this problem by incorporating an extremely lightweight NLP system embedded within the Next.js frontend, allowing kitchen staff to ask the system why it is suggesting certain numbers.
+        KitchenSync tested whether a weather-aware LightGBM forecast beats a KPS-style baseline. Both ran side by side on simulated stores for 34 days, compared on service level (customers who got food) and waste.
       </p>
     </div>
 
     <hr class="max-w-4xl mx-auto my-12 border-border">
 
-    <!-- Live A/B data -->
-    <div id="live-data" class="hidden">
-      <p class="text-xs text-muted uppercase tracking-widest mb-6">live a/b results</p>
+    <!-- Findings -->
+    <div id="findings" class="hidden">
+      <p class="text-xs text-muted uppercase tracking-widest mb-6">findings</p>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="bg-bg-card border border-border rounded-lg px-4 py-3">
-          <p class="text-xs text-muted uppercase tracking-widest">days tracked</p>
-          <p id="stat-days" class="text-lg text-text mt-1"></p>
-        </div>
-        <div class="bg-bg-card border border-border rounded-lg px-4 py-3">
-          <p class="text-xs text-muted uppercase tracking-widest">ml service level</p>
+          <p class="text-xs text-muted uppercase tracking-widest">service level</p>
           <p id="stat-service" class="text-lg text-text mt-1"></p>
+          <p id="stat-service-base" class="text-xs text-muted mt-1"></p>
         </div>
         <div class="bg-bg-card border border-border rounded-lg px-4 py-3">
-          <p class="text-xs text-muted uppercase tracking-widest">ml waste rate</p>
+          <p class="text-xs text-muted uppercase tracking-widest">waste rate</p>
           <p id="stat-waste" class="text-lg text-text mt-1"></p>
+          <p id="stat-waste-base" class="text-xs text-muted mt-1"></p>
         </div>
-      </div>
-
-      <p class="text-xs text-muted uppercase tracking-widest mb-3">service level %</p>
-      <div class="bg-bg-card border border-border rounded-lg p-4 mb-6">
-        <canvas id="chart-service" height="200"></canvas>
-      </div>
-
-      <p class="text-xs text-muted uppercase tracking-widest mb-3">waste rate %</p>
-      <div class="bg-bg-card border border-border rounded-lg p-4">
-        <canvas id="chart-waste" height="200"></canvas>
-      </div>
-    </div>
-
-    <hr class="max-w-4xl mx-auto my-12 border-border">
-
-    <!-- Architecture -->
-    <div>
-      <p class="text-xs text-muted uppercase tracking-widest mb-6">architecture</p>
-      <div class="space-y-3">
-
-        <div class="bg-bg-card border border-border rounded-lg px-4 py-3 text-sm text-text text-center">
-          POS Simulator <span class="text-muted text-xs ml-2">Poisson arrivals, FIFO batches, weather-shaped demand</span>
+        <div class="bg-bg-card border border-border rounded-lg px-4 py-3">
+          <p class="text-xs text-muted uppercase tracking-widest">days run</p>
+          <p id="stat-days" class="text-lg text-text mt-1"></p>
+          <p class="text-xs text-muted mt-1">ML vs baseline, seeded by date</p>
         </div>
-        <div class="text-center text-muted text-xs">&darr; <span class="text-xs">5-min bulk insert</span></div>
-
-        <div class="bg-bg-card border border-border rounded-lg px-4 py-3 text-sm text-text text-center">
-          Neon (Postgres) <span class="text-muted text-xs ml-2">per-store schemas + shared prediction tables</span>
-        </div>
-        <div class="text-center text-muted text-xs">&darr; <span class="text-xs">nightly 2am UTC cron</span></div>
-
-        <div class="bg-bg-card border border-border rounded-lg px-4 py-3 text-sm text-text text-center">
-          Feature rebuild <span class="text-muted text-xs ml-2">baseline profile, cold start, traffic ratio</span>
-        </div>
-        <div class="text-center text-muted text-xs">&darr;</div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <a href="https://kitchensync.streamlit.app" class="block bg-bg-card border border-accent rounded-lg px-4 py-3 text-sm text-text text-center">
-              Streamlit Dashboard <span class="text-xs text-green-500 ml-2">live</span>
-              <p class="text-xs text-muted mt-1">Kitchen + Chicken queues, 5-min refresh</p>
-            </a>
-          </div>
-          <div>
-            <div class="bg-bg-card border border-border rounded-lg px-4 py-3 text-sm text-text text-center">
-              A/B Comparison
-              <p class="text-xs text-muted mt-1">ML vs baseline, seeded by date</p>
-            </div>
-            <div class="text-center text-muted text-xs my-2">&darr;</div>
-            <div class="bg-bg-card border border-border rounded-lg px-4 py-3 text-sm text-text text-center">
-              ab_results_v2.json
-              <p class="text-xs text-muted mt-1">git push → portfolio site</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="text-center text-muted text-xs mt-4">&darr; <span class="text-xs">manual retrain</span></div>
-
-        <div class="bg-bg-card border border-dashed border-border rounded-lg px-4 py-3 text-sm text-muted text-center">
-          LightGBM retrain <span class="text-xs ml-2">build features → train → predict → commit .joblib</span>
-        </div>
-
-        <p class="text-xs text-muted mt-4">Nightly cron in a Hetzner CX23 instance rebuilds the baseline profile and runs the A/B comparison. Retraining is done manually (for now).</p>
-
       </div>
     </div>
 
@@ -176,6 +110,37 @@
       </div>
       <p class="text-xs text-muted mt-4 max-w-xl leading-relaxed">
         While it can be noted that on rainy/snowy days the ML model's service level is a bit lower than the baseline's, overall waste is nearly half that of the baseline. Clearly, the baseline model over-suggests on rainy days and pays for it with higher waste.
+        <br><br>
+        On neutral days the picture flips: ML wastes more than the baseline. The model's edge comes from weather days, and on ordinary days it slightly over-produces.
+      </p>
+    </div>
+
+    <hr class="max-w-4xl mx-auto my-12 border-border">
+
+    <!-- Daily A/B data -->
+    <div id="live-data" class="hidden">
+      <p class="text-xs text-muted uppercase tracking-widest mb-6">daily results</p>
+
+      <p class="text-xs text-muted uppercase tracking-widest mb-3">service level %</p>
+      <div class="bg-bg-card border border-border rounded-lg p-4 mb-6">
+        <canvas id="chart-service" height="200"></canvas>
+      </div>
+
+      <p class="text-xs text-muted uppercase tracking-widest mb-3">waste rate %</p>
+      <div class="bg-bg-card border border-border rounded-lg p-4">
+        <canvas id="chart-waste" height="200"></canvas>
+      </div>
+    </div>
+
+    <hr class="max-w-4xl mx-auto my-12 border-border">
+
+    <!-- How it ran -->
+    <div>
+      <p class="text-xs text-muted uppercase tracking-widest mb-6">how it ran</p>
+      <p class="text-sm text-muted max-w-xl leading-relaxed">
+        A POS simulator generated weather-shaped demand (Poisson arrivals, FIFO batches) into Postgres every 5 minutes. A nightly cron on EC2 rebuilt features and compared ML against the baseline, committing the results as JSON, which is what this page reads. A
+        <a href="https://kitchensync.streamlit.app" class="hover:text-accent">Streamlit dashboard</a>
+        showed the kitchen queues while it ran.
       </p>
     </div>
 
@@ -255,9 +220,12 @@
         if (!res.ok) return;
         const data = await res.json();
 
-        document.getElementById('stat-days').textContent = data.cumulative.days_run;
-        document.getElementById('stat-service').textContent = data.cumulative.ml_avg_service_level + '%';
-        document.getElementById('stat-waste').textContent = data.cumulative.ml_avg_waste_pct + '%';
+        const c = data.cumulative;
+        document.getElementById('stat-days').textContent = c.days_run;
+        document.getElementById('stat-service').textContent = 'ML ' + c.ml_avg_service_level.toFixed(1) + '%';
+        document.getElementById('stat-service-base').textContent = 'baseline ' + c.base_avg_service_level.toFixed(1) + '%';
+        document.getElementById('stat-waste').textContent = 'ML ' + c.ml_avg_waste_pct.toFixed(1) + '%';
+        document.getElementById('stat-waste-base').textContent = 'baseline ' + c.baseline_avg_waste_pct.toFixed(1) + '%';
 
         const labels = data.daily.map(d => {
           const dt = new Date(d.date + 'T00:00:00');
@@ -343,6 +311,7 @@
           },
         });
 
+        document.getElementById('findings').classList.remove('hidden');
         document.getElementById('live-data').classList.remove('hidden');
       } catch (e) { /* silently omit */}
     })();
@@ -367,7 +336,7 @@
           const gap = d.service_level_gap_pp;
           const gapWaste = d.baseline_waste_pct;
           const gapColor = gap > 0.5 ? 'text-green-500' : gap < -0.1 ? 'text-red-400' : 'text-muted';
-          gapWasteColor = 'text-muted';
+          let gapWasteColor = 'text-muted';
           if (gapWaste > 15) {gapWasteColor = 'text-red-400'}
           const isLast = i === buckets.length - 1;
           const tr = document.createElement('tr');
