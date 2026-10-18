@@ -40,7 +40,7 @@
       <h1 class="font-display text-3xl md:text-6xl mt-6">Music Growth</h1>
       <div class="flex items-center gap-2 text-sm text-muted mt-6">
         <a href="https://github.com/deankuhn/music-growth-pipeline" class="text-muted bg-bg-card border border-border rounded px-2 py-2 hover:border-accent">github ➚</a>
-        <a href="https://music.deanslist.dev" class="text-muted bg-bg-card border border-accent rounded px-2 py-2 hover:border-accent">live site ♫</a>
+        <a href="https://music.deanslist.dev" class="text-muted bg-bg-card border border-accent rounded px-2 py-2 hover:text-accent">live site ♫</a>
       </div>
     </div>
 
@@ -52,9 +52,7 @@
       <p class="text-sm text-muted max-w-xl leading-relaxed">
         Popular API last.fm only gives cumulative stats for artists. No growth rates, historical data, or way to compare against other artists. Music Growth solves this problem by snapshotting 37k+ artist's listener count weekly. It also captures an artist's genre, calculates their size band, and notes similar artists.
         <br><br>
-        This tool is designed to help curious analysts or the artists themselves observe their own listener growth over time, as well as to compare themselves to other artists of similar size and genre. This is made possible through a static HTML/Tailwind/JS frontend,
-        <a href="https://music.deanslist.dev" class="hover:text-accent">music.deanslist.dev</a>
-        , where you can query individual artist statistics as well as overall leaderboard and genre-related data without needing to know SQL.
+        Music Growth Pipeline allows you to query individual artist statistics as well as overall leaderboard and genre-related data without needing to know SQL.
       </p>
     </div>
 
@@ -72,7 +70,7 @@
         </div>
         <div class="bg-bg-card border border-border rounded-lg px-4 py-3">
           <p class="text-xs text-muted uppercase tracking-widest">weeks tracked</p>
-          <p id="stat-weeks" class="text-lg text-text mt-1"></p>
+          <p id="stat-weeks" class="text-lg text-accent mt-1"></p>
         </div>
         <div class="bg-bg-card border border-border rounded-lg px-4 py-3">
           <p class="text-xs text-muted uppercase tracking-widest">latest snapshot</p>
@@ -99,6 +97,17 @@
 
     <hr class="max-w-4xl mx-auto my-12 border-border">
 
+    <!-- Screenshot -->
+    <div>
+      <p class="text-xs text-muted uppercase tracking-widest mb-6">the live site</p>
+      <a href="https://music.deanslist.dev/artist/?slug=5788-ridgeclub">
+        <img src="../../public/images/music-growth-detail.png" alt="Music Growth artist page: listener count, total growth, and a weekly listener chart" class="w-full rounded-lg border border-border hover:border-accent">
+      </a>
+      <p class="text-xs text-muted mt-3">Artist page: ridgeclub's listener growth over 23 weeks, with similar artists below.</p>
+    </div>
+
+    <hr class="max-w-4xl mx-auto my-12 border-border">
+
     <!-- Architecture -->
     <div>
       <p class="text-xs text-muted uppercase tracking-widest mb-6">architecture</p>
@@ -120,7 +129,7 @@
         <div class="text-center text-muted text-xs">&darr;</div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <a href="https://music.deanslist.dev" class="block bg-bg-card border border-accent rounded-lg px-4 py-3 text-sm text-text text-center">
+          <a href="https://music.deanslist.dev" class="block bg-bg-card border border-border hover:border-accent rounded-lg px-4 py-3 text-sm text-text text-center">
             Static web app <span class="text-xs text-green-500 ml-2">live</span>
             <p class="text-xs text-muted mt-1">music.deanslist.dev</p>
           </a>
