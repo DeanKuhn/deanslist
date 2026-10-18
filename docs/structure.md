@@ -40,7 +40,7 @@ All URLs are `https://raw.githubusercontent.com/` prefixed.
 1. **PharmaWatch** — Drug safety signal detection over FDA adverse event data. Status: live.
 2. **Music Growth Pipeline** — Spotify listener growth tracking. Status: live.
 3. **KitchenSync** — ML demand forecasting. Status: completed.
-4. **Package Router (VRP-TW)** — Genetic algorithm vehicle routing. Status: complete.
+4. **Package Router (VRP-TW)** — Genetic algorithm vehicle routing. Status: completed.
 
 ## Deploy
 
